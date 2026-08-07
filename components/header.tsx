@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import logoPic from "@/lib/assets/logo.png";
 
 export function Header() {
   return (
@@ -8,7 +9,7 @@ export function Header() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 md:gap-3 transition-opacity hover:opacity-80">
           <Image 
-            src="/logo.png" 
+            src={logoPic} 
             alt="CozyPixels Logo" 
             width={40} 
             height={40} 

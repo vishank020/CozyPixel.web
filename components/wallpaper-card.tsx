@@ -32,7 +32,7 @@ export function WallpaperCard({
           alt={wallpaper.filename}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
           priority={priority}
           unoptimized // GitHub/jsDelivr – next/image optimization is limited for remote
         />

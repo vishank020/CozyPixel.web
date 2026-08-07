@@ -36,7 +36,7 @@ export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {
               alt={wallpaper.filename}
               fill
               sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
               unoptimized
             />
             <div className="absolute inset-0 bg-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

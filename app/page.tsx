@@ -90,24 +90,30 @@ export default function Home() {
           </div>
 
           {/* Hero Visual Collage (Hidden on small mobile for cleaner layout) */}
-          <div className="flex-1 relative w-full h-[400px] md:h-[600px] hidden sm:block perspective-1000">
-            {/* Front Center Image */}
-            <div className="absolute top-[15%] left-[20%] w-[60%] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border z-30 transition-transform duration-700 hover:scale-[1.02] hover:-translate-y-2">
-              {heroCatppuccin && (
-                <Image src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill className="object-cover" unoptimized priority />
-              )}
-            </div>
-            {/* Top Right Image */}
-            <div className="absolute top-[5%] right-[5%] w-[45%] aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-20 opacity-80 blur-[1px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-[1.05]">
-              {heroNord && (
-                <Image src={getImageUrl(heroNord)} alt="Nord preview" fill className="object-cover" unoptimized priority />
-              )}
-            </div>
-            {/* Bottom Left Image */}
-            <div className="absolute bottom-[10%] left-[5%] w-[50%] aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-20 opacity-70 blur-[2px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-[1.05]">
-              {heroOneDark && (
-                <Image src={getImageUrl(heroOneDark)} alt="One Dark preview" fill className="object-cover" unoptimized priority />
-              )}
+          <div className="flex-1 relative w-full hidden sm:flex items-center justify-center min-h-[400px] md:min-h-[500px]">
+            <div className="relative w-full max-w-lg aspect-square">
+              
+              {/* Bottom Left Image (One Dark) */}
+              <div className="absolute top-1/4 -left-8 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-10 opacity-70 blur-[2px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform -rotate-6">
+                {heroOneDark && (
+                  <Image src={getImageUrl(heroOneDark)} alt="One Dark preview" fill className="object-cover" unoptimized priority />
+                )}
+              </div>
+              
+              {/* Top Right Image (Nord) */}
+              <div className="absolute top-0 -right-4 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-20 opacity-80 blur-[1px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform rotate-6">
+                {heroNord && (
+                  <Image src={getImageUrl(heroNord)} alt="Nord preview" fill className="object-cover" unoptimized priority />
+                )}
+              </div>
+              
+              {/* Front Center Image (Catppuccin) */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border z-30 transition-transform duration-700 hover:scale-105 will-change-transform">
+                {heroCatppuccin && (
+                  <Image src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill className="object-cover" unoptimized priority />
+                )}
+              </div>
+
             </div>
           </div>
         </section>
@@ -167,7 +173,7 @@ export default function Home() {
                             alt={sample.filename}
                             fill
                             sizes="20vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="object-cover transition-transform duration-500 group-hover:scale-110 will-change-transform"
                             unoptimized
                           />
                         </div>
