@@ -1,11 +1,11 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/Catppuccin/Abstract%20%26%20Surreal/abstract-swirls.jpg" alt="CozyPixels Banner" width="100%" style="border-radius: 12px; margin-bottom: 20px;">
+  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/Catppuccin/Abstract%20%26%20Artistic/abstract-swirls.jpg" alt="CozyPixels Banner" width="100%" style="border-radius: 12px; margin-bottom: 20px;">
   
 # 🌟 CozyPixels Gallery
 
   **A beautiful, lightning-fast frontend gallery built for the ultimate aesthetic wallpaper collection.**
 
-  [View Live Demo](#) <!-- Add your Vercel URL here -->
+  [View Live Demo](https://vishank020.github.io/CozyPixel.web/)
 </div>
 
 ---
@@ -29,8 +29,8 @@ Designed with a heavy focus on modern UI/UX, the site features a stunning froste
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/Nord/Abstract/Abstract-Nord.png" width="48%" style="border-radius: 8px;">
-  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/One%20Dark/Gaming%20(BotW)/od_botw_saddled.jpg" width="48%" style="border-radius: 8px;">
+  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/Nord/Abstract%20%26%20Artistic/ign_nordic_rose.png" width="48%" style="border-radius: 8px;">
+  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/One%20Dark/Gaming%20(BOTW)/od_stalker.png" width="48%" style="border-radius: 8px;">
 </div>
 
 *(Above: Previews of the Nord and One Dark aesthetic themes.)*
