@@ -123,16 +123,15 @@ export function Lightbox({
           </div>
 
           <div className="flex gap-2">
-            <a
-              href={downloadUrl}
-              download={wallpaper.filename}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium hover:bg-white/25 transition-colors"
+            <button
+              onClick={() => {
+                import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium hover:bg-white/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
             >
               <Download className="h-4 w-4" />
               Download
-            </a>
+            </button>
 
             <a
               href={`https://github.com/SleepyCatHey/CozyPixels/blob/main/${encodeURI(

@@ -25,10 +25,10 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
   return (
     <div className="space-y-6">
       {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-card p-4 rounded-2xl border border-border/50 shadow-sm">
+      <div className="flex flex-col gap-4 bg-card p-4 rounded-2xl border border-border/50 shadow-sm">
         
         {/* Search */}
-        <div className="relative w-full md:w-72">
+        <div className="relative w-full max-w-xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
@@ -48,8 +48,8 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
         </div>
 
         {/* Subcategory Chips */}
-        <div className="flex-1 w-full overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-          <div className="flex items-center gap-2 md:justify-end">
+        <div className="w-full overflow-x-auto pb-3 custom-scrollbar">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveSubcategory(null)}
               className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${

@@ -57,18 +57,17 @@ export function WallpaperCard({
           </p>
         </div>
 
-        <a
-          href={downloadUrl}
-          download={wallpaper.filename}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary"
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
+          }}
+          className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Download ${wallpaper.filename}`}
           title="Download"
         >
           <Download className="h-3.5 w-3.5" />
-        </a>
+        </button>
       </div>
     </div>
   );
