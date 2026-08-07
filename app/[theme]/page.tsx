@@ -1,11 +1,21 @@
 import { manifest, getWallpapersByTheme } from "@/lib/manifest";
 import { ThemeGallery } from "@/components/theme-gallery";
 
-export default function ThemePage({
+export function generateStaticParams() {
+  return [
+    { theme: "catppuccin" },
+    { theme: "nord" },
+    { theme: "onedark" },
+  ];
+}
+
+export default async function ThemePage({
   params,
 }: {
-  params: { theme: string };
+  params: Promise<{ theme: string }>;
 }) {
+  const resolvedParams = await params;
+  
   // Map URL slug → display name
   const themeMap: Record<string, string> = {
     catppuccin: "Catppuccin",
@@ -13,7 +23,7 @@ export default function ThemePage({
     onedark: "One Dark",
   };
 
-  const themeName = themeMap[params.theme] ?? "Catppuccin";
+  const themeName = themeMap[resolvedParams.theme] ?? "Catppuccin";
   const wallpapers = getWallpapersByTheme(themeName);
   
   const manifestTheme = manifest.themes[themeName];
