@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/Catppuccin/Abstract%20%26%20Surreal/abstract-swirls.jpg" alt="CozyPixels Banner" width="100%" style="border-radius: 12px; margin-bottom: 20px;">
+  
+# 🌟 CozyPixels Gallery
 
-## Getting Started
+  **A beautiful, lightning-fast frontend gallery built for the ultimate aesthetic wallpaper collection.**
 
-First, run the development server:
+  [View Live Demo](#) <!-- Add your Vercel URL here -->
+</div>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 About The Project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**CozyPixels Web** is the official open-source gallery interface built to browse, search, and download from the incredible **[CozyPixels Wallpaper Collection](https://github.com/SleepyCatHey/CozyPixels)**.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Designed with a heavy focus on modern UI/UX, the site features a stunning frosted-glass aesthetic (glassmorphism), buttery smooth micro-animations, and full support for dynamic themes.
 
-## Learn More
+### ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+- **🖼️ Massive Collection**: Browse hundreds of curated, high-quality wallpapers.
+- **🌗 Native Theming**: Fully integrated custom theming engine supporting **Catppuccin (Latte/Mocha)**, **Nord (Light/Dark)**, and **One Dark (Light/Dark)**. The entire UI shifts seamlessly to match the wallpapers you are viewing!
+- **⚡ Blazing Fast (SSG)**: Built with Next.js 15, the gallery is statically generated at build time using the GitHub API. No database required.
+- **🔍 Instant Search**: Client-side filtering by subcategories and filenames for instant discovery.
+- **📱 Fully Responsive**: Carefully optimized for mobile, tablet, and desktop viewing.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📸 Screenshots
 
-## Deploy on Vercel
+<div align="center">
+  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/Nord/Abstract/Abstract-Nord.png" width="48%" style="border-radius: 8px;">
+  <img src="https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/One%20Dark/Gaming%20(BotW)/od_botw_saddled.jpg" width="48%" style="border-radius: 8px;">
+</div>
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+*(Above: Previews of the Nord and One Dark aesthetic themes.)*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠️ Tech Stack & Setup
+
+Looking to run this gallery locally or fork the codebase?
+Please refer to the **[Setup Guide & Tech Stack](setup.md)**.
+
+---
+
+## 🙏 Credits & Acknowledgments
+
+**All wallpapers, curation, and original repository management belong entirely to [SleepyCatHey](https://github.com/SleepyCatHey).**
+
+This frontend project serves solely as an interactive viewer and tribute to their incredible dedication in gathering, organizing, and open-sourcing the [CozyPixels Wallpaper Collection](https://github.com/SleepyCatHey/CozyPixels) over the past year.
+
+Please consider dropping a ⭐ on the [original wallpaper repository](https://github.com/SleepyCatHey/CozyPixels) to support the creator!
+
+---
+
+## 📄 License
+
+This frontend web project is open-source. For licensing regarding the wallpapers themselves, please refer to the [original CozyPixels repository](https://github.com/SleepyCatHey/CozyPixels).
