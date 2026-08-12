@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Download, Expand } from "lucide-react";
+import { motion } from "framer-motion";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl, getRawUrl } from "@/lib/manifest";
 
@@ -20,7 +21,10 @@ export function WallpaperCard({
   const downloadUrl = getRawUrl(wallpaper);
 
   return (
-    <div className="group relative overflow-hidden rounded-xl bg-card border border-border shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/40">
+    <motion.div 
+      whileHover={{ y: -6, transition: { type: "spring", stiffness: 300 } }}
+      className="group relative overflow-hidden rounded-xl bg-card border border-border shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40"
+    >
       {/* Image */}
       <button
         onClick={() => onOpen(wallpaper)}
@@ -57,7 +61,9 @@ export function WallpaperCard({
           </p>
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={(e) => {
             e.stopPropagation();
             import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
@@ -67,8 +73,8 @@ export function WallpaperCard({
           title="Download"
         >
           <Download className="h-3.5 w-3.5" />
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }

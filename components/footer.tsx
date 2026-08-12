@@ -21,9 +21,15 @@ export function Footer() {
               </a>.
             </p>
           </div>
-          <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-4">
-            Made with <Heart className="h-3.5 w-3.5 text-destructive" /> for the cozy aesthetic community.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-2 mt-4">
+            <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+              Made with <Heart className="h-3.5 w-3.5 text-destructive" /> for the cozy aesthetic community.
+            </p>
+            <span className="hidden sm:inline text-muted-foreground">•</span>
+            <p className="text-sm text-muted-foreground">
+              Developed by <a href="https://github.com/vishank020" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">vishank020</a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

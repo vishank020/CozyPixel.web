@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { SmoothScroll } from "@/components/SmoothScroll";
 
 export default function RootLayout({
   children,
@@ -24,9 +25,11 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased theme-noise flex min-h-screen flex-col bg-background text-foreground`}>
         <ThemeProvider defaultTheme="catppuccin" defaultMode="system">
           <Header />
-          <div className="flex-1">
-            {children}
-          </div>
+          <SmoothScroll>
+            <div className="flex-1">
+              {children}
+            </div>
+          </SmoothScroll>
           <Footer />
         </ThemeProvider>
       </body>
