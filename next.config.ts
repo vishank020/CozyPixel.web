@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/CozyPixel.web",
+  basePath: process.env.VERCEL ? "" : "/CozyPixel.web",
   images: {
     unoptimized: true,
     remotePatterns: [
