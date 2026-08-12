@@ -1,4 +1,5 @@
 {
   "framework": "nextjs",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "installCommand": "npm install -g pnpm@11.8.0 && pnpm install"
 }
