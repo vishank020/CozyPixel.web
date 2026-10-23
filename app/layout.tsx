@@ -43,6 +43,7 @@ export const viewport: Viewport = {
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { Toaster } from "@/components/toast";
 
 export default function RootLayout({
   children,
@@ -68,6 +69,7 @@ export default function RootLayout({
             </div>
           </SmoothScroll>
           <Footer />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

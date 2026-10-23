@@ -106,7 +106,7 @@ test("filter bar: category search, counts, sticky and 44px targets", async ({ pa
   await blockImages(page);
   await page.goto("/catppuccin");
   // The live result count, not the hero's "413 wallpapers" stat
-  const count = page.locator('[aria-live="polite"]');
+  const count = page.locator('p[aria-live="polite"]');
   await expect(count).toHaveText("383 wallpapers");
 
   // Searching a category name finds that category (README promise)
@@ -437,7 +437,7 @@ test.describe("deep links", () => {
     await expect(page.getByRole("button", { name: /^Transportation · / })).toHaveAttribute("aria-pressed", "true");
     const search = page.getByRole("searchbox", { name: "Search wallpapers" });
     await expect(search).toHaveValue("van");
-    await expect(page.locator('[aria-live="polite"]')).toHaveText("1 wallpaper");
+    await expect(page.locator('p[aria-live="polite"]')).toHaveText("1 wallpaper");
 
     // Editing filters replaces the history entry instead of adding to it
     const historyLength = await page.evaluate(() => history.length);
@@ -489,6 +489,53 @@ test.describe("deep links", () => {
   });
 });
 
+test.describe("downloads", () => {
+  const ORIGINAL = /raw\.githubusercontent\.com\/.*od_botw_saddled\.jpg$/;
+
+  test("card download saves the original file under its own name, with a busy state", async ({ page }) => {
+    await blockImages(page);
+    let release!: () => void;
+    const held = new Promise<void>((r) => (release = r));
+    await page.route(ORIGINAL, async (route) => {
+      await held;
+      await route.fulfill({ status: 200, contentType: "image/jpeg", body: PIXEL_PNG });
+    });
+    await page.goto("/onedark");
+
+    const button = page.getByRole("button", { name: "Download Botw Saddled" });
+    const downloadEvent = page.waitForEvent("download");
+    await button.click();
+    const busy = page.getByRole("button", { name: /^Downloading Botw Saddled/ });
+    await expect(busy).toBeDisabled();
+
+    release();
+    const download = await downloadEvent;
+    expect(download.suggestedFilename()).toBe("od_botw_saddled.jpg");
+    await expect(page.getByRole("button", { name: "Saved Botw Saddled" })).toBeVisible();
+  });
+
+  test("a failed download opens the file in a new tab and says so", async ({ page, context }) => {
+    await blockImages(page);
+    await page.route(ORIGINAL, (route) => route.abort());
+    await page.goto("/onedark");
+
+    const popup = context.waitForEvent("page");
+    await page.getByRole("button", { name: "Download Botw Saddled" }).click();
+    expect((await popup).url()).toMatch(ORIGINAL);
+
+    // Coming back from the new tab, the explanation is still waiting
+    await page.bringToFront();
+    await expect(page.getByRole("status").filter({ hasText: "opened in a new tab" })).toBeVisible();
+  });
+
+  test("the lightbox shows format and size before downloading", async ({ page }) => {
+    await blockImages(page);
+    await page.goto("/onedark");
+    await page.getByRole("button", { name: /^View / }).first().click();
+    await expect(page.getByRole("dialog").getByText(/One Dark · Gaming \(BOTW\)\s*· JPEG · 707 KB/)).toBeVisible();
+  });
+});
+
 test("unknown URLs get the styled 404 with ways back", async ({ page }) => {
   await blockImages(page);
   const response = await page.goto("/no-such-page");
@@ -508,7 +555,7 @@ test("empty search shows a friendly state that clears the filters", async ({ pag
   await expect(page.getByText("No wallpapers match")).toBeVisible();
 
   await page.getByRole("button", { name: "Clear filters" }).click();
-  await expect(page.locator('[aria-live="polite"]')).toHaveText("383 wallpapers");
+  await expect(page.locator('p[aria-live="polite"]')).toHaveText("383 wallpapers");
   await expect(page.getByRole("searchbox", { name: "Search wallpapers" })).toHaveValue("");
 });
 

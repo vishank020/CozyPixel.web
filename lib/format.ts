@@ -34,3 +34,15 @@ export function displayName(filename: string): string {
 export function wallpaperAlt(wallpaper: Pick<Wallpaper, "filename" | "theme" | "subcategory">): string {
   return `${displayName(wallpaper.filename)}, ${wallpaper.theme} ${wallpaper.subcategory} wallpaper`;
 }
+
+/** "png" → "PNG", "jpg"/"jpeg" → "JPEG" */
+export function formatLabel(extension: string): string {
+  const ext = extension.toLowerCase();
+  return ext === "jpg" ? "JPEG" : ext.toUpperCase();
+}
+
+/** 2168322 → "2.1 MB", 380000 → "371 KB" */
+export function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}

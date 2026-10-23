@@ -1,9 +1,10 @@
 "use client";
 
 import { WallpaperImage } from "./wallpaper-image";
-import { Download, Expand } from "lucide-react";
+import { Expand } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl, getRawUrl } from "@/lib/image-urls";
+import { getImageUrl } from "@/lib/image-urls";
+import { DownloadButton } from "./download-button";
 import { displayName, wallpaperAlt } from "@/lib/format";
 
 interface WallpaperCardProps {
@@ -19,7 +20,6 @@ export function WallpaperCard({
   isFirst = false,
 }: WallpaperCardProps) {
   const imageUrl = getImageUrl(wallpaper);
-  const downloadUrl = getRawUrl(wallpaper);
   const name = displayName(wallpaper.filename);
 
   return (
@@ -62,17 +62,11 @@ export function WallpaperCard({
           </p>
         </div>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
-          }}
+        <DownloadButton
+          wallpaper={wallpaper}
+          variant="icon"
           className="press-pop relative shrink-0 inline-flex h-8 w-8 items-center after:absolute after:-inset-1.5 after:content-[''] justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary"
-          aria-label={`Download ${name}`}
-          title="Download"
-        >
-          <Download className="h-3.5 w-3.5" />
-        </button>
+        />
       </div>
     </div>
   );

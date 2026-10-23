@@ -7,7 +7,6 @@ import { WallpaperImage } from "./wallpaper-image";
 import { setSmoothScrollPaused } from "./SmoothScroll";
 import {
   X,
-  Download,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
@@ -16,8 +15,9 @@ import {
   Loader2,
 } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl, getRawUrl, getGithubBlobUrl } from "@/lib/image-urls";
-import { displayName, wallpaperAlt } from "@/lib/format";
+import { getImageUrl, getGithubBlobUrl } from "@/lib/image-urls";
+import { displayName, formatBytes, formatLabel, wallpaperAlt } from "@/lib/format";
+import { DownloadButton } from "./download-button";
 import { themeIdForName } from "@/lib/themes";
 import { absoluteUrl } from "@/lib/site";
 
@@ -57,7 +57,6 @@ export function Lightbox({
 }: LightboxProps) {
   const wallpaper = wallpapers[currentIndex];
   const imageUrl = getImageUrl(wallpaper);
-  const downloadUrl = getRawUrl(wallpaper);
   const name = displayName(wallpaper.filename);
 
   const hasPrev = currentIndex > 0;
@@ -294,19 +293,19 @@ export function Lightbox({
           <p className="truncate font-medium">{name}</p>
           <p className="truncate text-sm text-white/70">
             {wallpaper.theme} · {wallpaper.subcategory}
+            {/* Format and size before a possibly large download on mobile data */}
+            {wallpaper.size ? (
+              <span className="whitespace-nowrap">
+                {" · "}
+                {formatLabel(wallpaper.extension)} · {formatBytes(wallpaper.size)}
+              </span>
+            ) : null}
           </p>
         </div>
 
         <div className="flex gap-2">
-          <button
-            onClick={() => {
-              import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
-            }}
-            className={actionButton}
-          >
-            <Download className="h-4 w-4" />
-            Download
-          </button>
+          {/* Keyed so browsing to another wallpaper never shows the previous one's progress */}
+          <DownloadButton key={wallpaper.id} wallpaper={wallpaper} variant="full" className={actionButton} />
 
           <a
             href={getGithubBlobUrl(wallpaper)}

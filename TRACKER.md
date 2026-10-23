@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 5** in progress: W5-01…W5-03 done; W5-04 next (branch `optimise`) |
+| Current phase | **Wave 5** in progress: W5-01…W5-04 done; W5-05 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -87,7 +87,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W5-01 Metadata, OG, sitemap, robots
 - [x] W5-02 License, About, visible takedown
 - [x] W5-03 Deep links
-- [ ] W5-04 Downloads with feedback
+- [x] W5-04 Downloads with feedback
 - [ ] W5-05 CI gate + scheduled refresh
 - [ ] W5-06 Small delights
 
@@ -182,7 +182,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 21. ~~W5-01~~ done.
 22. ~~W5-02~~ done.
 23. ~~W5-03~~ done.
-24. W5-04 downloads with feedback.
+24. ~~W5-04~~ done.
+25. W5-05 CI gate + scheduled refresh.
 
 
 ---

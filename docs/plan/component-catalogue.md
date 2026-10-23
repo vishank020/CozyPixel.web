@@ -36,7 +36,8 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `lightbox.tsx` | client | Full-screen viewer: swipe, top bar (counter, close), bottom action bar, hover-only arrows, focus trap/restore, palette-tinted backdrop | W1-01, W1-04, W2-04, W3-03, W4-04 | **Done (W1-04, W2-04, W3-03)** |
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
 | `theme-hero.tsx` | server | Per-theme page header: eyebrow, name, description, counts, palette swatches + glow in the page's own palette | W4-03 | **Done (W4-03)** |
-| `toast.tsx` | client | Status toasts with `role="status"` (new) | W5-04 | not built |
+| `toast.tsx` | client | App-wide `showToast()` + `<Toaster>` (`role="status"`); countdown only while the page is visible | W5-04 | **Done (W5-04)** |
+| `download-button.tsx` + `use-download.ts` | client | Original-file download with progress, busy/saved states, new-tab fallback + toast | W5-04 | **Done (W5-04)** |
 | `credit-note.tsx` | client | Slim dismissible credit + takedown pointer on theme pages; hidden pre-paint once dismissed (`lib/credit-note.ts`) | W5-02 | **Done (W5-02)** |
 | `animations.tsx` | client | framer-motion wrappers | **deleted** in W2-03 | **Done (W2-03)** |
 | `Features.tsx`, `Hero.tsx` | client | Unused template leftovers | **deleted** in P0-04 | **Done (P0-04)** |
@@ -51,4 +52,4 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `components/wallpaper-image.tsx` | `next/image` wrapper: falls back to the original if the proxy fails | Use for every remote wallpaper image | **Done (W1-02)** |
 | `lib/format.ts` | `displayName()` (strips `ign_`/`od_`, splits words, UUID → "Untitled wallpaper"), `wallpaperAlt()` | Anywhere | **Done (W3-01)** |
 | `lib/themes.ts` | Theme metadata, official palette swatches, storage keys | Anywhere | **Done (W4-03)** |
-| `lib/download.ts` | Blob download with progress callback + new-tab fallback | Lazy-imported on click | W5-04 |
+| `lib/download.ts` | Blob download with progress callback + new-tab fallback | Lazy-imported on click | **Done (W5-04)** |
