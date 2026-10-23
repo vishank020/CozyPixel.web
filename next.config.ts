@@ -1,9 +1,22 @@
 import type { NextConfig } from "next";
 
+// GitHub Pages serves under /CozyPixel.web; Vercel and local previews serve at the root
+const basePath = process.env.VERCEL || process.env.LOCAL_PREVIEW ? "" : "/CozyPixel.web";
+
+// Public origin of the deployed site, for absolute links in metadata, sitemap and robots
+// (PLAN A-17). Override with SITE_ORIGIN, e.g. for a custom domain.
+const siteOrigin =
+  process.env.SITE_ORIGIN ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://vishank020.github.io");
+
 const nextConfig: NextConfig = {
   output: "export",
-  // GitHub Pages serves under /CozyPixel.web; Vercel and local previews serve at the root
-  basePath: process.env.VERCEL || process.env.LOCAL_PREVIEW ? "" : "/CozyPixel.web",
+  basePath,
+  env: {
+    NEXT_PUBLIC_SITE_URL: `${siteOrigin.replace(/\/$/, "")}${basePath}`,
+  },
   images: {
     // Static export can't use the built-in optimizer; resize through a custom loader instead
     loader: "custom",

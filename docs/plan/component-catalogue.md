@@ -12,9 +12,9 @@ has no API, so the surface that stories change is routes and components. `A-xx` 
 | `/catppuccin` · `/nord` · `/onedark` | `app/[theme]/page.tsx` (`generateStaticParams`, `generateMetadata`) | SCR-02 | `ThemeHero` + `ThemeGallery` | **Done (W4-03)** |
 | 404 | `app/not-found.tsx` → `out/404.html` | SCR-06 | Styled panel with links to each collection and home | **Done (W4-06)** |
 | `/about` | `app/about/page.tsx` (new, W5-02) | SCR-07 | Credits, disclaimer, takedown, no-tracking | not built |
-| `/sitemap.xml` · `/robots.txt` | `app/sitemap.ts` · `app/robots.ts` (new, W5-01) | — | Static SEO files | not built |
+| `/sitemap.xml` · `/robots.txt` | `app/sitemap.ts` · `app/robots.ts` (`force-static`) | — | Static SEO files | **Done (W5-01)** |
 | `/manifest.webmanifest` | `app/manifest.ts` (new, W5-06) | — | PWA install metadata | not built |
-| OG images | `app/opengraph-image.png`, `app/[theme]/opengraph-image.png` (new, W5-01) | — | 1200×630 social previews | not built |
+| OG images | `public/og/{home,catppuccin,nord,onedark}.png` from `scripts/make-og.ts` | — | 1200×630 social previews, referenced from metadata | **Done (W5-01)** |
 
 Query params on theme pages (W5-03, A-20): `sub` (subcategory slug), `q` (search), `w` (open wallpaper id).
 

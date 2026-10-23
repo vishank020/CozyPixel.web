@@ -3,6 +3,7 @@ import { manifest, getWallpapersByTheme } from "@/lib/manifest";
 import { themes, type ThemeId } from "@/lib/themes";
 import { ThemeGallery, type SubcategoryCount } from "@/components/theme-gallery";
 import { ThemeHero } from "@/components/theme-hero";
+import { SITE_NAME } from "@/lib/site";
 
 type Params = Promise<{ theme: string }>;
 
@@ -17,9 +18,16 @@ function themeFor(slug: string) {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const theme = themeFor((await params).theme);
   const count = manifest.themes[theme.name]?.count ?? 0;
+  const title = `${theme.name} wallpapers · CozyPixels`;
+  const description = `${count} free ${theme.name} wallpapers: ${theme.description.toLowerCase()}. Browse by category and download in full resolution.`;
+  const image = { url: `og/${theme.id}.png`, width: 1200, height: 630, alt: `${theme.name} wallpapers on CozyPixels` };
   return {
-    title: `${theme.name} wallpapers · CozyPixels`,
-    description: `${count} free ${theme.name} wallpapers: ${theme.description.toLowerCase()}. Browse by category and download in full resolution.`,
+    title,
+    description,
+    alternates: { canonical: theme.id },
+    // openGraph replaces (doesn't merge with) the layout's, so repeat siteName
+    openGraph: { type: "website", siteName: SITE_NAME, title, description, url: theme.id, images: [image] },
+    twitter: { card: "summary_large_image", title, description, images: [image.url] },
   };
 }
 

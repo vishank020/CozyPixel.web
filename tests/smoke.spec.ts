@@ -369,6 +369,30 @@ test("hero headline stays on two lines and the CTA on one at every width", async
   }
 });
 
+test("sharing metadata, sitemap and robots", async ({ page, request }) => {
+  await blockImages(page);
+  for (const [route, image] of [["/", "og/home.png"], ["/nord", "og/nord.png"]]) {
+    await page.goto(route);
+    const og = await page.locator('meta[property="og:image"]').getAttribute("content");
+    expect(og, `og:image on ${route}`).toMatch(new RegExp(`^https://.+/${image}$`));
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
+    await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "CozyPixels");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /^https:\/\//);
+
+    // The referenced image is actually shipped
+    const file = await request.get(`/${image}`);
+    expect(file.status()).toBe(200);
+    expect(file.headers()["content-type"]).toContain("image/png");
+  }
+
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  for (const path of ["/", "/catppuccin", "/nord", "/onedark"]) {
+    expect(sitemap).toMatch(new RegExp(`<loc>https://[^<]+${path === "/" ? "/" : path}</loc>`));
+  }
+  const robots = await (await request.get("/robots.txt")).text();
+  expect(robots).toMatch(/Sitemap: https:\/\/.+\/sitemap\.xml/);
+});
+
 test("unknown URLs get the styled 404 with ways back", async ({ page }) => {
   await blockImages(page);
   const response = await page.goto("/no-such-page");

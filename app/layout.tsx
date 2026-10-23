@@ -2,14 +2,34 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { themeScript } from "@/lib/theme-dom";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
+const description =
+  "Free cozy wallpapers in Catppuccin, Nord and One Dark themes. Open source & free forever.";
+
 export const metadata: Metadata = {
+  // Relative URLs below (og images, canonical) resolve against the deployed site
+  metadataBase: new URL(`${SITE_URL}/`),
   title: "CozyPixels – Aesthetic Wallpaper Gallery",
-  description:
-    "Free cozy wallpapers in Catppuccin, Nord and One Dark themes. Open source & free forever.",
+  description,
+  alternates: { canonical: "./" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: "CozyPixels – Aesthetic Wallpaper Gallery",
+    description,
+    url: "./",
+    images: [{ url: "og/home.png", width: 1200, height: 630, alt: "CozyPixels: soft colors for quiet screens" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CozyPixels – Aesthetic Wallpaper Gallery",
+    description,
+    images: ["og/home.png"],
+  },
 };
 
 // Let content reach the screen edges on notched phones; safe-area insets pad it back in
