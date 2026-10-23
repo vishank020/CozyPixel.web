@@ -21,6 +21,18 @@ export function getGithubBlobUrl(wallpaper: WallpaperRef): string {
   return `https://github.com/${SOURCE_REPO}/blob/main/${encodeURI(wallpaper.path)}`;
 }
 
+const JSDELIVR_PREFIX = `https://cdn.jsdelivr.net/gh/${SOURCE_REPO}@main/`;
+const RAW_PREFIX = `https://raw.githubusercontent.com/${SOURCE_REPO}/main/`;
+
+/**
+ * Source URL for the resizing proxy. jsDelivr refuses many requests from wsrv.nl
+ * (403, seen 2026-10-23) while serving browsers fine, so the proxy reads raw GitHub
+ * and jsDelivr stays the browser-side fallback.
+ */
+export function toProxySource(url: string): string {
+  return url.startsWith(JSDELIVR_PREFIX) ? RAW_PREFIX + url.slice(JSDELIVR_PREFIX.length) : url;
+}
+
 /** Prefer jsDelivr for better caching; raw GitHub for files jsDelivr won't serve */
 export function getImageUrl(wallpaper: WallpaperRef, preferCdn = true): string {
   const tooBigForCdn = (wallpaper.size ?? 0) > JSDELIVR_MAX_BYTES;

@@ -24,7 +24,8 @@ test.describe("image URL rules", () => {
     expect(remote.host).toBe("wsrv.nl");
     expect(remote.searchParams.get("w")).toBe("640");
     expect(remote.searchParams.get("output")).toBe("webp");
-    expect(remote.searchParams.get("url")).toBe(getImageUrl({ path }));
+    // The proxy reads raw GitHub (jsDelivr blocks it); the page keeps jsDelivr as fallback
+    expect(remote.searchParams.get("url")).toBe(getRawUrl({ path }));
 
     expect(imageLoader({ src: "/_next/static/media/logo.webp", width: 96 })).toBe(
       "/_next/static/media/logo.webp?w=96"

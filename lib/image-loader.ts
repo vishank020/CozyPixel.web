@@ -1,6 +1,7 @@
 "use client";
 
 import type { ImageLoaderProps } from "next/image";
+import { toProxySource } from "./image-urls";
 
 // Custom next/image loader (PLAN A-01): remote wallpapers are resized to WebP by the free
 // wsrv.nl proxy. Swapping provider means editing only this file.
@@ -14,7 +15,7 @@ export default function imageLoader({ src, width, quality }: ImageLoaderProps): 
   }
 
   const params = new URLSearchParams({
-    url: src,
+    url: toProxySource(src),
     w: String(width),
     q: String(quality ?? DEFAULT_QUALITY),
     output: "webp",
