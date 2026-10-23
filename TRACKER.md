@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 1** in progress: all stories done; wave gate next (branch `optimise`) |
+| Current phase | **Wave 2** next: W2-01 theme before paint (Wave 1 complete, tag `wave-1-done`) (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -109,12 +109,17 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 | 2026-10-23 | after W1-02 | `/catppuccin` | 40 | 7.14 s | 6,911 ms | 0 | 664 | 238 |
 | 2026-10-23 | after W1-02 | `/onedark` | 47 | 6.55 s | 2,352 ms | 0 | 563 | 238 |
 
+| 2026-10-23 | Wave 1 gate | `/` | 90 | 3.58 s | 56 ms | 0 | 100 | 236 |
+| 2026-10-23 | Wave 1 gate | `/catppuccin` | 43 | 5.41 s | 8,574 ms | 0 | 302 | 238 |
+| 2026-10-23 | Wave 1 gate | `/onedark` | 71 | 4.02 s | 629 ms | 0 | 201 | 238 |
+
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
 ### Wave gate results
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-23 | W1 | typecheck · lint · build:local · build:preview · test:e2e (23 + 1 skipped) · perf ×3 | Pass | Exit: (1) 0 client chunks contain manifest data (was one 336 KB chunk); total JS 1.1 MB → 877 KB uncompressed. (2) Image transfer `/` 100 KB, `/catppuccin` 302 KB (budget 1,536). (3) Smoke test proves the hidden collage is never downloaded at 360 px. No regressions. Still failing A-11 (LCP, TBT, JS) is W2's exit. Lint 1 known error (W2-01). Image KB dropped further vs. W1-02 as the wsrv cache warmed |
 | 2026-10-23 | Phase 0 | typecheck · lint · build:local · build:preview · test:e2e (14) · perf (baseline) | Pass | Exit met: every check runs with one command. Lint has 1 known error (theme-provider, fixed by W2-01; see §4). CSS 49.6 → 47.3 KB after dead-code removal |
 
 **Commit convention:** `W<wave>-<nn>: <story title>`, one story per commit. When a wave is done: commit `Wave <n> complete`, tag `wave-<n>-done`.
@@ -126,7 +131,9 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
 3. ~~P0-03, P0-04~~ done.
-4. ~~Phase 0 gate, W1-01, W1-02~~ done. Next: W1-06 oversized originals, then the Wave 1 gate.
+4. ~~Phase 0, Wave 1~~ done.
+5. W2-01 theme before paint: removes the hydration gate that now dominates LCP, and fixes the last lint error.
+6. W2-02 paged grid: the fix for `/catppuccin` TBT (8.6 s).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
