@@ -1,10 +1,14 @@
 import Link from "next/link";
-import Image from "next/image";
+import { WallpaperImage } from "@/components/wallpaper-image";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { manifest, getWallpapersByTheme, getImageUrl } from "@/lib/manifest";
+import { manifest, getWallpapersByTheme } from "@/lib/manifest";
+import { getImageUrl } from "@/lib/image-urls";
+import { wallpaperAlt } from "@/lib/format";
 import { themes } from "@/lib/themes";
 import { FeaturedStrip } from "@/components/featured-strip";
-import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations";
+
+// Hero entrance order for the CSS `rise` animation (globals.css)
+const stagger = (index: number) => ({ "--stagger": index }) as React.CSSProperties;
 
 export default function Home() {
   const themeIds = ["catppuccin", "nord", "onedark"] as const;
@@ -22,7 +26,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="flex flex-col min-h-screen relative overflow-hidden">
+    <main className="flex flex-col min-h-svh relative overflow-hidden">
       
       {/* 
         Subtle ambient background effects. 
@@ -35,36 +39,36 @@ export default function Home() {
 
       <div className="container mx-auto px-4">
         
-        {/* 1. Hero Section */}
-        <section className="flex flex-col md:flex-row items-center justify-center gap-12 min-h-[85vh] py-12 md:py-20">
+        {/* 1. Hero Section (side by side from lg; tablets and phones stack) */}
+        <section className="flex flex-col lg:flex-row items-center justify-center gap-12 min-h-[85svh] py-12 md:py-20">
           
           {/* Hero Text */}
-          <StaggerContainer className="flex-1 space-y-8 z-10 text-center md:text-left max-w-2xl">
-            <StaggerItem className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
+          <div className="flex-1 space-y-8 z-10 text-center lg:text-left max-w-2xl">
+            <div style={stagger(0)} className="rise inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
               <Sparkles className="h-4 w-4" />
               <span>Aesthetic Desktop Wallpapers</span>
-            </StaggerItem>
+            </div>
             
-            <StaggerItem>
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
+            <div style={stagger(1)} className="rise">
+              <h1 className="text-hero lg:text-[3.5rem] xl:text-hero font-extrabold tracking-tight text-foreground leading-[1.1]">
                 Soft colors for <br />
                 <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
                   quiet screens.
                 </span>
               </h1>
-            </StaggerItem>
+            </div>
             
-            <StaggerItem>
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto md:mx-0">
+            <div style={stagger(2)} className="rise">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
                 A curated collection of cozy, high-quality aesthetic wallpapers. 
                 Featuring <strong>Catppuccin</strong>, <strong>Nord</strong>, and <strong>One Dark</strong> themes for a beautifully cohesive digital setup.
               </p>
-            </StaggerItem>
+            </div>
             
-            <StaggerItem className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start pt-4">
+            <div style={stagger(3)} className="rise flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4">
               <Link
                 href="#themes"
-                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"
               >
                 Explore Wallpapers
               </Link>
@@ -72,7 +76,7 @@ export default function Home() {
                 href="https://github.com/SleepyCatHey/CozyPixels"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-border bg-background px-8 py-3.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-secondary hover:text-secondary-foreground hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-border bg-background px-8 py-3.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-secondary hover:text-secondary-foreground hover:border-border"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -91,8 +95,8 @@ export default function Home() {
                 </svg>
                 View on GitHub
               </a>
-            </StaggerItem>
-          </StaggerContainer>
+            </div>
+          </div>
 
           {/* Hero Visual Collage (Hidden on small mobile for cleaner layout) */}
           <div className="flex-1 relative w-full hidden sm:flex items-center justify-center min-h-[400px] md:min-h-[500px]">
@@ -101,25 +105,46 @@ export default function Home() {
               {/* Bottom Left Image (One Dark) */}
               <div className="absolute top-1/4 -left-8 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-10 opacity-70 blur-[2px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform -rotate-6">
                 {heroOneDark && (
-                  <Image src={getImageUrl(heroOneDark)} alt="One Dark preview" fill className="object-cover" unoptimized priority />
+                  <WallpaperImage src={getImageUrl(heroOneDark)} alt="One Dark preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" />
                 )}
               </div>
               
               {/* Top Right Image (Nord) */}
               <div className="absolute top-0 -right-4 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-20 opacity-80 blur-[1px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform rotate-6">
                 {heroNord && (
-                  <Image src={getImageUrl(heroNord)} alt="Nord preview" fill className="object-cover" unoptimized priority />
+                  <WallpaperImage src={getImageUrl(heroNord)} alt="Nord preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" />
                 )}
               </div>
               
               {/* Front Center Image (Catppuccin) */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border z-30 transition-transform duration-700 hover:scale-105 will-change-transform">
                 {heroCatppuccin && (
-                  <Image src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill className="object-cover" unoptimized priority />
+                  <WallpaperImage src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" fetchPriority="high" />
                 )}
               </div>
 
             </div>
+          </div>
+
+          {/* Phone hero visual: a compact take on the collage (front card + one tilted behind) */}
+          <div className="relative w-full max-w-sm mx-auto sm:hidden pt-2 pb-6" aria-hidden={!heroCatppuccin}>
+            {heroNord && (
+              <div className="absolute right-0 top-0 w-3/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 opacity-80 blur-[1px] rotate-6">
+                <WallpaperImage src={getImageUrl(heroNord)} alt="" fill sizes="50vw" className="object-cover" />
+              </div>
+            )}
+            {heroCatppuccin && (
+              <div className="img-shimmer relative z-10 mt-8 w-[85%] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border -rotate-3">
+                <WallpaperImage
+                  src={getImageUrl(heroCatppuccin)}
+                  alt={wallpaperAlt(heroCatppuccin)}
+                  fill
+                  sizes="85vw"
+                  className="object-cover"
+                  fetchPriority="high"
+                />
+              </div>
+            )}
           </div>
         </section>
 
@@ -127,7 +152,7 @@ export default function Home() {
         {/* 2. Theme Showcase Section */}
         <section id="themes" className="py-24 space-y-12">
           <div className="text-center space-y-4 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            <h2 className="text-section font-bold tracking-tight text-foreground">
               Choose your aesthetic
             </h2>
             <p className="text-muted-foreground">
@@ -171,15 +196,15 @@ export default function Home() {
                       {samples.map((sample, idx) => (
                         <div 
                           key={sample.id} 
-                          className={`relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border border-border/50 ${idx === 2 ? 'hidden sm:block lg:hidden xl:block' : ''}`}
+                          className={`img-shimmer relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border border-border/50 ${idx === 2 ? 'hidden sm:block lg:hidden xl:block' : ''}`}
                         >
-                          <Image
+                          <WallpaperImage
                             src={getImageUrl(sample)}
-                            alt={sample.filename}
+                            alt={wallpaperAlt(sample)}
+                            fade
                             fill
-                            sizes="20vw"
+                            sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 16vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-110 will-change-transform"
-                            unoptimized
                           />
                         </div>
                       ))}
@@ -212,22 +237,22 @@ export default function Home() {
 
         {/* 4. Philosophy / About strip */}
         <section className="py-24">
-          <div className="relative rounded-[2.5rem] overflow-hidden bg-card border border-border/60 shadow-lg px-6 py-16 md:px-16 md:py-20 text-center max-w-5xl mx-auto flex flex-col items-center gap-8">
+          <div className="relative rounded-panel overflow-hidden bg-card border border-border/60 shadow-lg px-6 py-16 md:px-16 md:py-20 text-center max-w-5xl mx-auto flex flex-col items-center gap-8">
             {/* Decorative background glow */}
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
             
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground relative z-10">
+            <h2 className="text-section font-bold tracking-tight text-foreground relative z-10">
               Free forever. Made with care.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed relative z-10">
-              CozyPixels is an open-source, community-driven project designed to bring beautiful, relaxing aesthetics to everyone's screen without any cost, ads, or tracking. Wallpapers that feel like a deep breath.
+              CozyPixels is an open-source, community-driven project designed to bring beautiful, relaxing aesthetics to everyone&apos;s screen without any cost, ads, or tracking. Wallpapers that feel like a deep breath.
             </p>
             
             <a
               href="https://github.com/SleepyCatHey/CozyPixels"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-primary font-medium hover:underline relative z-10 mt-2"
+              className="inline-flex min-h-11 items-center gap-2 text-primary font-medium hover:underline relative z-10 mt-2"
             >
               Support the project on GitHub <ArrowRight className="h-4 w-4" />
             </a>

@@ -45,3 +45,6 @@ context.md
 css_context.md
 AGENTS.md
 CLAUDE.md
+
+# perf / test artefacts
+/.perf/

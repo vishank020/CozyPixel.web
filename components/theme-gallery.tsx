@@ -1,84 +1,152 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { useMemo, useRef } from "react";
+import { Search, Shuffle, X } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
+import { displayName, slugify } from "@/lib/format";
+import { openWallpaper, updateUrlParams, useUrlParams } from "@/lib/url-state";
 import { WallpaperGrid } from "./wallpaper-grid";
+import { scrollToElement } from "./SmoothScroll";
+
+export interface SubcategoryCount {
+  name: string;
+  count: number;
+}
 
 interface ThemeGalleryProps {
   wallpapers: Wallpaper[];
-  subcategories: string[];
+  subcategories: SubcategoryCount[];
+}
+
+// Everything a visitor might type: the shown name, the raw filename and the category
+function searchText(w: Wallpaper) {
+  return `${displayName(w.filename)} ${w.filename} ${w.subcategory}`.toLowerCase();
 }
 
 export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
+  // Filters live in the URL (?sub=<category slug>&q=<text>) so a view can be shared
+  const params = useUrlParams();
+  const searchQuery = params.get("q") ?? "";
+  const subSlug = params.get("sub");
+  const activeSubcategory = subcategories.find((s) => slugify(s.name) === subSlug)?.name ?? null;
+
+  const setSearchQuery = (q: string) => updateUrlParams({ q }, "replace");
+  const setActiveSubcategory = (name: string | null) =>
+    updateUrlParams({ sub: name && slugify(name) }, "replace");
+  const resultsTopRef = useRef<HTMLDivElement>(null);
+
+  const searchIndex = useMemo(() => wallpapers.map(searchText), [wallpapers]);
 
   const filteredWallpapers = useMemo(() => {
-    return wallpapers.filter((w) => {
-      const matchesSearch = w.filename.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.trim().toLowerCase();
+    return wallpapers.filter((w, i) => {
+      const matchesSearch = !query || searchIndex[i].includes(query);
       const matchesSubcategory = activeSubcategory ? w.subcategory === activeSubcategory : true;
       return matchesSearch && matchesSubcategory;
     });
-  }, [wallpapers, searchQuery, activeSubcategory]);
+  }, [wallpapers, searchIndex, searchQuery, activeSubcategory]);
+
+  // When the bar is stuck (user scrolled into the grid), jump back to the first result
+  function showResultsFromTop() {
+    const top = resultsTopRef.current;
+    if (top && top.getBoundingClientRect().top < 0) scrollToElement(top);
+  }
+
+  function selectSubcategory(sub: string | null) {
+    setActiveSubcategory(sub);
+    showResultsFromTop();
+  }
+
+  const chipClass = (active: boolean) =>
+    // ::after widens the tap area to 44px tall without changing the chip's look
+    `relative snap-start whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] ${
+      active
+        ? "bg-primary text-primary-foreground shadow-sm"
+        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+    }`;
 
   return (
-    <div className="space-y-6">
-      {/* Filter Bar */}
-      <div className="flex flex-col gap-4 bg-card p-4 rounded-2xl border border-border/50 shadow-sm">
-        
+    <div className="space-y-4 sm:space-y-6">
+      <div ref={resultsTopRef} className="scroll-mt-[calc(4rem+env(safe-area-inset-top))]" />
+
+      {/* Filter bar: stays under the header while browsing */}
+      <div className="sticky top-[calc(4rem+env(safe-area-inset-top))] z-30 flex flex-col gap-3 sm:gap-4 rounded-2xl border border-border/50 bg-card/85 p-3 sm:p-4 shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-card/70">
+
         {/* Search */}
         <div className="relative w-full max-w-xl">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
-            type="text"
+            type="search"
+            enterKeyHint="search"
             placeholder="Search wallpapers..."
+            aria-label="Search wallpapers"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-10 py-2 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow"
+            className="w-full min-h-11 pl-9 pr-11 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow [&::-webkit-search-cancel-button]:hidden"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label="Clear search"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground after:absolute after:-inset-1.5 after:content-['']"
             >
               <X className="h-4 w-4" />
             </button>
           )}
         </div>
 
-        {/* Subcategory Chips */}
-        <div className="w-full overflow-x-auto pb-3 custom-scrollbar">
-          <div className="flex items-center gap-2">
+        {/* Subcategory chips: swipeable row, faded edge hints there are more */}
+        <div
+          role="group"
+          aria-label="Filter by category"
+          className="-mx-3 sm:mx-0 overflow-x-auto overscroll-x-contain snap-x scroll-px-3 px-3 sm:px-0 py-1.5 custom-scrollbar [mask-image:linear-gradient(to_right,black_calc(100%-2rem),transparent)] sm:[mask-image:none]"
+        >
+          <div className="flex w-max items-center gap-2 pr-6 sm:pr-0">
             <button
-              onClick={() => setActiveSubcategory(null)}
-              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                activeSubcategory === null
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-              }`}
+              onClick={() => selectSubcategory(null)}
+              aria-pressed={activeSubcategory === null}
+              className={chipClass(activeSubcategory === null)}
             >
-              All
+              All <span className="opacity-80 tabular-nums">· {wallpapers.length}</span>
             </button>
-            {subcategories.map((sub) => (
+            {subcategories.map(({ name, count }) => (
               <button
-                key={sub}
-                onClick={() => setActiveSubcategory(sub)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  activeSubcategory === sub
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                }`}
+                key={name}
+                onClick={() => selectSubcategory(name)}
+                aria-pressed={activeSubcategory === name}
+                className={chipClass(activeSubcategory === name)}
               >
-                {sub}
+                {name} <span className="opacity-80 tabular-nums">· {count}</span>
               </button>
             ))}
           </div>
         </div>
       </div>
 
+      <div className="flex items-center justify-between gap-3 px-1">
+        <p aria-live="polite" className="text-sm text-muted-foreground tabular-nums">
+          {filteredWallpapers.length} {filteredWallpapers.length === 1 ? "wallpaper" : "wallpapers"}
+        </p>
+        {filteredWallpapers.length > 1 && (
+          // A random pick from what's currently shown (respects search and category)
+          <button
+            onClick={() => {
+              const pick = filteredWallpapers[Math.floor(Math.random() * filteredWallpapers.length)];
+              openWallpaper(pick.id);
+            }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+          >
+            <Shuffle className="h-4 w-4" aria-hidden />
+            Surprise me
+          </button>
+        )}
+      </div>
+
       {/* Grid */}
-      <WallpaperGrid wallpapers={filteredWallpapers} />
+      <WallpaperGrid
+        wallpapers={filteredWallpapers}
+        onClearFilters={() => updateUrlParams({ q: null, sub: null }, "replace")}
+      />
     </div>
   );
 }

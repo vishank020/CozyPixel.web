@@ -21,6 +21,14 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   --color-overlay: hsl(var(--overlay));
+
+  /* Radius scale: Tailwind's lg (controls) · xl (cards, inputs) · 2xl (panels) ·
+     3xl (theme cards), plus the large feature panel */
+  --radius-panel: 2.5rem;
+
+  /* Fluid type: scales smoothly between phone and desktop instead of jumping at md */
+  --text-hero: clamp(2.75rem, 5vw + 1.75rem, 4.5rem);
+  --text-section: clamp(1.875rem, 1.5vw + 1.5rem, 2.25rem);
 }
 
 /* ============================================================
@@ -28,6 +36,12 @@
    ============================================================ */
 
 @layer base {
+  /* One focus style for every control, in the active palette's ring colour */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
   :root {
     /* ---------- Shared / Fallback (Light) ---------- */
     --background: 40 33% 98%;
@@ -49,7 +63,6 @@
     --border: 240 6% 90%;
     --input: 240 6% 90%;
     --ring: 250 65% 60%;
-    --radius: 0.75rem;
 
     /* Wallpaper card specific */
     --card-hover: 0 0% 100%;
@@ -67,19 +80,19 @@
     --card-foreground: 234 16% 35%;
     --popover: 220 22% 97%;
     --popover-foreground: 234 16% 35%;
-    --primary: 267 84% 81%;             /* Mauve */
-    --primary-foreground: 234 16% 20%;
+    --primary: 266 85% 58%;             /* Latte Mauve (#8839ef) */
+    --primary-foreground: 220 23% 95%;  /* Latte Base */
     --secondary: 220 16% 90%;           /* Surface0 */
     --secondary-foreground: 234 16% 35%;
     --muted: 220 16% 90%;
-    --muted-foreground: 233 10% 50%;    /* Overlay1 */
+    --muted-foreground: 233 13% 41%;    /* Latte Subtext1 (#5c5f77) */
     --accent: 267 84% 92%;
     --accent-foreground: 267 50% 40%;
     --destructive: 347 87% 72%;         /* Red */
     --destructive-foreground: 0 0% 100%;
     --border: 223 16% 83%;              /* Surface1 */
     --input: 223 16% 83%;
-    --ring: 267 84% 81%;
+    --ring: 266 85% 58%;
     --card-hover: 220 20% 99%;
     --overlay: 234 16% 20% / 0.5;
   }
@@ -121,7 +134,7 @@
     --card-foreground: 220 16% 22%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 16% 22%;
-    --primary: 213 32% 52%;             /* Frost */
+    --primary: 213 32% 45%;             /* Frost (nord10, darkened for text contrast) */
     --primary-foreground: 0 0% 100%;
     --secondary: 220 16% 90%;
     --secondary-foreground: 220 16% 22%;
@@ -133,7 +146,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 220 13% 87%;
     --input: 220 13% 87%;
-    --ring: 213 32% 52%;
+    --ring: 213 32% 45%;
     --card-hover: 220 20% 99%;
     --overlay: 220 16% 15% / 0.55;
   }
@@ -147,19 +160,19 @@
     --card-foreground: 218 27% 94%;
     --popover: 220 16% 18%;
     --popover-foreground: 218 27% 94%;
-    --primary: 213 32% 52%;             /* Frost */
+    --primary: 193 43% 67%;             /* Frost nord8 (#88c0d0) */
     --primary-foreground: 220 16% 12%;
     --secondary: 220 16% 28%;           /* Polar Night 2 */
     --secondary-foreground: 218 27% 94%;
     --muted: 220 16% 28%;
     --muted-foreground: 220 10% 65%;
     --accent: 213 25% 30%;
-    --accent-foreground: 213 32% 70%;
+    --accent-foreground: 213 32% 75%;
     --destructive: 354 42% 56%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 16% 32%;
     --input: 220 16% 32%;
-    --ring: 213 32% 52%;
+    --ring: 193 43% 67%;
     --card-hover: 220 16% 25%;
     --overlay: 220 16% 10% / 0.7;
   }
@@ -175,19 +188,19 @@
     --card-foreground: 220 13% 18%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 18%;
-    --primary: 220 70% 55%;             /* Blue */
+    --primary: 220 70% 51%;             /* Blue */
     --primary-foreground: 0 0% 100%;
     --secondary: 220 10% 90%;
     --secondary-foreground: 220 13% 25%;
     --muted: 220 10% 90%;
-    --muted-foreground: 220 8% 45%;
+    --muted-foreground: 220 8% 44%;
     --accent: 220 70% 94%;
     --accent-foreground: 220 70% 35%;
     --destructive: 355 65% 55%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 10% 86%;
     --input: 220 10% 86%;
-    --ring: 220 70% 55%;
+    --ring: 220 70% 51%;
     --card-hover: 0 0% 100%;
     --overlay: 220 13% 10% / 0.55;
   }
@@ -208,7 +221,7 @@
     --muted: 220 13% 24%;
     --muted-foreground: 220 10% 60%;
     --accent: 207 40% 28%;
-    --accent-foreground: 207 82% 70%;
+    --accent-foreground: 207 82% 72%;
     --destructive: 355 65% 65%;         /* Red */
     --destructive-foreground: 0 0% 100%;
     --border: 220 13% 28%;
@@ -229,21 +242,19 @@
   opacity: 0.4;
 }
 
-* {
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    color 0.2s ease,
-    box-shadow 0.25s ease;
-}
-
-/* Fix for Webkit sub-pixel jitter on scale transforms */
-.no-jitter {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  perspective: 1000px;
+/* Smooth palette swap, only for the ~300ms after a theme/mode change (PLAN A-07).
+   A permanent rule on * would override every component's own transitions. */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.2s ease,
+      fill 0.2s ease,
+      box-shadow 0.25s ease !important;
+  }
 }
 
 /* Custom horizontal scrollbar for filter chips */
@@ -259,4 +270,113 @@
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* ============================================================
+   Motion (CSS only, PLAN A-05). Content is visible by default;
+   it only animates when the visitor hasn't asked for reduced motion.
+   ============================================================ */
+
+/* Spring-like overshoot, standing in for framer-motion's spring (stiffness 300) */
+:root {
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero entrance: set --stagger on each item (0, 1, 2…) for a 100ms cascade */
+  .rise {
+    animation: rise 0.8s var(--ease-out-expo) both;
+    animation-delay: calc(var(--stagger, 0) * 100ms);
+  }
+
+  .press-pop {
+    transition:
+      transform 0.2s var(--ease-spring),
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .press-pop:active {
+    transform: scale(0.9);
+  }
+}
+
+/* Hover-lift only where hover exists, so taps on phones don't leave cards raised */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card-lift {
+    transition:
+      transform 0.45s var(--ease-spring),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-6px);
+  }
+
+  .press-pop:hover {
+    transform: scale(1.1);
+  }
+  .press-pop:hover:active {
+    transform: scale(0.9);
+  }
+}
+
+/* ============================================================
+   Image loading (W4-04): palette-tinted shimmer behind thumbnails,
+   gentle fade-in for images that arrive after the page is interactive.
+   ============================================================ */
+@keyframes shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+.img-shimmer {
+  background: linear-gradient(
+    100deg,
+    hsl(var(--secondary)) 30%,
+    hsl(var(--card)) 50%,
+    hsl(var(--secondary)) 70%
+  );
+  background-size: 200% 100%;
+}
+
+/* Once the image is in, stop painting the shimmer underneath it */
+.img-shimmer:has(img[data-loaded="true"]) {
+  animation: none;
+  background: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .img-shimmer {
+    animation: shimmer 1.4s linear infinite;
+  }
+
+  /* Only after hydration: before that (or without JS) images paint as they arrive */
+  html.hydrated img[data-fade][data-loaded="false"] {
+    opacity: 0;
+  }
+  html.hydrated img[data-fade] {
+    transition: opacity 0.2s ease;
+  }
+}
+
+/* Dismissed credit note: hidden before first paint via the head script (lib/credit-note.ts) */
+html[data-credit-dismissed] .credit-note {
+  display: none;
 }

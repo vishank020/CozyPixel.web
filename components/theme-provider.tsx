@@ -4,17 +4,17 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
 } from "react";
+import { ThemeId, Mode, THEME_STORAGE_KEY, MODE_STORAGE_KEY } from "@/lib/themes";
 import {
-  ThemeId,
-  Mode,
-  themes,
-  THEME_STORAGE_KEY,
-  MODE_STORAGE_KEY,
-} from "@/lib/themes";
+  applyThemeFromStorage,
+  applyThemeWithTransition,
+  DEFAULT_MODE,
+  DEFAULT_THEME,
+} from "@/lib/theme-dom";
 
 interface ThemeContextValue {
   theme: ThemeId;
@@ -27,125 +27,115 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function getSystemMode(): "light" | "dark" {
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+// ---------------------------------------------------------------------------
+// External store: <html> attributes (set before paint by the head script) +
+// localStorage for the chosen mode, which may be "system".
+// ---------------------------------------------------------------------------
+
+type Snapshot = Pick<ThemeContextValue, "theme" | "mode" | "resolvedMode">;
+
+const listeners = new Set<() => void>();
+
+function notify() {
+  listeners.forEach((listener) => listener());
 }
 
-interface ThemeProviderProps {
-  children: React.ReactNode;
-  defaultTheme?: ThemeId;
-  defaultMode?: Mode;
+function readStoredMode(): Mode {
+  try {
+    const stored = localStorage.getItem(MODE_STORAGE_KEY);
+    if (stored === "light" || stored === "dark" || stored === "system") return stored;
+  } catch {
+    // localStorage unavailable
+  }
+  return DEFAULT_MODE;
 }
 
-export function ThemeProvider({
-  children,
-  defaultTheme = "catppuccin",
-  defaultMode = "system",
-}: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<ThemeId>(defaultTheme);
-  const [mode, setModeState] = useState<Mode>(defaultMode);
-  const [resolvedMode, setResolvedMode] = useState<"light" | "dark">("dark");
-  const [mounted, setMounted] = useState(false);
+let cachedKey = "";
+let cachedSnapshot: Snapshot = { theme: DEFAULT_THEME, mode: DEFAULT_MODE, resolvedMode: "dark" };
 
-  // Resolve the actual light/dark value
-  const resolveMode = useCallback((currentMode: Mode): "light" | "dark" => {
-    if (currentMode === "system") return getSystemMode();
-    return currentMode;
+function getSnapshot(): Snapshot {
+  const root = document.documentElement;
+  const theme = (root.getAttribute("data-theme") as ThemeId | null) ?? DEFAULT_THEME;
+  const resolvedMode = root.getAttribute("data-mode") === "light" ? "light" : "dark";
+  const mode = readStoredMode();
+
+  // useSyncExternalStore needs a stable object while nothing changed
+  const key = `${theme}|${mode}|${resolvedMode}`;
+  if (key !== cachedKey) {
+    cachedKey = key;
+    cachedSnapshot = { theme, mode, resolvedMode };
+  }
+  return cachedSnapshot;
+}
+
+// Static HTML is rendered with defaults; React swaps to the real values right after hydration
+const serverSnapshot: Snapshot = { theme: DEFAULT_THEME, mode: DEFAULT_MODE, resolvedMode: "dark" };
+
+function getServerSnapshot(): Snapshot {
+  return serverSnapshot;
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+
+  // Follow the OS setting while mode === "system"
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onSystemChange = () => {
+    if (readStoredMode() === "system") {
+      applyThemeWithTransition();
+      notify();
+    }
+  };
+  mq.addEventListener("change", onSystemChange);
+
+  return () => {
+    listeners.delete(listener);
+    mq.removeEventListener("change", onSystemChange);
+  };
+}
+
+function persist(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // localStorage unavailable: the choice lasts for this page only
+  }
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { theme, mode, resolvedMode } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  // In development, Strict Mode's remount resets <html> attributes; re-apply before paint.
+  // A no-op in production, where the head script already set them.
+  useLayoutEffect(() => {
+    applyThemeFromStorage();
+    notify();
+    // From here on, JS-driven effects (e.g. image fade-in) may hide content until ready
+    document.documentElement.classList.add("hydrated");
   }, []);
 
-  // Apply attributes to <html>
-  const applyTheme = useCallback(
-    (nextTheme: ThemeId, nextMode: Mode) => {
-      const root = document.documentElement;
-      const resolved = resolveMode(nextMode);
+  const setTheme = useCallback((next: ThemeId) => {
+    persist(THEME_STORAGE_KEY, next);
+    applyThemeWithTransition();
+    notify();
+  }, []);
 
-      root.setAttribute("data-theme", nextTheme);
-      root.setAttribute("data-mode", resolved);
-      root.classList.toggle("dark", resolved === "dark");
-
-      setResolvedMode(resolved);
-    },
-    [resolveMode]
-  );
-
-  // Initial load from localStorage + system preference
-  useEffect(() => {
-    const storedTheme = localStorage.getItem(THEME_STORAGE_KEY) as ThemeId | null;
-    const storedMode = localStorage.getItem(MODE_STORAGE_KEY) as Mode | null;
-
-    const initialTheme =
-      storedTheme && themes[storedTheme] ? storedTheme : defaultTheme;
-    const initialMode = storedMode ?? defaultMode;
-
-    setThemeState(initialTheme);
-    setModeState(initialMode);
-    applyTheme(initialTheme, initialMode);
-    setMounted(true);
-  }, [defaultTheme, defaultMode, applyTheme]);
-
-  // Listen to system preference changes when mode === "system"
-  useEffect(() => {
-    if (mode !== "system") return;
-
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = () => applyTheme(theme, "system");
-
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, [mode, theme, applyTheme]);
-
-  const setTheme = useCallback(
-    (next: ThemeId) => {
-      setThemeState(next);
-      localStorage.setItem(THEME_STORAGE_KEY, next);
-      applyTheme(next, mode);
-    },
-    [mode, applyTheme]
-  );
-
-  const setMode = useCallback(
-    (next: Mode) => {
-      setModeState(next);
-      localStorage.setItem(MODE_STORAGE_KEY, next);
-      applyTheme(theme, next);
-    },
-    [theme, applyTheme]
-  );
+  const setMode = useCallback((next: Mode) => {
+    persist(MODE_STORAGE_KEY, next);
+    applyThemeWithTransition();
+    notify();
+  }, []);
 
   const toggleMode = useCallback(() => {
-    const next = resolvedMode === "dark" ? "light" : "dark";
-    setMode(next);
+    setMode(resolvedMode === "dark" ? "light" : "dark");
   }, [resolvedMode, setMode]);
 
   const value = useMemo(
-    () => ({
-      theme,
-      mode,
-      resolvedMode,
-      setTheme,
-      setMode,
-      toggleMode,
-    }),
+    () => ({ theme, mode, resolvedMode, setTheme, setMode, toggleMode }),
     [theme, mode, resolvedMode, setTheme, setMode, toggleMode]
   );
 
-  // Prevent hydration mismatch flash
-  if (!mounted) {
-    return (
-      <ThemeContext.Provider value={value}>
-        <div style={{ visibility: "hidden" }} aria-hidden>
-          {children}
-        </div>
-      </ThemeContext.Provider>
-    );
-  }
-
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {

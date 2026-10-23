@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Image from "next/image";
+import { WallpaperImage } from "./wallpaper-image";
 import { Expand } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl } from "@/lib/manifest";
+import { getImageUrl } from "@/lib/image-urls";
+import { wallpaperAlt } from "@/lib/format";
 import { Lightbox } from "./lightbox";
 
 export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {
@@ -29,15 +30,15 @@ export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {
           <button
             key={wallpaper.id}
             onClick={() => openLightbox(idx)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="img-shimmer group relative aspect-[4/3] overflow-hidden rounded-xl border border-border shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/40"
           >
-            <Image
+            <WallpaperImage
               src={getImageUrl(wallpaper)}
-              alt={wallpaper.filename}
+              alt={wallpaperAlt(wallpaper)}
+              fade
               fill
-              sizes="(max-width: 768px) 50vw, 25vw"
+              sizes="(max-width: 767px) 50vw, 25vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
-              unoptimized
             />
             <div className="absolute inset-0 bg-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <span className="inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm shadow-sm scale-95 group-hover:scale-100 transition-transform duration-300">
