@@ -109,7 +109,8 @@ export function Lightbox({
             height={1080}
             className="max-h-[75vh] w-auto h-auto object-contain"
             sizes="100vw"
-            priority
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
 

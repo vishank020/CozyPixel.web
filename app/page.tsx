@@ -102,21 +102,21 @@ export default function Home() {
               {/* Bottom Left Image (One Dark) */}
               <div className="absolute top-1/4 -left-8 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-10 opacity-70 blur-[2px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform -rotate-6">
                 {heroOneDark && (
-                  <WallpaperImage src={getImageUrl(heroOneDark)} alt="One Dark preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" priority />
+                  <WallpaperImage src={getImageUrl(heroOneDark)} alt="One Dark preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" />
                 )}
               </div>
               
               {/* Top Right Image (Nord) */}
               <div className="absolute top-0 -right-4 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-20 opacity-80 blur-[1px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform rotate-6">
                 {heroNord && (
-                  <WallpaperImage src={getImageUrl(heroNord)} alt="Nord preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" priority />
+                  <WallpaperImage src={getImageUrl(heroNord)} alt="Nord preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" />
                 )}
               </div>
               
               {/* Front Center Image (Catppuccin) */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border z-30 transition-transform duration-700 hover:scale-105 will-change-transform">
                 {heroCatppuccin && (
-                  <WallpaperImage src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" priority />
+                  <WallpaperImage src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" fetchPriority="high" />
                 )}
               </div>
 

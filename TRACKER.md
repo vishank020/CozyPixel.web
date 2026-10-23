@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 1** in progress: W1-01, W1-02 done; W1-03 next (branch `optimise`) |
+| Current phase | **Wave 1** in progress: W1-01…W1-03 done; W1-04 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -53,7 +53,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 ### Wave 1 — Images and bundle
 - [x] W1-01 Keep the manifest on the server
 - [x] W1-02 Custom image loader
-- [ ] W1-03 Priority hygiene
+- [x] W1-03 Priority hygiene
 - [ ] W1-04 Lightbox image sizing
 - [ ] W1-05 Logo and favicon
 - [ ] W1-06 Oversized originals
@@ -126,7 +126,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
 3. ~~P0-03, P0-04~~ done.
-4. ~~Phase 0 gate, W1-01, W1-02~~ done. Next: W1-03 priority hygiene.
+4. ~~Phase 0 gate, W1-01, W1-02~~ done. Next: W1-04 lightbox image sizing.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -162,6 +162,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - **LCP after W1-02 is render-bound, not image-bound.** On `/` the LCP element is the hero paragraph and 100 % of its LCP is "element render delay" (page hidden until hydration + framer-motion `initial` opacity 0). On `/catppuccin` the LCP image downloads in 271 ms and then waits 1.8 s to render. Images stopped dominating the simulated load, so the hydration gate is now what Lighthouse sees. W2-01/W2-03 target exactly this; a `preconnect` to wsrv.nl made no difference to it.
 - TBT varies a lot between runs on this machine (`/catppuccin` 2.5 s → 5.8 s → 6.9 s with no change to JS work). Compare TBT only within one session, and use `PERF_RUNS=3`. The real fix is W2-02 (paging).
 - wsrv.nl's first request for an uncached size can take ~6 s (measured on a 2.46 MB PNG); repeats are < 1 s. Visitors share that cache.
+- A hidden `<img>` can still show as loaded when its URL matches a visible image (Chrome's in-memory image cache), e.g. the hero Catppuccin card reuses a theme-card thumbnail at 640 w. That costs no extra request. The smoke test checks network requests, not `currentSrc`.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

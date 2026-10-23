@@ -9,13 +9,14 @@ import { getImageUrl, getRawUrl } from "@/lib/image-urls";
 interface WallpaperCardProps {
   wallpaper: Wallpaper;
   onOpen: (wallpaper: Wallpaper) => void;
-  priority?: boolean;
+  /** The likely LCP image: load eagerly with high fetch priority */
+  isFirst?: boolean;
 }
 
 export function WallpaperCard({
   wallpaper,
   onOpen,
-  priority = false,
+  isFirst = false,
 }: WallpaperCardProps) {
   const imageUrl = getImageUrl(wallpaper);
   const downloadUrl = getRawUrl(wallpaper);
@@ -37,7 +38,8 @@ export function WallpaperCard({
           fill
           sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
-          priority={priority}
+          loading={isFirst ? "eager" : "lazy"}
+          fetchPriority={isFirst ? "high" : "auto"}
         />
 
         {/* Hover overlay */}

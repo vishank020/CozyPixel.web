@@ -7,13 +7,10 @@ import { Lightbox } from "./lightbox";
 
 interface WallpaperGridProps {
   wallpapers: Wallpaper[];
-  /** Number of images to prioritize (above the fold) */
-  priorityCount?: number;
 }
 
 export function WallpaperGrid({
   wallpapers,
-  priorityCount = 6,
 }: WallpaperGridProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -50,7 +47,7 @@ export function WallpaperGrid({
             key={wallpaper.id}
             wallpaper={wallpaper}
             onOpen={openLightbox}
-            priority={index < priorityCount}
+            isFirst={index === 0}
           />
         ))}
       </div>

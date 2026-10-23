@@ -27,6 +27,30 @@ test.describe("every route", () => {
   }
 });
 
+test("hidden hero collage never downloads on phones", async ({ page }, testInfo) => {
+  test.skip(!isMobile(testInfo.project.name), "collage is only hidden below sm");
+  const requested = new Set<string>();
+  page.on("request", (req) => requested.add(req.url()));
+  await page.goto("/");
+  await page.waitForLoadState("load");
+  await page.waitForTimeout(1_000);
+
+  const collage = page.locator('img[alt$=" preview"]');
+  await expect(collage).toHaveCount(3);
+  const candidates = await collage.evaluateAll((imgs) =>
+    imgs.flatMap((img) =>
+      (img.getAttribute("srcset") ?? "").split(", ").map((entry) => entry.split(" ")[0])
+    )
+  );
+  // A collage URL may legitimately be requested if a visible image uses the same URL
+  // (the hero reuses a theme-card sample), so only count URLs no visible image shows.
+  const visibleSrcs = await page.locator("img").evaluateAll((imgs) =>
+    imgs.filter((img) => img.checkVisibility()).map((img) => (img as HTMLImageElement).currentSrc)
+  );
+  const wasted = candidates.filter((url) => requested.has(url) && !visibleSrcs.includes(url));
+  expect(wasted, "hidden collage images were downloaded").toEqual([]);
+});
+
 test("lightbox opens, navigates and closes", async ({ page }) => {
   await blockImages(page);
   await page.goto("/onedark");
