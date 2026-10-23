@@ -22,13 +22,16 @@ const ROUTES = (process.env.PERF_ROUTES || "/,/catppuccin,/onedark").split(",");
 const RUNS = Number(process.env.PERF_RUNS || 1);
 const OUT_DIR = join(process.cwd(), ".perf");
 
+// PLAN A-11 (v1.1, 2026-10-23): simulated LCP has a ~2.6 s floor from the React/Next runtime
+// alone, so real paint is checked with the observed LCP and the simulated one gets headroom.
 const BUDGETS = {
   performance: 90,
-  lcpMs: 2500,
+  observedLcpMs: 1000,
+  lcpMs: 3500,
   tbtMs: 200,
   cls: 0.05,
   imageKB: 1536,
-  scriptKB: 150,
+  scriptKB: 160,
 };
 
 function startServer() {
@@ -70,6 +73,7 @@ function summarise(lhr) {
 
   return {
     performance: Math.round(lhr.categories.performance.score * 100),
+    observedLcpMs: Math.round(audits.metrics.details.items[0].observedLargestContentfulPaint),
     lcpMs: Math.round(audits["largest-contentful-paint"].numericValue),
     tbtMs: Math.round(audits["total-blocking-time"].numericValue),
     cls: Number(audits["cumulative-layout-shift"].numericValue.toFixed(3)),
@@ -87,7 +91,8 @@ function median(values) {
 function checkBudgets(result) {
   const failures = [];
   if (result.performance < BUDGETS.performance) failures.push("performance");
-  if (result.lcpMs > BUDGETS.lcpMs) failures.push("LCP");
+  if (result.observedLcpMs > BUDGETS.observedLcpMs) failures.push("observed LCP");
+  if (result.lcpMs > BUDGETS.lcpMs) failures.push("simulated LCP");
   if (result.tbtMs > BUDGETS.tbtMs) failures.push("TBT");
   if (result.cls > BUDGETS.cls) failures.push("CLS");
   if (result.imageKB > BUDGETS.imageKB) failures.push("images");

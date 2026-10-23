@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 2** in progress: all stories done; wave gate next (branch `optimise`) |
+| Current phase | **Wave 3** next: W3-01 phone grid and cards (Wave 2 complete, tag `wave-2-done`) (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -97,7 +97,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 
 ### Performance log
 
-Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
+Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11 (v1.1 from the Wave 2 gate). "LCP" is Lighthouse's simulated value; the observed value is noted where measured.
 
 | Date | Point | Route | Perf | LCP | TBT | CLS | Img KB | JS KB (gz) |
 |---|---|---|---|---|---|---|---|---|
@@ -129,12 +129,17 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 | 2026-10-23 | after W2-04 | `/catppuccin` | 95 | 2.92 s | 45 ms | 0 | 302 | 152 |
 | 2026-10-23 | after W2-04 | `/onedark` | 97 | 2.62 s | 41 ms | 0 | 201 | 152 |
 
+| 2026-10-23 | Wave 2 gate | `/` | 95 | 2.94 s (observed 0.41 s) | 52 ms | 0 | 100 | 148 |
+| 2026-10-23 | Wave 2 gate | `/catppuccin` | 95 | 2.93 s (observed 0.11 s) | 49 ms | 0 | 302 | 153 |
+| 2026-10-23 | Wave 2 gate | `/onedark` | 95 | 2.95 s (observed 0.15 s) | 57 ms | 0 | 201 | 153 |
+
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
 ### Wave gate results
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-23 | W2 | typecheck · lint (clean) · build:local · build:preview · test:e2e (37 + 1 skipped) · perf ×3 + ×1 | Pass (A-11 v1.1) | Exit: every A-11 v1.1 budget met on all 3 routes (scores 94–96, TBT 45–57 ms, observed LCP 0.1–0.4 s); theme HTML 13–19 KB gzipped; gsap and framer-motion gone; hero reaches opacity 1 with all Next JS blocked (test). Against v1.0, simulated LCP (2.9–3.1 s) and theme-page JS (153 KB) failed; owner chose to revise the budgets (§4). Tried and reverted: lazy-loading the lightbox (saved ≈0 KB measured). No regressions |
 | 2026-10-23 | W1 | typecheck · lint · build:local · build:preview · test:e2e (23 + 1 skipped) · perf ×3 | Pass | Exit: (1) 0 client chunks contain manifest data (was one 336 KB chunk); total JS 1.1 MB → 877 KB uncompressed. (2) Image transfer `/` 100 KB, `/catppuccin` 302 KB (budget 1,536). (3) Smoke test proves the hidden collage is never downloaded at 360 px. No regressions. Still failing A-11 (LCP, TBT, JS) is W2's exit. Lint 1 known error (W2-01). Image KB dropped further vs. W1-02 as the wsrv cache warmed |
 | 2026-10-23 | Phase 0 | typecheck · lint · build:local · build:preview · test:e2e (14) · perf (baseline) | Pass | Exit met: every check runs with one command. Lint has 1 known error (theme-provider, fixed by W2-01; see §4). CSS 49.6 → 47.3 KB after dead-code removal |
 
@@ -152,7 +157,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 6. ~~W2-02~~ done (`/catppuccin` TBT 8.6 s → 41 ms).
 7. ~~W2-03~~ done (`/` 90 → 96).
 8. ~~W2-04~~ done (JS 196 → 148–152 KB).
-9. W2-05 scoped theme transition, W2-06 (only if paint profiling shows a cost), then the Wave 2 gate.
+9. ~~W2-05, W2-06, Wave 2 gate~~ done.
+10. W3-01 phone grid and cards (2 columns, 44 px targets, display names).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -167,6 +173,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 | 2026-10-23 | A-09: client receives slim wallpaper objects (no `extension`) | Pass full `Wallpaper` objects as props; only the import split was done | Dropping one short field saves ~4 KB of RSC payload per theme page, not worth the extra type and mapper. The real cost (336 KB manifest chunk) is gone |
 | 2026-10-23 | A-06: `ThemeProvider` initialises state from `<html>` attributes on mount | `<html>` attributes + localStorage are an external store read with `useSyncExternalStore`; one function (`lib/theme-dom.ts`) is both serialised into the head script and called at runtime; `useLayoutEffect` re-applies for dev Strict Mode | Follows `node_modules/next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`. Mount-time state init would need setState in an effect (the lint error) and could drift from the script |
 | 2026-10-23 | W2-05 scope: remove the `*` transition | Also restores components' own hover transitions: the unlayered `*` rule beat Tailwind v4's layered `transition-*` utilities, so e.g. the card image zoom (`transition-transform duration-500`) snapped instead of easing | Visible but intended: the original classes now behave as written |
+| 2026-10-23 | A-11 v1.0: simulated LCP ≤ 2.5 s, client JS ≤ 150 KB | A-11 v1.1: score ≥ 90, **observed LCP ≤ 1.0 s**, simulated LCP ≤ 3.5 s, JS ≤ 160 KB. Owner decision at the Wave 2 gate | Both v1.0 numbers were set before measuring and sit below the framework floor. Simulated LCP stays ≈2.56 s even with the web font removed (React/Next runtime on the simulated critical path); observed LCP is 0.1–0.4 s. JS is 112 KB React/Next runtime + ≈15 KB site code; lazy-loading the lightbox saved ≈0 KB. `perf.mjs` now reports observed LCP too |
 | 2026-10-23 | W2-06: lighter glows/noise below `md` if paint cost > 5 ms/frame | No change. Measured home scroll at 360 px, 4× CPU throttle, 3 runs each: effects on avg 8.8–9.0 ms/frame vs off 8.7–8.8 ms (≈0.2 ms difference), no difference in frames > 33 ms | A-08's condition not met; keeping the effects intact also serves "keep the current style". Headless compositing differs from real phone GPUs, so H-02 re-checks on devices |
 | 2026-10-23 | W2 Exit: "`/catppuccin.html` ≤ 150 KB" | Measured 243 KB raw / **19 KB gzipped** (was 1,094 KB raw). Criterion changed to "≤ 30 KB gzipped" | Raw size is a poor proxy for what users download. The rest is srcset markup and the RSC list of 383 wallpapers for the lightbox; slimming that (A-09) saves ~67 KB raw but ~5 KB gzipped, which isn't worth deriving fields on the client |
 | 2026-10-23 | DoD: `pnpm lint` green (resolved by W2-01: lint fully clean) | Lint was already red at baseline (3 errors, 2 warnings); not fixed in P0-02 | Out of P0-02 scope. P0-04 fixes `tailwind.config.ts`, the apostrophe and unused imports; W2-01 fixes the `theme-provider` setState-in-effect error. Until then, "lint green" means "no new problems" |

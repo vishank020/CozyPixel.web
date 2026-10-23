@@ -8,7 +8,7 @@
 | **Data / source of truth** | `data/manifest.json` generated from the GitHub tree API at build. Images are served from jsDelivr / raw.githubusercontent |
 | **Hosting** | GitHub Pages (live demo, `basePath /CozyPixel.web`) and Vercel (no basePath) |
 | **Open questions** | None blocking. Every gap is settled by an assumption in §3. |
-| **Plan version** | v1.0 · 2026-10-23 |
+| **Plan version** | v1.1 · 2026-10-23 (A-11 budgets revised after Wave 2 measurements) |
 
 ### Document map
 
@@ -79,7 +79,7 @@ Each is a setting or a single code path, so it can change later without rework.
 | A-08 | Effects on mobile | Below `md`: glow orbs at `blur-3xl` and 60 % size without `mix-blend`, and the noise overlay switches from a fixed full-screen layer to a `background-image` on `body`. Above `md`: unchanged. Change only if P0-02 profiling shows paint cost; otherwise log "not needed" in TRACKER §4. | [A §3.5] [C §1.4–1.5] |
 | A-09 | Data in client | Client components receive only `{id, theme, subcategory, filename, path, size}` via props and import URL helpers from `lib/image-urls.ts`. `lib/manifest.ts` starts with `import "server-only"`. | [A §2.1] |
 | A-10 | Touch targets | All interactive elements ≥ 44 × 44 px hit area on touch (visual size may be smaller via padding/`::after`). | WCAG 2.5.5; [B §2.5] |
-| A-11 | Performance budgets | Lighthouse **mobile** preset (default throttling) against the static build. `/` and `/catppuccin`: Performance ≥ 90, LCP ≤ 2.5 s, TBT ≤ 200 ms, CLS ≤ 0.05. Initial image transfer: `/` ≤ 1.5 MB, theme pages ≤ 1.5 MB. Client JS (gz) on any route ≤ 150 KB. | [A §6]; web.dev Core Web Vitals "good" thresholds |
+| A-11 | Performance budgets | **v1.1 (2026-10-23)**: Lighthouse **mobile** preset (default throttling) against the static build, every route: Performance ≥ 90, **observed LCP ≤ 1.0 s and simulated LCP ≤ 3.5 s**, TBT ≤ 200 ms, CLS ≤ 0.05. Initial image transfer ≤ 1.5 MB. Client JS (gz) ≤ **160 KB** (≈140 KB React/Next runtime + ≤ 20 KB site code). *v1.0 had simulated LCP ≤ 2.5 s and JS ≤ 150 KB; both were set before measuring and sit below the framework's own floor (see TRACKER §4).* | [A §6]; web.dev Core Web Vitals; Wave 2 measurements |
 | A-12 | Target viewports | 360×740, 390×844, 768×1024, 1280×800, 1920×1080. Browsers: Chrome Android, Safari iOS (manual check at the H gate), desktop Chrome/Firefox. | [B §7] |
 | A-13 | Oversized originals | Wallpapers with `size > 20 MB` use raw.githubusercontent for both proxy source and download. Implemented in `getImageUrl`. | [A §1.8] |
 | A-14 | Palette fixes | Use official palette values where the current token fails 4.5:1 for text. Catppuccin Latte `primary` → Latte Mauve `266 85% 58%`; Nord dark `primary` → `nord8` `193 43% 67%`; Nord light / One Dark light `primary` darkened (lightness only) to ≥ 4.5; Catppuccin Latte `muted-foreground` → Latte Subtext0 `233 10% 47%` (verify ≥ 4.5). Dark palettes otherwise unchanged. | [C §2], `BL §4` |
