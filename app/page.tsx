@@ -39,18 +39,18 @@ export default function Home() {
 
       <div className="container mx-auto px-4">
         
-        {/* 1. Hero Section */}
-        <section className="flex flex-col md:flex-row items-center justify-center gap-12 min-h-[85svh] py-12 md:py-20">
+        {/* 1. Hero Section (side by side from lg; tablets and phones stack) */}
+        <section className="flex flex-col lg:flex-row items-center justify-center gap-12 min-h-[85svh] py-12 md:py-20">
           
           {/* Hero Text */}
-          <div className="flex-1 space-y-8 z-10 text-center md:text-left max-w-2xl">
+          <div className="flex-1 space-y-8 z-10 text-center lg:text-left max-w-2xl">
             <div style={stagger(0)} className="rise inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
               <Sparkles className="h-4 w-4" />
               <span>Aesthetic Desktop Wallpapers</span>
             </div>
             
             <div style={stagger(1)} className="rise">
-              <h1 className="text-hero font-extrabold tracking-tight text-foreground leading-[1.1]">
+              <h1 className="text-hero lg:text-[3.5rem] xl:text-hero font-extrabold tracking-tight text-foreground leading-[1.1]">
                 Soft colors for <br />
                 <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
                   quiet screens.
@@ -59,13 +59,13 @@ export default function Home() {
             </div>
             
             <div style={stagger(2)} className="rise">
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto md:mx-0">
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
                 A curated collection of cozy, high-quality aesthetic wallpapers. 
                 Featuring <strong>Catppuccin</strong>, <strong>Nord</strong>, and <strong>One Dark</strong> themes for a beautifully cohesive digital setup.
               </p>
             </div>
             
-            <div style={stagger(3)} className="rise flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start pt-4">
+            <div style={stagger(3)} className="rise flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4">
               <Link
                 href="#themes"
                 className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"

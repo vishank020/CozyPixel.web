@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 4** in progress: all stories done; wave gate next (branch `optimise`) |
+| Current phase | **Wave 5** next: W5-01 metadata, OG, sitemap, robots (Wave 4 complete, tag `wave-4-done`) (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -136,6 +136,9 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11 (v1.1 fro
 | 2026-10-23 | Wave 3 gate | `/` | 95 (a11y 100) | 2.92 s (observed 0.14 s) | 58 ms | 0 | 100 | 149 |
 | 2026-10-23 | Wave 3 gate | `/catppuccin` | 94 (a11y 100) | 3.08 s (observed 0.11 s) | 49 ms | 0 | 219 | 155 |
 | 2026-10-23 | Wave 3 gate | `/onedark` | 96 (a11y 100) | 2.78 s (observed 0.10 s) | 47 ms | 0 | 103 | 155 |
+| 2026-10-23 | Wave 4 gate | `/` | 93 (a11y 100) | 3.18 s (observed 0.23 s) | 74 ms | 0 | 121 | 149 |
+| 2026-10-23 | Wave 4 gate | `/catppuccin` | 93 (a11y 100) | 3.16 s (observed 0.13 s) | 58 ms | 0 | 219 | 156 |
+| 2026-10-23 | Wave 4 gate | `/onedark` | 94 (a11y 100) | 3.02 s (observed 0.16 s) | 71 ms | 0 | 103 | 156 |
 
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
@@ -143,6 +146,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-23 | W4 | typecheck · lint (clean) · contrast (all ≥ 4.5, 6 palettes) · build:local · build:preview · test:e2e (137 + 16 skipped) · perf ×3 · visual review: `/` and `/nord` at 360/768/1280/1920 px × 6 palettes (48 shots in `.perf/gate-w4/`, contact sheets `sheet-*.png`) | Pass | Exit: identity intact in every palette and size; contrast all pass; budgets met. Gate found and fixed: at 768 px the side-by-side hero squeezed the headline to 4 lines and wrapped the CTA (pre-existing); hero now stacks until `lg` and caps its size at 3.5 rem for 1024–1279 px, so the headline is 2 lines and the CTA one line at 360–1920 px (new permanent test). Caveat: the P0-03 "before" screenshots had been overwritten by later test runs, so the comparison used the baseline images reviewed earlier in the session; gate shots now live in a separate folder. Perf 93–94 vs 94–97 at W3 (TBT 58–74 ms): within noise but watch in H-01 |
 | 2026-10-23 | W3 | typecheck · lint (clean) · build:local · build:preview · test:e2e at 360/390/1280 px (120 + 12 skipped) · perf ×3 incl. accessibility | Pass | Exit: smoke green at 360 and 390 px (new permanent `mobile-390` project); real touch swipe changes the counter; filter bar in viewport after scrolling 2,000 px; 44 px sweep passes on every route; Lighthouse accessibility 100/100/100 (`perf.mjs` now budgets a11y ≥ 95). Gate found and fixed: chip counts at `opacity-70` gave 4.47:1 on the active chip → `opacity-80`. Lighthouse checks one palette; per-palette contrast is W4-01. No regressions |
 | 2026-10-23 | W2 | typecheck · lint (clean) · build:local · build:preview · test:e2e (37 + 1 skipped) · perf ×3 + ×1 | Pass (A-11 v1.1) | Exit: every A-11 v1.1 budget met on all 3 routes (scores 94–96, TBT 45–57 ms, observed LCP 0.1–0.4 s); theme HTML 13–19 KB gzipped; gsap and framer-motion gone; hero reaches opacity 1 with all Next JS blocked (test). Against v1.0, simulated LCP (2.9–3.1 s) and theme-page JS (153 KB) failed; owner chose to revise the budgets (§4). Tried and reverted: lazy-loading the lightbox (saved ≈0 KB measured). No regressions |
 | 2026-10-23 | W1 | typecheck · lint · build:local · build:preview · test:e2e (23 + 1 skipped) · perf ×3 | Pass | Exit: (1) 0 client chunks contain manifest data (was one 336 KB chunk); total JS 1.1 MB → 877 KB uncompressed. (2) Image transfer `/` 100 KB, `/catppuccin` 302 KB (budget 1,536). (3) Smoke test proves the hidden collage is never downloaded at 360 px. No regressions. Still failing A-11 (LCP, TBT, JS) is W2's exit. Lint 1 known error (W2-01). Image KB dropped further vs. W1-02 as the wsrv cache warmed |
@@ -173,9 +177,11 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 17. ~~W4-03~~ done.
 18. ~~W4-04~~ done.
 19. ~~W4-05~~ done.
-20. W4-06 styled 404 and empty state, then the Wave 4 gate.
+20. ~~W4-06, Wave 4 gate~~ done.
+21. W5-01 metadata, OG image, sitemap, robots.
 
-Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
+Quick win any time: the `LICENSE` file from W5-02.
+
 
 ---
 

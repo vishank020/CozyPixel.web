@@ -352,6 +352,23 @@ test("without app JS, thumbnails are never hidden by the fade", async ({ page })
   await expect(fading).toHaveCSS("opacity", "1");
 });
 
+test("hero headline stays on two lines and the CTA on one at every width", async ({ browser }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-1280", "checks its own widths");
+  for (const width of [360, 390, 768, 1024, 1180, 1280, 1920]) {
+    const context = await browser.newContext({ viewport: { width, height: 1000 } });
+    const page = await context.newPage();
+    await blockImages(page);
+    await page.goto("/");
+    const lines = await page.locator("h1").evaluate((h) =>
+      Math.round(h.getBoundingClientRect().height / parseFloat(getComputedStyle(h).lineHeight))
+    );
+    const ctaHeight = await page.getByRole("link", { name: "Explore Wallpapers" }).evaluate((a) => a.getBoundingClientRect().height);
+    expect(lines, `headline lines at ${width}px`).toBe(2);
+    expect(ctaHeight, `CTA wraps at ${width}px`).toBeLessThan(60);
+    await context.close();
+  }
+});
+
 test("unknown URLs get the styled 404 with ways back", async ({ page }) => {
   await blockImages(page);
   const response = await page.goto("/no-such-page");
