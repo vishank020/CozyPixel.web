@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { themeScript } from "@/lib/theme-dom";
@@ -10,6 +10,13 @@ export const metadata: Metadata = {
   title: "CozyPixels – Aesthetic Wallpaper Gallery",
   description:
     "Free cozy wallpapers in Catppuccin, Nord and One Dark themes. Open source & free forever.",
+};
+
+// Let content reach the screen edges on notched phones; safe-area insets pad it back in
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 import { Header } from "@/components/header";
@@ -30,7 +37,7 @@ export default function RootLayout({
         {/* Every wallpaper thumbnail comes from the resizing proxy (lib/image-loader.ts) */}
         <link rel="preconnect" href="https://wsrv.nl" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased theme-noise flex min-h-screen flex-col bg-background text-foreground`}>
+      <body className={`${inter.variable} font-sans antialiased theme-noise flex min-h-dvh flex-col bg-background text-foreground`}>
         <ThemeProvider>
           <Header />
           <SmoothScroll>

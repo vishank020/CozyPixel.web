@@ -26,7 +26,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="flex flex-col min-h-screen relative overflow-hidden">
+    <main className="flex flex-col min-h-svh relative overflow-hidden">
       
       {/* 
         Subtle ambient background effects. 
@@ -40,7 +40,7 @@ export default function Home() {
       <div className="container mx-auto px-4">
         
         {/* 1. Hero Section */}
-        <section className="flex flex-col md:flex-row items-center justify-center gap-12 min-h-[85vh] py-12 md:py-20">
+        <section className="flex flex-col md:flex-row items-center justify-center gap-12 min-h-[85svh] py-12 md:py-20">
           
           {/* Hero Text */}
           <div className="flex-1 space-y-8 z-10 text-center md:text-left max-w-2xl">

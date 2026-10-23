@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 3** in progress: W3-01…W3-03 done; W3-04 next (branch `optimise`) |
+| Current phase | **Wave 3** in progress: W3-01…W3-04 done; W3-05 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -70,7 +70,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W3-01 Phone grid and cards
 - [x] W3-02 Sticky compact filter bar
 - [x] W3-03 Lightbox for touch
-- [ ] W3-04 Viewport units and safe areas
+- [x] W3-04 Viewport units and safe areas
 - [ ] W3-05 Theme switcher a11y + touch
 
 ### Wave 4 — Style polish
@@ -161,7 +161,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 10. ~~W3-01~~ done.
 11. ~~W3-02~~ done.
 12. ~~W3-03~~ done.
-13. W3-04 viewport units and safe areas.
+13. ~~W3-04~~ done.
+14. W3-05 theme switcher a11y + touch, then the Wave 3 gate.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -212,6 +213,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - With Lenis active (desktop), native `scrollIntoView`/`window.scrollTo` jumps are ignored. Use `scrollToElement()` from `components/SmoothScroll.tsx` for programmatic scrolling. Anchor links (`#themes`) work as-is.
 - **Headless screenshots of fades are unreliable.** In headless desktop Chrome a large lightbox image takes ~0.3–0.5 s before its fade-in visibly starts (software raster), so a screenshot right after load can show an empty stage. Wait ~2 s before screenshotting. Real browsers don't show this; the spinner now stays behind the image until its fade ends either way.
 - A failed `next build` leaves the previous `out/` in place, so tests then run against stale code. A TypeScript error in `tests/` fails the build (tsconfig includes them). Check for the `8/8` line before trusting a test run.
+- **Flaky once (2026-10-23, after W3-04):** one `locator.click` timed out at 30 s in a run started straight after two production builds; the next 8 full runs passed (72/72). Unidentified test (output lost). If it recurs, capture the failing test name before re-running.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

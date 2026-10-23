@@ -210,6 +210,18 @@ test("lightbox on desktop: arrows and focus stays inside", async ({ page }, test
   }
 });
 
+test("viewport fits notched screens and the hero uses stable viewport units", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/");
+  await expect(page.locator('meta[name="viewport"]')).toHaveAttribute("content", /viewport-fit=cover/);
+
+  const { minHeight, innerHeight } = await page.locator("h1").first().evaluate((h1) => ({
+    minHeight: parseFloat(getComputedStyle(h1.closest("section")!).minHeight),
+    innerHeight: window.innerHeight,
+  }));
+  expect(minHeight).toBeCloseTo(innerHeight * 0.85, 0);
+});
+
 test("lightbox opens, navigates and closes", async ({ page }) => {
   await blockImages(page);
   await page.goto("/onedark");

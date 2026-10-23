@@ -5,8 +5,8 @@ import logoPic from "@/lib/assets/logo.webp";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-40 w-full pt-[env(safe-area-inset-top)] border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 md:gap-3 transition-opacity hover:opacity-80">
           <Image 
             src={logoPic} 
