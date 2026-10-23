@@ -1,39 +1,40 @@
+import type { Metadata } from "next";
 import { manifest, getWallpapersByTheme } from "@/lib/manifest";
+import { themes, type ThemeId } from "@/lib/themes";
 import { ThemeGallery, type SubcategoryCount } from "@/components/theme-gallery";
+import { ThemeHero } from "@/components/theme-hero";
+
+type Params = Promise<{ theme: string }>;
 
 export function generateStaticParams() {
-  return [
-    { theme: "catppuccin" },
-    { theme: "nord" },
-    { theme: "onedark" },
-  ];
+  return (Object.keys(themes) as ThemeId[]).map((theme) => ({ theme }));
 }
 
-export default async function ThemePage({
-  params,
-}: {
-  params: Promise<{ theme: string }>;
-}) {
-  const resolvedParams = await params;
-  
-  // Map URL slug → display name
-  const themeMap: Record<string, string> = {
-    catppuccin: "Catppuccin",
-    nord: "Nord",
-    onedark: "One Dark",
-  };
+function themeFor(slug: string) {
+  return themes[slug as ThemeId] ?? themes.catppuccin;
+}
 
-  const themeName = themeMap[resolvedParams.theme] ?? "Catppuccin";
-  const wallpapers = getWallpapersByTheme(themeName);
-  
-  const manifestTheme = manifest.themes[themeName];
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const theme = themeFor((await params).theme);
+  const count = manifest.themes[theme.name]?.count ?? 0;
+  return {
+    title: `${theme.name} wallpapers · CozyPixels`,
+    description: `${count} free ${theme.name} wallpapers: ${theme.description.toLowerCase()}. Browse by category and download in full resolution.`,
+  };
+}
+
+export default async function ThemePage({ params }: { params: Params }) {
+  const theme = themeFor((await params).theme);
+  const wallpapers = getWallpapersByTheme(theme.name);
+
+  const manifestTheme = manifest.themes[theme.name];
   const subcategories: SubcategoryCount[] = Object.entries(manifestTheme?.subcategories ?? {}).map(
     ([name, count]) => ({ name, count })
   );
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">{themeName}</h1>
+    <main className="container mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <ThemeHero theme={theme} wallpaperCount={wallpapers.length} categoryCount={subcategories.length} />
       <ThemeGallery wallpapers={wallpapers} subcategories={subcategories} />
     </main>
   );

@@ -98,7 +98,8 @@ test("phone grid shows two columns with 44px download targets", async ({ page },
 test("filter bar: category search, counts, sticky and 44px targets", async ({ page }) => {
   await blockImages(page);
   await page.goto("/catppuccin");
-  const count = page.getByText(/^\d+ wallpapers?$/);
+  // The live result count, not the hero's "413 wallpapers" stat
+  const count = page.locator('[aria-live="polite"]');
   await expect(count).toHaveText("383 wallpapers");
 
   // Searching a category name finds that category (README promise)
@@ -281,6 +282,22 @@ test("keyboard focus is visible on every control", async ({ page }, testInfo) =>
       expect(focus.outline || focus.ring, `no focus indicator on "${focus.label}" (${route})`).toBe(true);
     }
   }
+});
+
+test("theme page hero: own title, counts and palette whatever the site theme", async ({ page }) => {
+  await blockImages(page);
+  await page.addInitScript(() => localStorage.setItem("cozypixels-theme", "catppuccin"));
+  await page.goto("/nord");
+
+  await expect(page).toHaveTitle("Nord wallpapers · CozyPixels");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Nord");
+  await expect(page.getByText(/^413$/).first()).toBeVisible();
+
+  const palette = page.getByRole("list", { name: "Nord palette" }).getByRole("listitem");
+  await expect(palette).toHaveCount(5);
+  // nord8 Frost, even though the visitor's site theme is Catppuccin
+  await expect(palette.first()).toHaveCSS("background-color", "rgb(136, 192, 208)");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "catppuccin");
 });
 
 test.describe("touch targets", () => {

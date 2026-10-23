@@ -9,7 +9,7 @@ has no API, so the surface that stories change is routes and components. `A-xx` 
 | Route | File | Screen | Renders | Status |
 |---|---|---|---|---|
 | `/` | `app/page.tsx` | SCR-01 | Hero + collage, theme cards, featured strip, "Free forever" panel | baseline |
-| `/catppuccin` · `/nord` · `/onedark` | `app/[theme]/page.tsx` (`generateStaticParams`) | SCR-02 | Title (→ `ThemeHero`, W4-03) + `ThemeGallery` | baseline |
+| `/catppuccin` · `/nord` · `/onedark` | `app/[theme]/page.tsx` (`generateStaticParams`, `generateMetadata`) | SCR-02 | `ThemeHero` + `ThemeGallery` | **Done (W4-03)** |
 | 404 | `app/not-found.tsx` (new, W4-06) | SCR-06 | Styled not-found panel | not built |
 | `/about` | `app/about/page.tsx` (new, W5-02) | SCR-07 | Credits, disclaimer, takedown, no-tracking | not built |
 | `/sitemap.xml` · `/robots.txt` | `app/sitemap.ts` · `app/robots.ts` (new, W5-01) | — | Static SEO files | not built |
@@ -35,7 +35,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | **Done (W1-01–03, W2-03, W3-01)** |
 | `lightbox.tsx` | client | Full-screen viewer: swipe, top bar (counter, close), bottom action bar, hover-only arrows, focus trap/restore, palette-tinted backdrop | W1-01, W1-04, W2-04, W3-03, W4-04 | **Done (W1-04, W2-04, W3-03)** |
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
-| `theme-hero.tsx` | server | Per-theme page header (new) | W4-03 | not built |
+| `theme-hero.tsx` | server | Per-theme page header: eyebrow, name, description, counts, palette swatches + glow in the page's own palette | W4-03 | **Done (W4-03)** |
 | `toast.tsx` | client | Status toasts with `role="status"` (new) | W5-04 | not built |
 | `animations.tsx` | client | framer-motion wrappers | **deleted** in W2-03 | **Done (W2-03)** |
 | `Features.tsx`, `Hero.tsx` | client | Unused template leftovers | **deleted** in P0-04 | **Done (P0-04)** |
@@ -49,5 +49,5 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `lib/image-loader.ts` | `next/image` custom loader → wsrv.nl | Referenced by `next.config.ts` only | **Done (W1-02)** |
 | `components/wallpaper-image.tsx` | `next/image` wrapper: falls back to the original if the proxy fails | Use for every remote wallpaper image | **Done (W1-02)** |
 | `lib/format.ts` | `displayName()` (strips `ign_`/`od_`, splits words, UUID → "Untitled wallpaper"), `wallpaperAlt()` | Anywhere | **Done (W3-01)** |
-| `lib/themes.ts` | Theme metadata, storage keys | Anywhere | W4-03 |
+| `lib/themes.ts` | Theme metadata, official palette swatches, storage keys | Anywhere | **Done (W4-03)** |
 | `lib/download.ts` | Blob download with progress callback + new-tab fallback | Lazy-imported on click | W5-04 |
