@@ -155,6 +155,15 @@ async function main() {
   // stable sort
   wallpapers.sort((a, b) => a.path.localeCompare(b.path));
 
+  // slugify drops characters like "+", so different files can collide
+  // (od_stamina.png vs od_stamina+.png); suffix later ones to keep ids unique
+  const seen = new Map<string, number>();
+  for (const w of wallpapers) {
+    const count = (seen.get(w.id) ?? 0) + 1;
+    seen.set(w.id, count);
+    if (count > 1) w.id = `${w.id}-${count}`;
+  }
+
   const manifest: Manifest = {
     generatedAt: new Date().toISOString(),
     sourceRepo: SOURCE_REPO,
