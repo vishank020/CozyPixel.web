@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Phase 0**: P0-01 done, P0-02 next (branch `optimise`) |
+| Current phase | **Phase 0**: P0-01, P0-02 done; P0-03 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -25,7 +25,8 @@ pnpm build                         # prebuild regenerates manifest, then static 
 pnpm lint                          # eslint
 # added in P0-02 / P0-03:
 pnpm typecheck                     # tsc --noEmit
-VERCEL=1 pnpm build:local          # static export from committed manifest, no basePath (for local preview)
+pnpm build:local                   # static export from committed manifest (Pages basePath)
+pnpm build:preview                 # same, no basePath (Vercel-like; what preview/perf serve)
 pnpm preview                       # serve out/ at http://localhost:4173
 pnpm perf                          # Lighthouse mobile on /, /catppuccin, /onedark against preview
 pnpm test:e2e                      # Playwright smoke at 360 px + 1280 px against preview
@@ -45,7 +46,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 
 ### Phase 0 — Foundations
 - [x] P0-01 Commit the documentation set
-- [ ] P0-02 Scripts + baseline
+- [x] P0-02 Scripts + baseline
 - [ ] P0-03 Playwright smoke suite
 - [ ] P0-04 Remove dead code
 
@@ -100,9 +101,11 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 
 | Date | Point | Route | Perf | LCP | TBT | CLS | Img KB | JS KB (gz) |
 |---|---|---|---|---|---|---|---|---|
-| | Baseline | `/` | | | | | | |
-| | Baseline | `/catppuccin` | | | | | | |
-| | Baseline | `/onedark` | | | | | | |
+| 2026-10-23 | Baseline | `/` | 85 | 4.23 s | 194 ms | 0 | 19,124 | 257 |
+| 2026-10-23 | Baseline | `/catppuccin` | 42 | 7.35 s | 2,551 ms | 0 | 17,709 | 259 |
+| 2026-10-23 | Baseline | `/onedark` | 52 | 10.03 s | 958 ms | 0 | 5,505 | 259 |
+
+Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
 ### Wave gate results
 
@@ -116,7 +119,7 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 ## 3. Next up (in order)
 
 1. ~~P0-01~~ done.
-2. P0-02: add scripts and record baseline numbers in the performance log.
+2. ~~P0-02~~ done.
 3. P0-03: Playwright smoke suite + "before" screenshots.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
@@ -128,6 +131,8 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 | Date | Plan said | We did | Why |
 |---|---|---|---|
 | 2026-10-23 | `idea.md` scope: performance, mobile, style | Added analysis D (completeness) and Wave 5 | Owner asked to include anything else that is lacking |
+| 2026-10-23 | P0-02: no-basePath build via `VERCEL=1 pnpm build:local` | Added `LOCAL_PREVIEW` to `next.config.ts` and a `build:preview` script (`scripts/build-preview.mjs`) | `VAR=1 cmd` doesn't work in Windows shells, and setting `VERCEL` locally could trigger Vercel-specific Next behaviour |
+| 2026-10-23 | DoD: `pnpm lint` green | Lint was already red at baseline (3 errors, 2 warnings); not fixed in P0-02 | Out of P0-02 scope. P0-04 fixes `tailwind.config.ts`, the apostrophe and unused imports; W2-01 fixes the `theme-provider` setState-in-effect error. Until then, "lint green" means "no new problems" |
 
 ---
 
@@ -149,7 +154,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).
-- A plain `pnpm build` uses `basePath: /CozyPixel.web`. For local preview or Lighthouse, build with `VERCEL=1` so pages are served at `/`.
+- A plain `pnpm build` uses `basePath: /CozyPixel.web`. For local preview or Lighthouse use `pnpm build:preview` (sets `LOCAL_PREVIEW=1`), so pages are served at `/`.
 - `next dev` rewrites `AGENTS.md`. That is expected (see its header).
 - A-01 relies on the free wsrv.nl proxy. If it is ever unreliable, ADR-01's fallback (build-time thumbnails) is the plan B; the swap is one loader file.
 - README/setup.md say "Next.js 15" and recommend Vercel; the code is Next 16.3 and the live demo is GitHub Pages. Fixed in H-04.

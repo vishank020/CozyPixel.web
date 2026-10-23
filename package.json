@@ -5,8 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:local": "next build",
+    "build:preview": "node scripts/build-preview.mjs",
     "start": "next start",
+    "preview": "serve out -l 4173",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "perf": "node scripts/perf.mjs",
     "generate-manifest": "tsx scripts/generate-manifest.ts",
     "prebuild": "pnpm run generate-manifest"
   },
@@ -25,8 +30,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "chrome-launcher": "^1.2.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
+    "lighthouse": "^13.5.0",
+    "serve": "^14.2.6",
     "tailwindcss": "^4",
     "tsx": "^4.23.9",
     "typescript": "^5"

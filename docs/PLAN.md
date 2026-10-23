@@ -84,7 +84,7 @@ Each is a setting or a single code path, so it can change later without rework.
 | A-13 | Oversized originals | Wallpapers with `size > 20 MB` use raw.githubusercontent for both proxy source and download. Implemented in `getImageUrl`. | [A §1.8] |
 | A-14 | Palette fixes | Use official palette values where the current token fails 4.5:1 for text. Catppuccin Latte `primary` → Latte Mauve `266 85% 58%`; Nord dark `primary` → `nord8` `193 43% 67%`; Nord light / One Dark light `primary` darkened (lightness only) to ≥ 4.5; Catppuccin Latte `muted-foreground` → Latte Subtext0 `233 10% 47%` (verify ≥ 4.5). Dark palettes otherwise unchanged. | [C §2], `BL §4` |
 | A-15 | Scope of "improve style" | Exactly the items in [C §3–4]: radius scale, focus ring, fluid headings, theme-page hero, chips with counts, shimmer + fade-in, mobile hero visual, card footer, 404/empty states, per-theme `theme-color`. The identity list [C §1] is a hard constraint. | `idea.md`; [C §1] |
-| A-16 | Deploy targets | Every story must build for both targets: `pnpm build` (Pages basePath) and `VERCEL=1 pnpm build`. The image loader produces absolute URLs, so basePath does not affect it. | `next.config.ts:L5` |
+| A-16 | Deploy targets | Every story must build for both targets: `pnpm build` (Pages basePath) and `pnpm build:preview` (no basePath, as on Vercel). The image loader produces absolute URLs, so basePath does not affect it. | `next.config.ts:L5` |
 | A-17 | Site URL | `metadataBase` comes from `NEXT_PUBLIC_SITE_URL`, defaulting to `https://vishank020.github.io/CozyPixel.web`. Canonical URLs point to it. Sitemap/robots/OG use the same value. | README live-demo link |
 | A-18 | License | MIT, `Copyright (c) 2026 Vishank Singh` (git author), covering **this frontend code only**. The README states that wallpapers are not covered and links to the source repo. Change holder = edit one line. | `ctx §1`, `§4`; [D §2.1] |
 | A-19 | Social image | One static 1200×630 `app/opengraph-image.png` (a collage of three wallpapers, logo and tagline, made once and committed) plus per-theme `opengraph-image` files. No runtime generation (static export). | [D §1.2] |
@@ -202,7 +202,7 @@ See `docs/plan/data-usage.md`. Only change: client props are slimmed (A-09) and 
 | Level | Scope | Gate |
 |---|---|---|
 | Static | `pnpm lint` · `pnpm typecheck` | Blocks commit |
-| Build | `pnpm build:local` and `VERCEL=1 pnpm build:local` both succeed | Blocks commit |
+| Build | `pnpm build:local` and `pnpm build:preview` both succeed | Blocks commit |
 | Smoke / E2E | `pnpm test:e2e`: Playwright on the static build. Every route loads at 360 px and 1280 px, no horizontal overflow, the lightbox opens/navigates/closes, theme switch persists after reload | Blocks commit for stories touching UI |
 | **Performance** | `pnpm perf`: Lighthouse mobile on `/`, `/catppuccin`, `/onedark` against A-11 budgets | **Blocks the wave gate** (W1, W2, H) |
 | Accessibility | Lighthouse a11y ≥ 95 + axe via Playwright on all routes | Blocks W3/W4 gates |

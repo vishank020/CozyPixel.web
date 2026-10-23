@@ -10,7 +10,7 @@ How to read a story:
 - **Size**: S ≤ 1 day · M 2–3 days · L 4–5 days.
 - Every story meets the **Definition of Done**:
   - `pnpm lint` and `pnpm typecheck` are green;
-  - `pnpm build:local` and `VERCEL=1 pnpm build:local` both succeed;
+  - `pnpm build:local` and `pnpm build:preview` both succeed;
   - `pnpm test:e2e` is green (once P0-03 exists);
   - UI stories: checked at 360 px and 1280 px, in one light and one dark palette;
   - no identity element from C §1 removed or visibly changed (unless the story says so);

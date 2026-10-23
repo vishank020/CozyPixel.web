@@ -18,7 +18,7 @@ changing its identity, then close completeness gaps (SEO/sharing, credits, deep 
 - $0, no tracking, and images stay on GitHub. No paid services or tracking analytics; never bundle wallpaper originals into the deploy.
 - Client components never import `lib/manifest.ts` (server-only). Pass slim props and use `lib/image-urls.ts`.
 - Every `<Image>` goes through the custom loader with accurate `sizes`. No `unoptimized`, no `priority` (deprecated in Next 16; use `fetchPriority`/`preload` deliberately).
-- Every story must build for both targets: `pnpm build:local` and `VERCEL=1 pnpm build:local`.
+- Every story must build for both targets: `pnpm build:local` and `pnpm build:preview`.
 - Read the relevant guide in `node_modules/next/dist/docs/` before using a Next API (see AGENTS.md).
 
 ## Commands
@@ -26,7 +26,8 @@ changing its identity, then close completeness gaps (SEO/sharing, credits, deep 
 - `pnpm install`: first time only
 - `pnpm dev`: dev server on :3000
 - `pnpm lint` · `pnpm typecheck`: static checks (typecheck added in P0-02)
-- `VERCEL=1 pnpm build:local`: static export from the committed manifest, no basePath (P0-02)
+- `pnpm build:local`: static export from the committed manifest, Pages basePath (P0-02)
+- `pnpm build:preview`: same, no basePath, which is what `preview`/`perf`/`test:e2e` serve (P0-02)
 - `pnpm preview`: serve `out/` on :4173 (P0-02)
 - `pnpm test:e2e`: Playwright smoke at 360 px + 1280 px (P0-03), the "test fast" suite
 - `pnpm perf`: Lighthouse mobile against budgets A-11 (P0-02), part of the wave gate

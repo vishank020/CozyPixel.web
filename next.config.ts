@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: process.env.VERCEL ? "" : "/CozyPixel.web",
+  // GitHub Pages serves under /CozyPixel.web; Vercel and local previews serve at the root
+  basePath: process.env.VERCEL || process.env.LOCAL_PREVIEW ? "" : "/CozyPixel.web",
   images: {
     unoptimized: true,
     remotePatterns: [
