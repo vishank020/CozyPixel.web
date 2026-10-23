@@ -4,7 +4,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { manifest, getWallpapersByTheme, getImageUrl } from "@/lib/manifest";
 import { themes } from "@/lib/themes";
 import { FeaturedStrip } from "@/components/featured-strip";
-import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations";
+import { StaggerContainer, StaggerItem } from "@/components/animations";
 
 export default function Home() {
   const themeIds = ["catppuccin", "nord", "onedark"] as const;
@@ -220,7 +220,7 @@ export default function Home() {
               Free forever. Made with care.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed relative z-10">
-              CozyPixels is an open-source, community-driven project designed to bring beautiful, relaxing aesthetics to everyone's screen without any cost, ads, or tracking. Wallpapers that feel like a deep breath.
+              CozyPixels is an open-source, community-driven project designed to bring beautiful, relaxing aesthetics to everyone&apos;s screen without any cost, ads, or tracking. Wallpapers that feel like a deep breath.
             </p>
             
             <a

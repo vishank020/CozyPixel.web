@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Phase 0**: P0-01…P0-03 done; P0-04 next (branch `optimise`) |
+| Current phase | **Phase 0 complete** (gate pending); Wave 1 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -48,7 +48,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] P0-01 Commit the documentation set
 - [x] P0-02 Scripts + baseline
 - [x] P0-03 Playwright smoke suite
-- [ ] P0-04 Remove dead code
+- [x] P0-04 Remove dead code
 
 ### Wave 1 — Images and bundle
 - [ ] W1-01 Keep the manifest on the server
@@ -111,6 +111,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-23 | Phase 0 | typecheck · lint · build:local · build:preview · test:e2e (14) · perf (baseline) | Pass | Exit met: every check runs with one command. Lint has 1 known error (theme-provider, fixed by W2-01; see §4). CSS 49.6 → 47.3 KB after dead-code removal |
 
 **Commit convention:** `W<wave>-<nn>: <story title>`, one story per commit. When a wave is done: commit `Wave <n> complete`, tag `wave-<n>-done`.
 
@@ -120,7 +121,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
-3. ~~P0-03~~ done. Next: P0-04 remove dead code (also clears 4 of the 5 baseline lint problems), then Wave 1.
+3. ~~P0-03, P0-04~~ done.
+4. Phase 0 exit check, then W1-01: keep the manifest on the server.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 

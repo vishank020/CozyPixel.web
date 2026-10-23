@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import type { Wallpaper } from "@/lib/types";
 import { WallpaperCard } from "./wallpaper-card";
 import { Lightbox } from "./lightbox";

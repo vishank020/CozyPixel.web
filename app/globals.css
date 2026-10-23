@@ -237,15 +237,6 @@
     box-shadow 0.25s ease;
 }
 
-/* Fix for Webkit sub-pixel jitter on scale transforms */
-.no-jitter {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  perspective: 1000px;
-}
-
 /* Custom horizontal scrollbar for filter chips */
 .custom-scrollbar::-webkit-scrollbar {
   height: 6px;
