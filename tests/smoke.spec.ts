@@ -14,10 +14,19 @@ function isMobile(projectName: string) {
 
 test.describe("every route", () => {
   for (const route of ROUTES) {
-    test(`${route} renders without horizontal overflow`, async ({ page }) => {
+    test(`${route} renders without horizontal overflow or React errors`, async ({ page }) => {
+      const reactErrors: string[] = [];
+      page.on("pageerror", (err) => reactErrors.push(err.message));
+      page.on("console", (msg) => {
+        // Blocked images log network errors; only React/hydration problems matter here
+        if (msg.type() === "error" && /react|hydrat/i.test(msg.text())) reactErrors.push(msg.text());
+      });
+
       await blockImages(page);
       await page.goto(route);
       await expect(page.locator("h1").first()).toBeVisible();
+      await page.waitForLoadState("load");
+      expect(reactErrors).toEqual([]);
 
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - window.innerWidth
@@ -81,8 +90,30 @@ test("theme choice survives a reload", async ({ page }, testInfo) => {
   await page.getByRole("button", { name: "Nord", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "nord");
 
+  // Hydrating with a non-default saved theme must not trigger React errors
+  const reactErrors: string[] = [];
+  page.on("pageerror", (err) => reactErrors.push(err.message));
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "nord");
+  await page.waitForLoadState("load");
+  expect(reactErrors).toEqual([]);
+});
+
+test("saved theme and content paint before any app JS runs", async ({ page }) => {
+  await blockImages(page);
+  // Only the inline head script may run: every Next.js chunk is blocked
+  await page.route(/\/_next\/static\/chunks\/.*\.js$/, (route) => route.abort());
+  await page.addInitScript(() => {
+    localStorage.setItem("cozypixels-theme", "nord");
+    localStorage.setItem("cozypixels-mode", "light");
+  });
+
+  await page.goto("/catppuccin");
+  const html = page.locator("html");
+  await expect(html).toHaveAttribute("data-theme", "nord");
+  await expect(html).toHaveAttribute("data-mode", "light");
+  await expect(page.locator("h1").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: /^View / }).first()).toBeVisible();
 });
 
 test("screenshots for visual review", async ({ page }, testInfo) => {

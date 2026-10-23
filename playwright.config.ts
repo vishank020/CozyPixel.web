@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from "fs";
+import { join } from "path";
 import { defineConfig, devices } from "@playwright/test";
 
 /**
@@ -6,6 +8,12 @@ import { defineConfig, devices } from "@playwright/test";
  * Locally it uses the installed Chrome; CI sets PW_CHANNEL="" to use Playwright's Chromium.
  */
 const channel = process.env.PW_CHANNEL ?? "chrome";
+
+// A Pages build (basePath /CozyPixel.web) served at the root loads no JS: fail fast instead of timing out
+const indexHtml = join(__dirname, "out", "index.html");
+if (existsSync(indexHtml) && readFileSync(indexHtml, "utf-8").includes("/CozyPixel.web/_next/")) {
+  throw new Error("out/ is a GitHub Pages build (basePath). Run `pnpm build:preview` first.");
+}
 
 export default defineConfig({
   testDir: "./tests",

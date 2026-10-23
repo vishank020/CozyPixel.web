@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { themeScript } from "@/lib/theme-dom";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -21,13 +22,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    // Defaults for no-JS; the head script swaps in the visitor's saved theme before first paint
+    <html lang="en" data-theme="catppuccin" data-mode="dark" className="dark" suppressHydrationWarning>
       <head>
+        <meta name="theme-color" content="#1e1e2e" />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Every wallpaper thumbnail comes from the resizing proxy (lib/image-loader.ts) */}
         <link rel="preconnect" href="https://wsrv.nl" />
       </head>
       <body className={`${inter.variable} font-sans antialiased theme-noise flex min-h-screen flex-col bg-background text-foreground`}>
-        <ThemeProvider defaultTheme="catppuccin" defaultMode="system">
+        <ThemeProvider>
           <Header />
           <SmoothScroll>
             <div className="flex-1">

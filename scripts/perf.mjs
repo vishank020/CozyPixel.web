@@ -12,7 +12,7 @@
  */
 
 import { spawn } from "child_process";
-import { mkdirSync, writeFileSync } from "fs";
+import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import lighthouse from "lighthouse";
 import * as chromeLauncher from "chrome-launcher";
@@ -95,8 +95,17 @@ function checkBudgets(result) {
   return failures;
 }
 
+// A Pages build (basePath /CozyPixel.web) served at the root loads no JS and gives bogus numbers
+function assertPreviewBuild() {
+  const html = readFileSync(join(process.cwd(), "out", "index.html"), "utf-8");
+  if (html.includes("/CozyPixel.web/_next/")) {
+    throw new Error("out/ is a GitHub Pages build (basePath). Run `pnpm build:preview` first.");
+  }
+}
+
 async function main() {
   const baseUrl = process.env.PERF_URL || `http://localhost:${PORT}`;
+  if (!process.env.PERF_URL) assertPreviewBuild();
   const server = process.env.PERF_URL ? null : startServer();
 
   try {
