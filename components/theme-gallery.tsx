@@ -51,7 +51,7 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
 
   const chipClass = (active: boolean) =>
     // ::after widens the tap area to 44px tall without changing the chip's look
-    `relative snap-start whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+    `relative snap-start whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] ${
       active
         ? "bg-primary text-primary-foreground shadow-sm"
         : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
@@ -80,7 +80,7 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
             <button
               onClick={() => setSearchQuery("")}
               aria-label="Clear search"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground after:absolute after:-inset-1.5 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground after:absolute after:-inset-1.5 after:content-['']"
             >
               <X className="h-4 w-4" />
             </button>

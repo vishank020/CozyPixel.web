@@ -261,6 +261,28 @@ test("theme buttons on desktop expose the active theme", async ({ page }, testIn
   await expect(page.getByRole("button", { name: "Catppuccin", exact: true })).toHaveAttribute("aria-pressed", "false");
 });
 
+test("keyboard focus is visible on every control", async ({ page }, testInfo) => {
+  test.skip(isMobile(testInfo.project.name), "keyboard navigation");
+  await blockImages(page);
+  for (const route of ["/", "/onedark"]) {
+    await page.goto(route);
+    await expect(page.locator("h1").first()).toBeVisible();
+    for (let i = 0; i < 14; i++) {
+      await page.keyboard.press("Tab");
+      const focus = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement;
+        const s = getComputedStyle(el);
+        return {
+          label: (el.getAttribute("aria-label") ?? el.textContent ?? el.tagName).trim().slice(0, 30),
+          outline: s.outlineStyle !== "none" && parseFloat(s.outlineWidth) >= 2,
+          ring: s.boxShadow !== "none",
+        };
+      });
+      expect(focus.outline || focus.ring, `no focus indicator on "${focus.label}" (${route})`).toBe(true);
+    }
+  }
+});
+
 test.describe("touch targets", () => {
   for (const route of ROUTES) {
     test(`${route}: every control is at least 44px on phones`, async ({ page }, testInfo) => {

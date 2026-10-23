@@ -27,7 +27,7 @@ export function WallpaperCard({
       {/* Image */}
       <button
         onClick={() => onOpen(wallpaper)}
-        className="block w-full aspect-[16/10] relative overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="block w-full aspect-[16/10] relative overflow-hidden focus-visible:-outline-offset-4"
         aria-label={`View ${name}`}
       >
         <WallpaperImage
@@ -66,7 +66,7 @@ export function WallpaperCard({
             e.stopPropagation();
             import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
           }}
-          className="press-pop relative shrink-0 inline-flex h-8 w-8 items-center after:absolute after:-inset-1.5 after:content-[''] justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="press-pop relative shrink-0 inline-flex h-8 w-8 items-center after:absolute after:-inset-1.5 after:content-[''] justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary"
           aria-label={`Download ${name}`}
           title="Download"
         >

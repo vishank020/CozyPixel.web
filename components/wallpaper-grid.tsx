@@ -91,7 +91,7 @@ export function WallpaperGrid({
           {/* Fallback for when the observer doesn't fire (and for keyboard users) */}
           <button
             onClick={showMore}
-            className="rounded-full border border-border bg-card px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded-full border border-border bg-card px-6 py-3 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-secondary"
           >
             Load more
           </button>

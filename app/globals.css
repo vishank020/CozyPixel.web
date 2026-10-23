@@ -21,6 +21,14 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   --color-overlay: hsl(var(--overlay));
+
+  /* Radius scale: Tailwind's lg (controls) · xl (cards, inputs) · 2xl (panels) ·
+     3xl (theme cards), plus the large feature panel */
+  --radius-panel: 2.5rem;
+
+  /* Fluid type: scales smoothly between phone and desktop instead of jumping at md */
+  --text-hero: clamp(2.75rem, 5vw + 1.75rem, 4.5rem);
+  --text-section: clamp(1.875rem, 1.5vw + 1.5rem, 2.25rem);
 }
 
 /* ============================================================
@@ -28,6 +36,12 @@
    ============================================================ */
 
 @layer base {
+  /* One focus style for every control, in the active palette's ring colour */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
   :root {
     /* ---------- Shared / Fallback (Light) ---------- */
     --background: 40 33% 98%;
@@ -49,7 +63,6 @@
     --border: 240 6% 90%;
     --input: 240 6% 90%;
     --ring: 250 65% 60%;
-    --radius: 0.75rem;
 
     /* Wallpaper card specific */
     --card-hover: 0 0% 100%;

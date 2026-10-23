@@ -50,7 +50,7 @@ export default function Home() {
             </div>
             
             <div style={stagger(1)} className="rise">
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
+              <h1 className="text-hero font-extrabold tracking-tight text-foreground leading-[1.1]">
                 Soft colors for <br />
                 <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
                   quiet screens.
@@ -68,7 +68,7 @@ export default function Home() {
             <div style={stagger(3)} className="rise flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start pt-4">
               <Link
                 href="#themes"
-                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105"
               >
                 Explore Wallpapers
               </Link>
@@ -76,7 +76,7 @@ export default function Home() {
                 href="https://github.com/SleepyCatHey/CozyPixels"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-border bg-background px-8 py-3.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-secondary hover:text-secondary-foreground hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-border bg-background px-8 py-3.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-secondary hover:text-secondary-foreground hover:border-border"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +131,7 @@ export default function Home() {
         {/* 2. Theme Showcase Section */}
         <section id="themes" className="py-24 space-y-12">
           <div className="text-center space-y-4 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+            <h2 className="text-section font-bold tracking-tight text-foreground">
               Choose your aesthetic
             </h2>
             <p className="text-muted-foreground">
@@ -215,11 +215,11 @@ export default function Home() {
 
         {/* 4. Philosophy / About strip */}
         <section className="py-24">
-          <div className="relative rounded-[2.5rem] overflow-hidden bg-card border border-border/60 shadow-lg px-6 py-16 md:px-16 md:py-20 text-center max-w-5xl mx-auto flex flex-col items-center gap-8">
+          <div className="relative rounded-panel overflow-hidden bg-card border border-border/60 shadow-lg px-6 py-16 md:px-16 md:py-20 text-center max-w-5xl mx-auto flex flex-col items-center gap-8">
             {/* Decorative background glow */}
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
             
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground relative z-10">
+            <h2 className="text-section font-bold tracking-tight text-foreground relative z-10">
               Free forever. Made with care.
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed relative z-10">

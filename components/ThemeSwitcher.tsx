@@ -7,7 +7,6 @@ import { Moon, Sun, Palette } from "lucide-react";
 
 // ::after widens the tap area to 44px without changing how the control looks (PLAN A-10)
 const TAP_AREA = "relative after:absolute after:-inset-1 after:content-['']";
-const FOCUS_RING = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export function ThemeSwitcher() {
   const { theme, setTheme, toggleMode, resolvedMode } = useTheme();
@@ -49,7 +48,7 @@ export function ThemeSwitcher() {
             key={id}
             onClick={() => setTheme(id)}
             aria-pressed={theme === id}
-            className={`${FOCUS_RING} relative after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
+            className={`relative after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-[''] px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
               theme === id
                 ? "bg-primary text-primary-foreground shadow-sm scale-100"
                 : "text-muted-foreground hover:text-foreground scale-95 hover:scale-100"
@@ -69,7 +68,7 @@ export function ThemeSwitcher() {
           aria-haspopup="true"
           aria-expanded={isOpen}
           aria-controls={menuId}
-          className={`${TAP_AREA} ${FOCUS_RING} p-2.5 rounded-lg border border-border bg-card transition-colors ${
+          className={`${TAP_AREA} p-2.5 rounded-lg border border-border bg-card transition-colors ${
             isOpen ? "bg-accent text-accent-foreground" : "hover:bg-accent hover:text-accent-foreground"
           }`}
         >
@@ -93,7 +92,7 @@ export function ThemeSwitcher() {
                     setIsOpen(false);
                   }}
                   aria-pressed={theme === id}
-                  className={`${FOCUS_RING} w-full min-h-11 text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`w-full min-h-11 text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     theme === id
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -110,7 +109,7 @@ export function ThemeSwitcher() {
       {/* Mode toggle - Always visible */}
       <button
         onClick={toggleMode}
-        className={`${TAP_AREA} ${FOCUS_RING} p-2.5 rounded-lg border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-all duration-200 active:scale-95`}
+        className={`${TAP_AREA} p-2.5 rounded-lg border border-border bg-card hover:bg-accent hover:text-accent-foreground transition-all duration-200 active:scale-95`}
         aria-label="Toggle light/dark mode"
         title={resolvedMode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       >

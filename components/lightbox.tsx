@@ -163,9 +163,9 @@ export function Lightbox({
   }
 
   const navButton =
-    "absolute top-1/2 -translate-y-1/2 z-10 hidden [@media(hover:hover)]:inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60";
+    "absolute top-1/2 -translate-y-1/2 z-10 hidden [@media(hover:hover)]:inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors";
   const actionButton =
-    "inline-flex h-11 flex-1 sm:flex-none items-center justify-center gap-2 rounded-full bg-white/15 px-5 text-sm font-medium text-white hover:bg-white/25 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60";
+    "inline-flex h-11 flex-1 sm:flex-none items-center justify-center gap-2 rounded-full bg-white/15 px-5 text-sm font-medium text-white hover:bg-white/25 transition-colors";
 
   return (
     <div
@@ -187,7 +187,7 @@ export function Lightbox({
         <button
           ref={closeRef}
           onClick={onClose}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
           aria-label="Close"
         >
           <X className="h-5 w-5" />

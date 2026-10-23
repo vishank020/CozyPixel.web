@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 4** in progress: W4-01 done, W4-02 next (branch `optimise`) |
+| Current phase | **Wave 4** in progress: W4-01, W4-02 done; W4-03 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -76,7 +76,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 
 ### Wave 4 — Style polish
 - [x] W4-01 Accessible palette tokens
-- [ ] W4-02 Design-token pass
+- [x] W4-02 Design-token pass
 - [ ] W4-03 Theme page hero
 - [ ] W4-04 Loading shimmer + fade-in
 - [ ] W4-05 Mobile hero visual
@@ -169,7 +169,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 13. ~~W3-04~~ done.
 14. ~~W3-05, Wave 3 gate~~ done.
 15. ~~W4-01~~ done.
-16. W4-02 design-token pass (radius scale, focus ring, fluid headings).
+16. ~~W4-02~~ done.
+17. W4-03 theme page hero.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -183,6 +184,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 | 2026-10-23 | P0-02: no-basePath build via `VERCEL=1 pnpm build:local` | Added `LOCAL_PREVIEW` to `next.config.ts` and a `build:preview` script (`scripts/build-preview.mjs`) | `VAR=1 cmd` doesn't work in Windows shells, and setting `VERCEL` locally could trigger Vercel-specific Next behaviour |
 | 2026-10-23 | A-09: client receives slim wallpaper objects (no `extension`) | Pass full `Wallpaper` objects as props; only the import split was done | Dropping one short field saves ~4 KB of RSC payload per theme page, not worth the extra type and mapper. The real cost (336 KB manifest chunk) is gone |
 | 2026-10-23 | A-06: `ThemeProvider` initialises state from `<html>` attributes on mount | `<html>` attributes + localStorage are an external store read with `useSyncExternalStore`; one function (`lib/theme-dom.ts`) is both serialised into the head script and called at runtime; `useLayoutEffect` re-applies for dev Strict Mode | Follows `node_modules/next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`. Mount-time state init would need setState in an effect (the lint error) and could drift from the script |
+| 2026-10-23 | W4-02 / PLAN §7.4: custom radius scale (`--radius-sm` … `--radius-xl`) applied across components; `focus-ring` utility | Kept Tailwind's default radius scale (already used consistently: lg controls, xl cards/inputs, 2xl panels, 3xl theme cards) and only named the one ad-hoc value (`rounded-panel` = 2.5rem). Focus: a single base `:focus-visible` rule instead of a utility class | Re-mapping a consistent scale would be churn with no visible change. A base rule covers every control automatically, including ones that had no focus style (home theme cards), and removed 33 scattered ring classes. C §3.6's "hero wraps to 4 lines at 360 px" was wrong (screenshots show 2), so the hero keeps its phone size and only interpolates to desktop |
 | 2026-10-23 | A-14: Latte muted-foreground → Subtext0; fix only the pairings named in C §2 | Subtext1 (`233 13% 41%`), and also fixed the pairings `pnpm contrast` found beyond C §2: button text in both Nord modes, hover accents in Nord/One Dark dark, One Dark light muted (4.45) | Subtext0 measures 4.40:1 on Latte Base. The script checks every text pairing the components use, which the analysis's 4-pairing table didn't |
 | 2026-10-23 | W2-05 scope: remove the `*` transition | Also restores components' own hover transitions: the unlayered `*` rule beat Tailwind v4's layered `transition-*` utilities, so e.g. the card image zoom (`transition-transform duration-500`) snapped instead of easing | Visible but intended: the original classes now behave as written |
 | 2026-10-23 | A-11 v1.0: simulated LCP ≤ 2.5 s, client JS ≤ 150 KB | A-11 v1.1: score ≥ 90, **observed LCP ≤ 1.0 s**, simulated LCP ≤ 3.5 s, JS ≤ 160 KB. Owner decision at the Wave 2 gate | Both v1.0 numbers were set before measuring and sit below the framework floor. Simulated LCP stays ≈2.56 s even with the web font removed (React/Next runtime on the simulated critical path); observed LCP is 0.1–0.4 s. JS is 112 KB React/Next runtime + ≈15 KB site code; lazy-loading the lightbox saved ≈0 KB. `perf.mjs` now reports observed LCP too |
