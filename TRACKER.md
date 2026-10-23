@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 4** in progress: W4-01…W4-03 done; W4-04 next (branch `optimise`) |
+| Current phase | **Wave 4** in progress: W4-01…W4-04 done; W4-05 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -78,7 +78,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W4-01 Accessible palette tokens
 - [x] W4-02 Design-token pass
 - [x] W4-03 Theme page hero
-- [ ] W4-04 Loading shimmer + fade-in
+- [x] W4-04 Loading shimmer + fade-in
 - [ ] W4-05 Mobile hero visual
 - [ ] W4-06 Styled 404 and empty state
 
@@ -171,7 +171,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 15. ~~W4-01~~ done.
 16. ~~W4-02~~ done.
 17. ~~W4-03~~ done.
-18. W4-04 loading shimmer + fade-in.
+18. ~~W4-04~~ done.
+19. W4-05 mobile hero visual (fills the empty space under the home CTAs on phones).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -227,6 +228,8 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - A failed `next build` leaves the previous `out/` in place, so tests then run against stale code. A TypeScript error in `tests/` fails the build (tsconfig includes them). Check for the `8/8` line before trusting a test run.
 - **Flaky once (2026-10-23, after W3-04):** one `locator.click` timed out at 30 s in a run started straight after two production builds; the next 8 full runs passed (72/72). Unidentified test (output lost). If it recurs, capture the failing test name before re-running.
 - **Contrast (W4-01, `pnpm contrast`).** Before: 14 text pairings under 4.5:1 (worst: Catppuccin light primary 1.80, Nord dark primary 3.03). After: all ≥ 4.5 in all 6 palettes. Token changes: Catppuccin light primary → Latte Mauve `#8839ef` with Latte Base text, muted → Latte Subtext1; Nord light primary L 52→45 %; Nord dark primary → `nord8` `#88c0d0`, accent-fg L 70→75 %; One Dark light primary L 55→51 %, muted L 45→44 %; One Dark dark accent-fg L 70→72 %. Visual check at 390 px in Catppuccin light and Nord dark.
+- **Flaky again once (W4-04 gate):** a single `toHaveClass` failure, passed on rerun. Found a real race in the W2-05 theme-transition test (it raced to see a class that only lives 300 ms); it now records the class with a MutationObserver. 4 consecutive full runs green afterwards.
+- Image fade-in is gated on `html.hydrated` (set by `ThemeProvider`), so without JS, or before hydration, images are never hidden; the first grid card (likely LCP) never fades.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

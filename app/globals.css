@@ -332,3 +332,46 @@
     transform: scale(0.9);
   }
 }
+
+/* ============================================================
+   Image loading (W4-04): palette-tinted shimmer behind thumbnails,
+   gentle fade-in for images that arrive after the page is interactive.
+   ============================================================ */
+@keyframes shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+.img-shimmer {
+  background: linear-gradient(
+    100deg,
+    hsl(var(--secondary)) 30%,
+    hsl(var(--card)) 50%,
+    hsl(var(--secondary)) 70%
+  );
+  background-size: 200% 100%;
+}
+
+/* Once the image is in, stop painting the shimmer underneath it */
+.img-shimmer:has(img[data-loaded="true"]) {
+  animation: none;
+  background: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .img-shimmer {
+    animation: shimmer 1.4s linear infinite;
+  }
+
+  /* Only after hydration: before that (or without JS) images paint as they arrive */
+  html.hydrated img[data-fade][data-loaded="false"] {
+    opacity: 0;
+  }
+  html.hydrated img[data-fade] {
+    transition: opacity 0.2s ease;
+  }
+}

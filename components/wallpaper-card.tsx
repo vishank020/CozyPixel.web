@@ -27,7 +27,7 @@ export function WallpaperCard({
       {/* Image */}
       <button
         onClick={() => onOpen(wallpaper)}
-        className="block w-full aspect-[16/10] relative overflow-hidden focus-visible:-outline-offset-4"
+        className="img-shimmer block w-full aspect-[16/10] relative overflow-hidden focus-visible:-outline-offset-4"
         aria-label={`View ${name}`}
       >
         <WallpaperImage
@@ -37,6 +37,7 @@ export function WallpaperCard({
           sizes="(max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
           loading={isFirst ? "eager" : "lazy"}
+          fade={!isFirst}
           fetchPriority={isFirst ? "high" : "auto"}
         />
 

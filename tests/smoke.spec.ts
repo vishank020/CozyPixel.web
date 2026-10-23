@@ -300,6 +300,55 @@ test("theme page hero: own title, counts and palette whatever the site theme", a
   await expect(page.locator("html")).toHaveAttribute("data-theme", "catppuccin");
 });
 
+// 1×1 PNG, so image loading is instant and deterministic
+const PIXEL_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+  "base64"
+);
+
+async function stubImages(page: Page) {
+  await page.route(/wsrv\.nl|\.(png|jpe?g|webp|gif)(\?.*)?$/i, (route) =>
+    route.fulfill({ status: 200, contentType: "image/png", body: PIXEL_PNG })
+  );
+}
+
+test("thumbnails: shimmer while loading, fade in after, first card never hidden", async ({ page }) => {
+  // Hold the second card's image so its pending state can be inspected
+  let release!: () => void;
+  const held = new Promise<void>((r) => (release = r));
+  let heldOnce = false;
+  await page.route(/wsrv\.nl/, async (route) => {
+    if (!heldOnce && route.request().url().includes("od_botw_z")) {
+      heldOnce = true;
+      await held;
+    }
+    await route.fulfill({ status: 200, contentType: "image/png", body: PIXEL_PNG });
+  });
+  await page.goto("/onedark");
+
+  const firstImg = page.locator(".card-lift img").first();
+  await expect(firstImg).not.toHaveAttribute("data-fade", /.*/);
+
+  const wrapper = page.locator(".card-lift .img-shimmer").nth(1);
+  const img = wrapper.locator("img");
+  await expect(img).toHaveAttribute("data-fade", "true");
+  await expect(img).toHaveAttribute("data-loaded", "false");
+  await expect(wrapper).toHaveCSS("animation-name", "shimmer");
+
+  release();
+  await expect(img).toHaveAttribute("data-loaded", "true");
+  await expect(img).toHaveCSS("opacity", "1");
+  await expect(wrapper).toHaveCSS("animation-name", "none");
+});
+
+test("without app JS, thumbnails are never hidden by the fade", async ({ page }) => {
+  await stubImages(page);
+  await page.route(/\/_next\/static\/chunks\/.*\.js$/, (route) => route.abort());
+  await page.goto("/onedark");
+  const fading = page.locator("img[data-fade]").first();
+  await expect(fading).toHaveCSS("opacity", "1");
+});
+
 test.describe("touch targets", () => {
   for (const route of ROUTES) {
     test(`${route}: every control is at least 44px on phones`, async ({ page }, testInfo) => {
@@ -396,9 +445,17 @@ test("theme cross-fade is scoped to the moment of switching", async ({ page }, t
   if (isMobile(testInfo.project.name)) {
     await page.getByRole("button", { name: "Theme menu" }).click();
   }
+  // The class only lives ~300ms, so record it appearing rather than racing to see it
+  await page.evaluate(() => {
+    const w = window as unknown as { sawSwitching: boolean };
+    w.sawSwitching = false;
+    new MutationObserver(() => {
+      if (document.documentElement.classList.contains("theme-switching")) w.sawSwitching = true;
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  });
   const html = page.locator("html");
   await page.getByRole("button", { name: "Nord", exact: true }).click();
-  await expect(html).toHaveClass(/\btheme-switching\b/);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { sawSwitching: boolean }).sawSwitching)).toBe(true);
   await expect(html).not.toHaveClass(/\btheme-switching\b/, { timeout: 2_000 });
 });
 

@@ -110,6 +110,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useLayoutEffect(() => {
     applyThemeFromStorage();
     notify();
+    // From here on, JS-driven effects (e.g. image fade-in) may hide content until ready
+    document.documentElement.classList.add("hydrated");
   }, []);
 
   const setTheme = useCallback((next: ThemeId) => {

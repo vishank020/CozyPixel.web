@@ -30,11 +30,12 @@ export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {
           <button
             key={wallpaper.id}
             onClick={() => openLightbox(idx)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/40"
+            className="img-shimmer group relative aspect-[4/3] overflow-hidden rounded-xl border border-border shadow-sm transition-all duration-500 hover:shadow-lg hover:border-primary/40"
           >
             <WallpaperImage
               src={getImageUrl(wallpaper)}
               alt={wallpaperAlt(wallpaper)}
+              fade
               fill
               sizes="(max-width: 767px) 50vw, 25vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"

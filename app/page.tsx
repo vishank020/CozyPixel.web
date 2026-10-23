@@ -175,11 +175,12 @@ export default function Home() {
                       {samples.map((sample, idx) => (
                         <div 
                           key={sample.id} 
-                          className={`relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border border-border/50 ${idx === 2 ? 'hidden sm:block lg:hidden xl:block' : ''}`}
+                          className={`img-shimmer relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border border-border/50 ${idx === 2 ? 'hidden sm:block lg:hidden xl:block' : ''}`}
                         >
                           <WallpaperImage
                             src={getImageUrl(sample)}
                             alt={wallpaperAlt(sample)}
+                            fade
                             fill
                             sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 16vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-110 will-change-transform"
