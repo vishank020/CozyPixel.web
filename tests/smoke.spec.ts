@@ -58,7 +58,8 @@ test("theme choice survives a reload", async ({ page }, testInfo) => {
 });
 
 test("screenshots for visual review", async ({ page }, testInfo) => {
-  test.setTimeout(60_000);
+  // Loads real images from third-party CDNs, so allow generous time
+  test.setTimeout(150_000);
   for (const route of ROUTES) {
     await page.goto(route);
     await expect(page.locator("h1").first()).toBeVisible();

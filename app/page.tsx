@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { manifest, getWallpapersByTheme, getImageUrl } from "@/lib/manifest";
+import { manifest, getWallpapersByTheme } from "@/lib/manifest";
+import { getImageUrl } from "@/lib/image-urls";
 import { themes } from "@/lib/themes";
 import { FeaturedStrip } from "@/components/featured-strip";
 import { StaggerContainer, StaggerItem } from "@/components/animations";

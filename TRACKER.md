@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Phase 0 complete** (gate pending); Wave 1 next (branch `optimise`) |
+| Current phase | **Wave 1** in progress: W1-01 done, W1-02 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -51,7 +51,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] P0-04 Remove dead code
 
 ### Wave 1 — Images and bundle
-- [ ] W1-01 Keep the manifest on the server
+- [x] W1-01 Keep the manifest on the server
 - [ ] W1-02 Custom image loader
 - [ ] W1-03 Priority hygiene
 - [ ] W1-04 Lightbox image sizing
@@ -122,7 +122,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
 3. ~~P0-03, P0-04~~ done.
-4. Phase 0 exit check, then W1-01: keep the manifest on the server.
+4. ~~Phase 0 gate, W1-01~~ done. Next: W1-02 custom image loader.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -134,6 +134,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 |---|---|---|---|
 | 2026-10-23 | `idea.md` scope: performance, mobile, style | Added analysis D (completeness) and Wave 5 | Owner asked to include anything else that is lacking |
 | 2026-10-23 | P0-02: no-basePath build via `VERCEL=1 pnpm build:local` | Added `LOCAL_PREVIEW` to `next.config.ts` and a `build:preview` script (`scripts/build-preview.mjs`) | `VAR=1 cmd` doesn't work in Windows shells, and setting `VERCEL` locally could trigger Vercel-specific Next behaviour |
+| 2026-10-23 | A-09: client receives slim wallpaper objects (no `extension`) | Pass full `Wallpaper` objects as props; only the import split was done | Dropping one short field saves ~4 KB of RSC payload per theme page, not worth the extra type and mapper. The real cost (336 KB manifest chunk) is gone |
 | 2026-10-23 | DoD: `pnpm lint` green | Lint was already red at baseline (3 errors, 2 warnings); not fixed in P0-02 | Out of P0-02 scope. P0-04 fixes `tailwind.config.ts`, the apostrophe and unused imports; W2-01 fixes the `theme-provider` setState-in-effect error. Until then, "lint green" means "no new problems" |
 
 ---

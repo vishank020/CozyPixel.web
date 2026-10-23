@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 import Image from "next/image";
 import { Expand } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl } from "@/lib/manifest";
+import { getImageUrl } from "@/lib/image-urls";
 import { Lightbox } from "./lightbox";
 
 export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {

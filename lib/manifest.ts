@@ -1,5 +1,9 @@
+import "server-only";
 import manifestData from "@/data/manifest.json";
 import type { Wallpaper, Manifest } from "./types";
+
+// Server only: importing this from a client component would ship the whole manifest.
+// Client code gets wallpapers via props and URL helpers from ./image-urls.
 
 export const manifest = manifestData as Manifest;
 
@@ -18,21 +22,4 @@ export function getWallpapersBySubcategory(
   return manifest.wallpapers.filter(
     (w) => w.theme === theme && w.subcategory === subcategory
   );
-}
-
-export function getRawUrl(wallpaper: Wallpaper): string {
-  return `https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/${encodeURI(
-    wallpaper.path
-  )}`;
-}
-
-export function getJsDelivrUrl(wallpaper: Wallpaper): string {
-  return `https://cdn.jsdelivr.net/gh/SleepyCatHey/CozyPixels@main/${encodeURI(
-    wallpaper.path
-  )}`;
-}
-
-/** Prefer jsDelivr for better caching, fall back to raw */
-export function getImageUrl(wallpaper: Wallpaper, preferCdn = true): string {
-  return preferCdn ? getJsDelivrUrl(wallpaper) : getRawUrl(wallpaper);
 }

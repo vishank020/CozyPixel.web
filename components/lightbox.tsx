@@ -10,7 +10,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl, getRawUrl } from "@/lib/manifest";
+import { getImageUrl, getRawUrl, getGithubBlobUrl } from "@/lib/image-urls";
 
 interface LightboxProps {
   wallpapers: Wallpaper[];
@@ -134,9 +134,7 @@ export function Lightbox({
             </button>
 
             <a
-              href={`https://github.com/SleepyCatHey/CozyPixels/blob/main/${encodeURI(
-                wallpaper.path
-              )}`}
+              href={getGithubBlobUrl(wallpaper)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-medium hover:bg-white/25 transition-colors"

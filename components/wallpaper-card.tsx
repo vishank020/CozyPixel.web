@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Download, Expand } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl, getRawUrl } from "@/lib/manifest";
+import { getImageUrl, getRawUrl } from "@/lib/image-urls";
 
 interface WallpaperCardProps {
   wallpaper: Wallpaper;
