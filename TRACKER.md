@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 1** in progress: W1-01…W1-05 done; W1-06 next (branch `optimise`) |
+| Current phase | **Wave 1** in progress: all stories done; wave gate next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -56,7 +56,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W1-03 Priority hygiene
 - [x] W1-04 Lightbox image sizing
 - [x] W1-05 Logo and favicon
-- [ ] W1-06 Oversized originals
+- [x] W1-06 Oversized originals
 
 ### Wave 2 — Rendering, hydration and motion
 - [ ] W2-01 Theme before paint

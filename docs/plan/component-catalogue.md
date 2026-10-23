@@ -44,7 +44,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | Module | Purpose | Import rule | Changed by |
 |---|---|---|---|
 | `lib/manifest.ts` | Read manifest, filter by theme/subcategory | **Server only** (`import "server-only"`) | **Done (W1-01)** |
-| `lib/image-urls.ts` | `getImageUrl`, `getRawUrl`, `getJsDelivrUrl`, `getGithubBlobUrl`; >20 MB rule (W1-06) | Anywhere | **Done (W1-01)**, W1-06 |
+| `lib/image-urls.ts` | `getImageUrl`, `getRawUrl`, `getJsDelivrUrl`, `getGithubBlobUrl`; >20 MB rule (W1-06) | Anywhere | **Done (W1-01, W1-06)** |
 | `lib/image-loader.ts` | `next/image` custom loader → wsrv.nl | Referenced by `next.config.ts` only | **Done (W1-02)** |
 | `components/wallpaper-image.tsx` | `next/image` wrapper: falls back to the original if the proxy fails | Use for every remote wallpaper image | **Done (W1-02)** |
 | `lib/format.ts` (new) | Display name from filename | Anywhere | W3-01 |
