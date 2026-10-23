@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 3** next: W3-01 phone grid and cards (Wave 2 complete, tag `wave-2-done`) (branch `optimise`) |
+| Current phase | **Wave 3** in progress: W3-01 done, W3-02 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -67,7 +67,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W2-06 Cheaper effects below md (measured: not needed, no change)
 
 ### Wave 3 — Mobile UX
-- [ ] W3-01 Phone grid and cards
+- [x] W3-01 Phone grid and cards
 - [ ] W3-02 Sticky compact filter bar
 - [ ] W3-03 Lightbox for touch
 - [ ] W3-04 Viewport units and safe areas
@@ -158,7 +158,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 7. ~~W2-03~~ done (`/` 90 → 96).
 8. ~~W2-04~~ done (JS 196 → 148–152 KB).
 9. ~~W2-05, W2-06, Wave 2 gate~~ done.
-10. W3-01 phone grid and cards (2 columns, 44 px targets, display names).
+10. ~~W3-01~~ done.
+11. W3-02 sticky compact filter bar.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 

@@ -32,7 +32,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `featured-strip.tsx` | client | Home featured grid + lightbox | W1-01, W1-02, W4-04 | baseline |
 | `theme-gallery.tsx` | client | Search, subcategory chips, filtered list | W2-02, W3-02 | baseline |
 | `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02)** |
-| `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | baseline |
+| `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | **Done (W1-01–03, W2-03, W3-01)** |
 | `lightbox.tsx` | client | Full-screen viewer, navigation, download | W1-01, W1-04, W2-04, W3-03, W4-04 | baseline |
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
 | `theme-hero.tsx` | server | Per-theme page header (new) | W4-03 | not built |
@@ -48,6 +48,6 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `lib/image-urls.ts` | `getImageUrl`, `getRawUrl`, `getJsDelivrUrl`, `getGithubBlobUrl`; >20 MB rule (W1-06) | Anywhere | **Done (W1-01, W1-06)** |
 | `lib/image-loader.ts` | `next/image` custom loader → wsrv.nl | Referenced by `next.config.ts` only | **Done (W1-02)** |
 | `components/wallpaper-image.tsx` | `next/image` wrapper: falls back to the original if the proxy fails | Use for every remote wallpaper image | **Done (W1-02)** |
-| `lib/format.ts` (new) | Display name from filename | Anywhere | W3-01 |
+| `lib/format.ts` | `displayName()` (strips `ign_`/`od_`, splits words, UUID → "Untitled wallpaper"), `wallpaperAlt()` | Anywhere | **Done (W3-01)** |
 | `lib/themes.ts` | Theme metadata, storage keys | Anywhere | W4-03 |
 | `lib/download.ts` | Blob download with progress callback + new-tab fallback | Lazy-imported on click | W5-04 |

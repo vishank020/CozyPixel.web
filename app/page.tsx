@@ -3,6 +3,7 @@ import { WallpaperImage } from "@/components/wallpaper-image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { manifest, getWallpapersByTheme } from "@/lib/manifest";
 import { getImageUrl } from "@/lib/image-urls";
+import { wallpaperAlt } from "@/lib/format";
 import { themes } from "@/lib/themes";
 import { FeaturedStrip } from "@/components/featured-strip";
 
@@ -178,7 +179,7 @@ export default function Home() {
                         >
                           <WallpaperImage
                             src={getImageUrl(sample)}
-                            alt={sample.filename}
+                            alt={wallpaperAlt(sample)}
                             fill
                             sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 16vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-110 will-change-transform"

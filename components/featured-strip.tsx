@@ -5,6 +5,7 @@ import { WallpaperImage } from "./wallpaper-image";
 import { Expand } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl } from "@/lib/image-urls";
+import { wallpaperAlt } from "@/lib/format";
 import { Lightbox } from "./lightbox";
 
 export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {
@@ -33,7 +34,7 @@ export function FeaturedStrip({ wallpapers }: { wallpapers: Wallpaper[] }) {
           >
             <WallpaperImage
               src={getImageUrl(wallpaper)}
-              alt={wallpaper.filename}
+              alt={wallpaperAlt(wallpaper)}
               fill
               sizes="(max-width: 767px) 50vw, 25vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"

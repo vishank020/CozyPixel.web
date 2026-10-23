@@ -4,6 +4,7 @@ import { WallpaperImage } from "./wallpaper-image";
 import { Download, Expand } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl, getRawUrl } from "@/lib/image-urls";
+import { displayName, wallpaperAlt } from "@/lib/format";
 
 interface WallpaperCardProps {
   wallpaper: Wallpaper;
@@ -19,6 +20,7 @@ export function WallpaperCard({
 }: WallpaperCardProps) {
   const imageUrl = getImageUrl(wallpaper);
   const downloadUrl = getRawUrl(wallpaper);
+  const name = displayName(wallpaper.filename);
 
   return (
     <div className="card-lift group relative overflow-hidden rounded-xl bg-card border border-border shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40">
@@ -26,13 +28,13 @@ export function WallpaperCard({
       <button
         onClick={() => onOpen(wallpaper)}
         className="block w-full aspect-[16/10] relative overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label={`View ${wallpaper.filename}`}
+        aria-label={`View ${name}`}
       >
         <WallpaperImage
           src={imageUrl}
-          alt={wallpaper.filename}
+          alt={wallpaperAlt(wallpaper)}
           fill
-          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
+          sizes="(max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
           loading={isFirst ? "eager" : "lazy"}
           fetchPriority={isFirst ? "high" : "auto"}
@@ -48,12 +50,13 @@ export function WallpaperCard({
       </button>
 
       {/* Footer */}
-      <div className="flex items-center justify-between gap-2 p-3">
+      <div className="flex items-center justify-between gap-2 p-2.5 sm:p-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-foreground">
-            {wallpaper.filename.replace(/\.[^.]+$/, "")}
+          <p className="truncate text-xs sm:text-sm font-medium text-foreground" title={name}>
+            {name}
           </p>
-          <p className="truncate text-xs text-muted-foreground">
+          {/* Phones show two columns, so the category only appears from sm up */}
+          <p className="hidden sm:block truncate text-xs text-muted-foreground">
             {wallpaper.subcategory}
           </p>
         </div>
@@ -63,8 +66,8 @@ export function WallpaperCard({
             e.stopPropagation();
             import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
           }}
-          className="press-pop shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label={`Download ${wallpaper.filename}`}
+          className="press-pop relative shrink-0 inline-flex h-8 w-8 items-center after:absolute after:-inset-1.5 after:content-[''] justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`Download ${name}`}
           title="Download"
         >
           <Download className="h-3.5 w-3.5" />

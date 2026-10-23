@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl, getRawUrl, getGithubBlobUrl } from "@/lib/image-urls";
+import { displayName, wallpaperAlt } from "@/lib/format";
 
 // Shared by the visible image and neighbour preloads so both resolve to the same URL
 const VIEW_SIZE = { width: 1920, height: 1080, sizes: "100vw" } as const;
@@ -134,7 +135,7 @@ export function Lightbox({
           <WallpaperImage
             key={wallpaper.id}
             src={imageUrl}
-            alt={wallpaper.filename}
+            alt={wallpaperAlt(wallpaper)}
             {...VIEW_SIZE}
             className={`max-h-[75vh] w-auto h-auto object-contain transition-opacity duration-300 ${
               isLoading ? "opacity-0" : "opacity-100"
@@ -155,7 +156,7 @@ export function Lightbox({
         {/* Info + actions */}
         <div className="flex flex-wrap items-center justify-center gap-3 text-white">
           <div className="text-center sm:text-left">
-            <p className="font-medium">{wallpaper.filename}</p>
+            <p className="font-medium">{displayName(wallpaper.filename)}</p>
             <p className="text-sm text-white/70">
               {wallpaper.theme} · {wallpaper.subcategory}
             </p>

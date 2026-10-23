@@ -12,6 +12,23 @@ function isMobile(projectName: string) {
   return projectName.startsWith("mobile");
 }
 
+/**
+ * Tappable size of an element in CSS px, including an absolutely positioned ::after
+ * that enlarges the hit area without changing the look (PLAN A-10).
+ */
+function hitBox(el: Element) {
+  const rect = el.getBoundingClientRect();
+  const after = getComputedStyle(el, "::after");
+  if (after.content === "none" || after.position !== "absolute") {
+    return { width: rect.width, height: rect.height };
+  }
+  const px = (v: string) => parseFloat(v) || 0;
+  return {
+    width: rect.width - px(after.left) - px(after.right),
+    height: rect.height - px(after.top) - px(after.bottom),
+  };
+}
+
 test.describe("every route", () => {
   for (const route of ROUTES) {
     test(`${route} renders without horizontal overflow or React errors`, async ({ page }) => {
@@ -58,6 +75,24 @@ test("hidden hero collage never downloads on phones", async ({ page }, testInfo)
   );
   const wasted = candidates.filter((url) => requested.has(url) && !visibleSrcs.includes(url));
   expect(wasted, "hidden collage images were downloaded").toEqual([]);
+});
+
+test("phone grid shows two columns with 44px download targets", async ({ page }, testInfo) => {
+  test.skip(!isMobile(testInfo.project.name), "phone layout");
+  await blockImages(page);
+  await page.goto("/onedark");
+
+  const cards = page.locator(".card-lift");
+  await expect(cards.nth(3)).toBeVisible();
+  const columns = await cards.evaluateAll((els) =>
+    new Set(els.slice(0, 6).map((el) => Math.round(el.getBoundingClientRect().left))).size
+  );
+  expect(columns).toBe(2);
+
+  const download = page.getByRole("button", { name: /^Download / }).first();
+  const box = await download.evaluate(hitBox);
+  expect(box.width).toBeGreaterThanOrEqual(44);
+  expect(box.height).toBeGreaterThanOrEqual(44);
 });
 
 test("theme grid renders in batches of 24 and loads more on scroll", async ({ page }) => {
