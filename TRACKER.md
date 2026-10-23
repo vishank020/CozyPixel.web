@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 2** in progress: W2-01…W2-03 done; W2-04 next (branch `optimise`) |
+| Current phase | **Wave 2** in progress: W2-01…W2-04 done; W2-05 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -62,7 +62,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W2-01 Theme before paint
 - [x] W2-02 Paged grid
 - [x] W2-03 CSS motion replaces framer-motion
-- [ ] W2-04 Lenis desktop-only, no GSAP
+- [x] W2-04 Lenis desktop-only, no GSAP
 - [ ] W2-05 Scoped theme transition
 - [ ] W2-06 Cheaper effects below md
 
@@ -125,6 +125,10 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 | 2026-10-23 | after W2-03 | `/catppuccin` | 94 | 3.13 s | 39 ms | 0 | 302 | 201 |
 | 2026-10-23 | after W2-03 | `/onedark` | 96 | 2.82 s | 31 ms | 0 | 201 | 201 |
 
+| 2026-10-23 | after W2-04 | `/` | 96 | 2.73 s | 49 ms | 0 | 100 | 148 |
+| 2026-10-23 | after W2-04 | `/catppuccin` | 95 | 2.92 s | 45 ms | 0 | 302 | 152 |
+| 2026-10-23 | after W2-04 | `/onedark` | 97 | 2.62 s | 41 ms | 0 | 201 | 152 |
+
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
 ### Wave gate results
@@ -147,7 +151,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 5. ~~W2-01~~ done. Lint is fully clean.
 6. ~~W2-02~~ done (`/catppuccin` TBT 8.6 s → 41 ms).
 7. ~~W2-03~~ done (`/` 90 → 96).
-8. W2-04 Lenis desktop-only, no GSAP: the last big JS item (JS 196 KB vs 150 KB budget).
+8. ~~W2-04~~ done (JS 196 → 148–152 KB).
+9. W2-05 scoped theme transition, W2-06 (only if paint profiling shows a cost), then the Wave 2 gate.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -188,6 +193,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - A hidden `<img>` can still show as loaded when its URL matches a visible image (Chrome's in-memory image cache), e.g. the hero Catppuccin card reuses a theme-card thumbnail at 640 w. That costs no extra request. The smoke test checks network requests, not `currentSrc`.
 - Lightbox at 360 px (checked 2026-10-23): image 46 KB at 1080 w instead of the multi-MB original; neighbours preloaded (7–20 KB). The prev/next arrows are fully covered by the image on phones (B §3.2); W3-03 replaces them with swipe + a bottom bar.
 - **Always `pnpm build:preview` before `test:e2e`/`perf`.** `build:local` writes a basePath build to the same `out/`; served at the root it loads no JS. Both tools now refuse to run against it. (A run against it showed the no-JS ceiling: `/` perf 100, LCP 1.1 s.)
+- **Simulated vs observed LCP (after W2-04).** Lighthouse's *observed* LCP equals FCP on every route (0.1–0.4 s locally); the *simulated* slow-4G LCP is 2.6–2.9 s. The LCP element is the header wordmark text; the simulation charges it for the 48 KB Inter font and the JS on the critical path (`font-display: swap` is already set, so real users see fallback text at first paint). A-11 still uses the simulated number.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

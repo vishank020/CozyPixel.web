@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { preload } from "react-dom";
 import { getImageProps } from "next/image";
 import { WallpaperImage } from "./wallpaper-image";
+import { setSmoothScrollPaused } from "./SmoothScroll";
 import {
   X,
   Download,
@@ -77,11 +78,13 @@ export function Lightbox({
     return () => window.removeEventListener("keydown", handler);
   }, [onClose, goPrev, goNext]);
 
-  // Prevent body scroll
+  // Prevent page scroll underneath, including desktop smooth scrolling
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    setSmoothScrollPaused(true);
     return () => {
       document.body.style.overflow = "";
+      setSmoothScrollPaused(false);
     };
   }, []);
 

@@ -1,41 +1,44 @@
 "use client";
 
 import { ReactNode, useEffect } from "react";
-import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type Lenis from "lenis";
 
-// Register ScrollTrigger early so it works alongside Lenis
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+// Smooth wheel scrolling is a desktop nicety (PLAN A-04): touch devices scroll natively,
+// and Lenis is only downloaded when it will actually be used.
+
+let activeLenis: Lenis | null = null;
+
+/** Pause smooth scrolling while an overlay (e.g. the lightbox) owns the wheel */
+export function setSmoothScrollPaused(paused: boolean) {
+  if (paused) activeLenis?.stop();
+  else activeLenis?.start();
 }
 
 export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
-    // Initialize Lenis
-    const lenis = new Lenis({
-      lerp: 0.1,
-      duration: 1.5,
-      smoothWheel: true,
+    const wantsSmooth =
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!wantsSmooth) return;
+
+    let cancelled = false;
+    let lenis: Lenis | null = null;
+
+    import("lenis").then(({ default: LenisClass }) => {
+      if (cancelled) return;
+      lenis = new LenisClass({
+        lerp: 0.1,
+        duration: 1.5,
+        smoothWheel: true,
+        autoRaf: true,
+      });
+      activeLenis = lenis;
     });
-
-    // Update GSAP ScrollTrigger based on Lenis scroll
-    lenis.on("scroll", ScrollTrigger.update);
-
-    // Sync GSAP ticker with Lenis requestAnimationFrame
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-
-    // Disable GSAP lag smoothing to avoid conflicts with Lenis
-    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      // Clean up
-      lenis.destroy();
-      gsap.ticker.remove((time) => {
-        lenis.raf(time * 1000);
-      });
+      cancelled = true;
+      lenis?.destroy();
+      if (activeLenis === lenis) activeLenis = null;
     };
   }, []);
 

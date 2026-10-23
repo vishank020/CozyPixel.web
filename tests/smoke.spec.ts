@@ -137,6 +137,25 @@ test("saved theme and content paint before any app JS runs", async ({ page }) =>
   await expect(page.getByRole("button", { name: /^View / }).first()).toBeVisible();
 });
 
+test("smooth scrolling runs on desktop only and pauses under the lightbox", async ({ page }, testInfo) => {
+  await blockImages(page);
+  await page.goto("/onedark");
+  const html = page.locator("html");
+
+  if (isMobile(testInfo.project.name)) {
+    await page.waitForLoadState("load");
+    await page.waitForTimeout(500);
+    await expect(html).not.toHaveClass(/\blenis\b/);
+    return;
+  }
+
+  await expect(html).toHaveClass(/\blenis\b/);
+  await page.getByRole("button", { name: /^View / }).first().click();
+  await expect(html).toHaveClass(/\blenis-stopped\b/);
+  await page.keyboard.press("Escape");
+  await expect(html).not.toHaveClass(/\blenis-stopped\b/);
+});
+
 test("cards lift on hover only on devices that can hover", async ({ page }, testInfo) => {
   await blockImages(page);
   await page.goto("/onedark");
