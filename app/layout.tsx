@@ -22,6 +22,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Every wallpaper thumbnail comes from the resizing proxy (lib/image-loader.ts) */}
+        <link rel="preconnect" href="https://wsrv.nl" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased theme-noise flex min-h-screen flex-col bg-background text-foreground`}>
         <ThemeProvider defaultTheme="catppuccin" defaultMode="system">
           <Header />

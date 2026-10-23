@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 1** in progress: W1-01 done, W1-02 next (branch `optimise`) |
+| Current phase | **Wave 1** in progress: W1-01, W1-02 done; W1-03 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -52,7 +52,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 
 ### Wave 1 — Images and bundle
 - [x] W1-01 Keep the manifest on the server
-- [ ] W1-02 Custom image loader
+- [x] W1-02 Custom image loader
 - [ ] W1-03 Priority hygiene
 - [ ] W1-04 Lightbox image sizing
 - [ ] W1-05 Logo and favicon
@@ -105,6 +105,10 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 | 2026-10-23 | Baseline | `/catppuccin` | 42 | 7.35 s | 2,551 ms | 0 | 17,709 | 259 |
 | 2026-10-23 | Baseline | `/onedark` | 52 | 10.03 s | 958 ms | 0 | 5,505 | 259 |
 
+| 2026-10-23 | after W1-02 | `/` | 75 | 6.48 s | 158 ms | 0 | 510 | 235 |
+| 2026-10-23 | after W1-02 | `/catppuccin` | 40 | 7.14 s | 6,911 ms | 0 | 664 | 238 |
+| 2026-10-23 | after W1-02 | `/onedark` | 47 | 6.55 s | 2,352 ms | 0 | 563 | 238 |
+
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
 ### Wave gate results
@@ -122,7 +126,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
 3. ~~P0-03, P0-04~~ done.
-4. ~~Phase 0 gate, W1-01~~ done. Next: W1-02 custom image loader.
+4. ~~Phase 0 gate, W1-01, W1-02~~ done. Next: W1-03 priority hygiene.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -155,6 +159,9 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 ## 6. Known issues / notes
 
 - Playwright uses the installed Chrome locally (`channel: "chrome"`). In CI set `PW_CHANNEL=""` and run `pnpm exec playwright install --with-deps chromium` (W5-05). The suite blocks image requests for functional checks; only the screenshot test loads images. "Before" screenshots from 2026-10-23 are in `.perf/shots/` (git-ignored, local only). In them the featured strip is still empty boxes after 8 s on mobile.
+- **LCP after W1-02 is render-bound, not image-bound.** On `/` the LCP element is the hero paragraph and 100 % of its LCP is "element render delay" (page hidden until hydration + framer-motion `initial` opacity 0). On `/catppuccin` the LCP image downloads in 271 ms and then waits 1.8 s to render. Images stopped dominating the simulated load, so the hydration gate is now what Lighthouse sees. W2-01/W2-03 target exactly this; a `preconnect` to wsrv.nl made no difference to it.
+- TBT varies a lot between runs on this machine (`/catppuccin` 2.5 s → 5.8 s → 6.9 s with no change to JS work). Compare TBT only within one session, and use `PERF_RUNS=3`. The real fix is W2-02 (paging).
+- wsrv.nl's first request for an uncached size can take ~6 s (measured on a 2.46 MB PNG); repeats are < 1 s. Visitors share that cache.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

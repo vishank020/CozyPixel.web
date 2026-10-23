@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import Image from "next/image";
+import { WallpaperImage } from "./wallpaper-image";
 import {
   X,
   Download,
@@ -102,13 +102,13 @@ export function Lightbox({
       <div className="relative z-10 flex flex-col items-center max-w-[95vw] max-h-[90vh] gap-4">
         {/* Image */}
         <div className="relative max-w-full max-h-[75vh] overflow-hidden rounded-lg shadow-2xl">
-          <Image
+          <WallpaperImage
             src={imageUrl}
             alt={wallpaper.filename}
             width={1920}
             height={1080}
             className="max-h-[75vh] w-auto h-auto object-contain"
-            unoptimized
+            sizes="100vw"
             priority
           />
         </div>

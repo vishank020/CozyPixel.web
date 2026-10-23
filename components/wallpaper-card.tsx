@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { WallpaperImage } from "./wallpaper-image";
 import { Download, Expand } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Wallpaper } from "@/lib/types";
@@ -31,14 +31,13 @@ export function WallpaperCard({
         className="block w-full aspect-[16/10] relative overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={`View ${wallpaper.filename}`}
       >
-        <Image
+        <WallpaperImage
           src={imageUrl}
           alt={wallpaper.filename}
           fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, (max-width: 1279px) 33vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
           priority={priority}
-          unoptimized // GitHub/jsDelivr – next/image optimization is limited for remote
         />
 
         {/* Hover overlay */}

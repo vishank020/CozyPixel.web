@@ -37,7 +37,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `theme-hero.tsx` | server | Per-theme page header (new) | W4-03 | not built |
 | `toast.tsx` | client | Status toasts with `role="status"` (new) | W5-04 | not built |
 | `animations.tsx` | client | framer-motion wrappers | **deleted** in W2-03 | baseline |
-| `Features.tsx`, `Hero.tsx` | client | Unused template leftovers | **deleted** in P0-04 | baseline |
+| `Features.tsx`, `Hero.tsx` | client | Unused template leftovers | **deleted** in P0-04 | **Done (P0-04)** |
 
 ## Lib modules
 
@@ -45,7 +45,8 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 |---|---|---|---|
 | `lib/manifest.ts` | Read manifest, filter by theme/subcategory | **Server only** (`import "server-only"`) | **Done (W1-01)** |
 | `lib/image-urls.ts` | `getImageUrl`, `getRawUrl`, `getJsDelivrUrl`, `getGithubBlobUrl`; >20 MB rule (W1-06) | Anywhere | **Done (W1-01)**, W1-06 |
-| `lib/image-loader.ts` (new) | `next/image` custom loader → wsrv.nl | Referenced by `next.config.ts` only | W1-02 |
+| `lib/image-loader.ts` | `next/image` custom loader → wsrv.nl | Referenced by `next.config.ts` only | **Done (W1-02)** |
+| `components/wallpaper-image.tsx` | `next/image` wrapper: falls back to the original if the proxy fails | Use for every remote wallpaper image | **Done (W1-02)** |
 | `lib/format.ts` (new) | Display name from filename | Anywhere | W3-01 |
 | `lib/themes.ts` | Theme metadata, storage keys | Anywhere | W4-03 |
 | `lib/download.ts` | Blob download with progress callback + new-tab fallback | Lazy-imported on click | W5-04 |

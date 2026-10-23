@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { WallpaperImage } from "@/components/wallpaper-image";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { manifest, getWallpapersByTheme } from "@/lib/manifest";
 import { getImageUrl } from "@/lib/image-urls";
@@ -102,21 +102,21 @@ export default function Home() {
               {/* Bottom Left Image (One Dark) */}
               <div className="absolute top-1/4 -left-8 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-10 opacity-70 blur-[2px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform -rotate-6">
                 {heroOneDark && (
-                  <Image src={getImageUrl(heroOneDark)} alt="One Dark preview" fill className="object-cover" unoptimized priority />
+                  <WallpaperImage src={getImageUrl(heroOneDark)} alt="One Dark preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" priority />
                 )}
               </div>
               
               {/* Top Right Image (Nord) */}
               <div className="absolute top-0 -right-4 w-2/3 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 z-20 opacity-80 blur-[1px] transition-all duration-700 hover:opacity-100 hover:blur-none hover:z-40 hover:scale-105 will-change-transform transform rotate-6">
                 {heroNord && (
-                  <Image src={getImageUrl(heroNord)} alt="Nord preview" fill className="object-cover" unoptimized priority />
+                  <WallpaperImage src={getImageUrl(heroNord)} alt="Nord preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" priority />
                 )}
               </div>
               
               {/* Front Center Image (Catppuccin) */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border z-30 transition-transform duration-700 hover:scale-105 will-change-transform">
                 {heroCatppuccin && (
-                  <Image src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill className="object-cover" unoptimized priority />
+                  <WallpaperImage src={getImageUrl(heroCatppuccin)} alt="Catppuccin preview" fill sizes="(max-width: 767px) 60vw, 420px" className="object-cover" priority />
                 )}
               </div>
 
@@ -174,13 +174,12 @@ export default function Home() {
                           key={sample.id} 
                           className={`relative flex-1 aspect-[4/3] rounded-xl overflow-hidden border border-border/50 ${idx === 2 ? 'hidden sm:block lg:hidden xl:block' : ''}`}
                         >
-                          <Image
+                          <WallpaperImage
                             src={getImageUrl(sample)}
                             alt={sample.filename}
                             fill
-                            sizes="20vw"
+                            sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 16vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-110 will-change-transform"
-                            unoptimized
                           />
                         </div>
                       ))}
