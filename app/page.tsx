@@ -125,6 +125,27 @@ export default function Home() {
 
             </div>
           </div>
+
+          {/* Phone hero visual: a compact take on the collage (front card + one tilted behind) */}
+          <div className="relative w-full max-w-sm mx-auto sm:hidden pt-2 pb-6" aria-hidden={!heroCatppuccin}>
+            {heroNord && (
+              <div className="absolute right-0 top-0 w-3/5 aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-border/50 opacity-80 blur-[1px] rotate-6">
+                <WallpaperImage src={getImageUrl(heroNord)} alt="" fill sizes="50vw" className="object-cover" />
+              </div>
+            )}
+            {heroCatppuccin && (
+              <div className="img-shimmer relative z-10 mt-8 w-[85%] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl border border-border -rotate-3">
+                <WallpaperImage
+                  src={getImageUrl(heroCatppuccin)}
+                  alt={wallpaperAlt(heroCatppuccin)}
+                  fill
+                  sizes="85vw"
+                  className="object-cover"
+                  fetchPriority="high"
+                />
+              </div>
+            )}
+          </div>
         </section>
 
 

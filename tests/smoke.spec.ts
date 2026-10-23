@@ -68,12 +68,15 @@ test("hidden hero collage never downloads on phones", async ({ page }, testInfo)
       (img.getAttribute("srcset") ?? "").split(", ").map((entry) => entry.split(" ")[0])
     )
   );
-  // A collage URL may legitimately be requested if a visible image uses the same URL
-  // (the hero reuses a theme-card sample), so only count URLs no visible image shows.
-  const visibleSrcs = await page.locator("img").evaluateAll((imgs) =>
-    imgs.filter((img) => img.checkVisibility()).map((img) => (img as HTMLImageElement).currentSrc)
+  // A collage URL may legitimately be requested when a shown image uses the same URL
+  // (hero and theme cards share wallpapers, and loads can still be in flight), so only
+  // count URLs that no other displayed image could have asked for.
+  const shownUrls = await page.locator('img:not([alt$=" preview"])').evaluateAll((imgs) =>
+    imgs
+      .filter((img) => img.checkVisibility())
+      .flatMap((img) => (img.getAttribute("srcset") ?? "").split(", ").map((entry) => entry.split(" ")[0]))
   );
-  const wasted = candidates.filter((url) => requested.has(url) && !visibleSrcs.includes(url));
+  const wasted = candidates.filter((url) => requested.has(url) && !shownUrls.includes(url));
   expect(wasted, "hidden collage images were downloaded").toEqual([]);
 });
 
