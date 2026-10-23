@@ -251,3 +251,64 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: hsl(var(--muted-foreground) / 0.5);
 }
+
+/* ============================================================
+   Motion (CSS only, PLAN A-05). Content is visible by default;
+   it only animates when the visitor hasn't asked for reduced motion.
+   ============================================================ */
+
+/* Spring-like overshoot, standing in for framer-motion's spring (stiffness 300) */
+:root {
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Hero entrance: set --stagger on each item (0, 1, 2…) for a 100ms cascade */
+  .rise {
+    animation: rise 0.8s var(--ease-out-expo) both;
+    animation-delay: calc(var(--stagger, 0) * 100ms);
+  }
+
+  .press-pop {
+    transition:
+      transform 0.2s var(--ease-spring),
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .press-pop:active {
+    transform: scale(0.9);
+  }
+}
+
+/* Hover-lift only where hover exists, so taps on phones don't leave cards raised */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card-lift {
+    transition:
+      transform 0.45s var(--ease-spring),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-6px);
+  }
+
+  .press-pop:hover {
+    transform: scale(1.1);
+  }
+  .press-pop:hover:active {
+    transform: scale(0.9);
+  }
+}

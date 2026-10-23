@@ -2,7 +2,6 @@
 
 import { WallpaperImage } from "./wallpaper-image";
 import { Download, Expand } from "lucide-react";
-import { motion } from "framer-motion";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl, getRawUrl } from "@/lib/image-urls";
 
@@ -22,10 +21,7 @@ export function WallpaperCard({
   const downloadUrl = getRawUrl(wallpaper);
 
   return (
-    <motion.div 
-      whileHover={{ y: -6, transition: { type: "spring", stiffness: 300 } }}
-      className="group relative overflow-hidden rounded-xl bg-card border border-border shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40"
-    >
+    <div className="card-lift group relative overflow-hidden rounded-xl bg-card border border-border shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40">
       {/* Image */}
       <button
         onClick={() => onOpen(wallpaper)}
@@ -62,20 +58,18 @@ export function WallpaperCard({
           </p>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
+        <button
           onClick={(e) => {
             e.stopPropagation();
             import("@/lib/download").then((m) => m.downloadImage(downloadUrl, wallpaper.filename));
           }}
-          className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="press-pop shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={`Download ${wallpaper.filename}`}
           title="Download"
         >
           <Download className="h-3.5 w-3.5" />
-        </motion.button>
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

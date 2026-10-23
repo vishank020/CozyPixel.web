@@ -37,7 +37,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
 | `theme-hero.tsx` | server | Per-theme page header (new) | W4-03 | not built |
 | `toast.tsx` | client | Status toasts with `role="status"` (new) | W5-04 | not built |
-| `animations.tsx` | client | framer-motion wrappers | **deleted** in W2-03 | baseline |
+| `animations.tsx` | client | framer-motion wrappers | **deleted** in W2-03 | **Done (W2-03)** |
 | `Features.tsx`, `Hero.tsx` | client | Unused template leftovers | **deleted** in P0-04 | **Done (P0-04)** |
 
 ## Lib modules

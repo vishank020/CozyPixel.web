@@ -5,7 +5,9 @@ import { manifest, getWallpapersByTheme } from "@/lib/manifest";
 import { getImageUrl } from "@/lib/image-urls";
 import { themes } from "@/lib/themes";
 import { FeaturedStrip } from "@/components/featured-strip";
-import { StaggerContainer, StaggerItem } from "@/components/animations";
+
+// Hero entrance order for the CSS `rise` animation (globals.css)
+const stagger = (index: number) => ({ "--stagger": index }) as React.CSSProperties;
 
 export default function Home() {
   const themeIds = ["catppuccin", "nord", "onedark"] as const;
@@ -40,29 +42,29 @@ export default function Home() {
         <section className="flex flex-col md:flex-row items-center justify-center gap-12 min-h-[85vh] py-12 md:py-20">
           
           {/* Hero Text */}
-          <StaggerContainer className="flex-1 space-y-8 z-10 text-center md:text-left max-w-2xl">
-            <StaggerItem className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
+          <div className="flex-1 space-y-8 z-10 text-center md:text-left max-w-2xl">
+            <div style={stagger(0)} className="rise inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
               <Sparkles className="h-4 w-4" />
               <span>Aesthetic Desktop Wallpapers</span>
-            </StaggerItem>
+            </div>
             
-            <StaggerItem>
+            <div style={stagger(1)} className="rise">
               <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
                 Soft colors for <br />
                 <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
                   quiet screens.
                 </span>
               </h1>
-            </StaggerItem>
+            </div>
             
-            <StaggerItem>
+            <div style={stagger(2)} className="rise">
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto md:mx-0">
                 A curated collection of cozy, high-quality aesthetic wallpapers. 
                 Featuring <strong>Catppuccin</strong>, <strong>Nord</strong>, and <strong>One Dark</strong> themes for a beautifully cohesive digital setup.
               </p>
-            </StaggerItem>
+            </div>
             
-            <StaggerItem className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start pt-4">
+            <div style={stagger(3)} className="rise flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start pt-4">
               <Link
                 href="#themes"
                 className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -92,8 +94,8 @@ export default function Home() {
                 </svg>
                 View on GitHub
               </a>
-            </StaggerItem>
-          </StaggerContainer>
+            </div>
+          </div>
 
           {/* Hero Visual Collage (Hidden on small mobile for cleaner layout) */}
           <div className="flex-1 relative w-full hidden sm:flex items-center justify-center min-h-[400px] md:min-h-[500px]">

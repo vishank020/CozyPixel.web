@@ -137,6 +137,47 @@ test("saved theme and content paint before any app JS runs", async ({ page }) =>
   await expect(page.getByRole("button", { name: /^View / }).first()).toBeVisible();
 });
 
+test("cards lift on hover only on devices that can hover", async ({ page }, testInfo) => {
+  await blockImages(page);
+  await page.goto("/onedark");
+  const card = page.locator(".card-lift").first();
+  await card.hover();
+
+  const liftY = () =>
+    card.evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42);
+  if (isMobile(testInfo.project.name)) {
+    await page.waitForTimeout(600);
+    expect(await liftY()).toBe(0);
+  } else {
+    await expect.poll(liftY).toBeCloseTo(-6, 0);
+  }
+});
+
+// The element whose opacity the hero entrance animates
+const heroHeadlineWrapper = (page: Page) => page.locator("h1").first().locator("xpath=..");
+
+test("hero headline fades in without any app JS", async ({ page }) => {
+  await blockImages(page);
+  await page.route(/\/_next\/static\/chunks\/.*\.js$/, (route) => route.abort());
+  await page.goto("/");
+  await expect
+    .poll(() => heroHeadlineWrapper(page).evaluate((el) => getComputedStyle(el).opacity))
+    .toBe("1");
+});
+
+test("reduced motion shows the hero immediately", async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: "reduce" });
+  const page = await context.newPage();
+  await blockImages(page);
+  await page.goto("/");
+  const style = await heroHeadlineWrapper(page).evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { opacity: s.opacity, animation: s.animationName };
+  });
+  expect(style).toEqual({ opacity: "1", animation: "none" });
+  await context.close();
+});
+
 test("screenshots for visual review", async ({ page }, testInfo) => {
   // Loads real images from third-party CDNs, so allow generous time
   test.setTimeout(150_000);

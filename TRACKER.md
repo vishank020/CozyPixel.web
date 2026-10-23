@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 2** in progress: W2-01, W2-02 done; W2-03 next (branch `optimise`) |
+| Current phase | **Wave 2** in progress: W2-01…W2-03 done; W2-04 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -61,7 +61,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 ### Wave 2 — Rendering, hydration and motion
 - [x] W2-01 Theme before paint
 - [x] W2-02 Paged grid
-- [ ] W2-03 CSS motion replaces framer-motion
+- [x] W2-03 CSS motion replaces framer-motion
 - [ ] W2-04 Lenis desktop-only, no GSAP
 - [ ] W2-05 Scoped theme transition
 - [ ] W2-06 Cheaper effects below md
@@ -121,6 +121,10 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11.
 | 2026-10-23 | after W2-02 | `/catppuccin` | 94 | 3.15 s | 41 ms | 0 | 302 | 239 |
 | 2026-10-23 | after W2-02 | `/onedark` | 93 | 3.27 s | 38 ms | 0 | 201 | 239 |
 
+| 2026-10-23 | after W2-03 | `/` | 96 | 2.84 s | 42 ms | 0 | 100 | 196 |
+| 2026-10-23 | after W2-03 | `/catppuccin` | 94 | 3.13 s | 39 ms | 0 | 302 | 201 |
+| 2026-10-23 | after W2-03 | `/onedark` | 96 | 2.82 s | 31 ms | 0 | 201 | 201 |
+
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
 ### Wave gate results
@@ -142,7 +146,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 4. ~~Phase 0, Wave 1~~ done.
 5. ~~W2-01~~ done. Lint is fully clean.
 6. ~~W2-02~~ done (`/catppuccin` TBT 8.6 s → 41 ms).
-7. W2-03 CSS motion: hero text starts at opacity 0 under framer-motion and is now the LCP element on `/`.
+7. ~~W2-03~~ done (`/` 90 → 96).
+8. W2-04 Lenis desktop-only, no GSAP: the last big JS item (JS 196 KB vs 150 KB budget).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
