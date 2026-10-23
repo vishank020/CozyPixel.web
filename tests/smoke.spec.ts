@@ -60,6 +60,10 @@ test("lightbox opens, navigates and closes", async ({ page }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText(/^1 \/ \d+$/)).toBeVisible();
 
+  // The next wallpaper is preloaded at view size through the resizer, never as an original
+  const preloads = page.locator('link[rel="preload"][as="image"][imagesrcset*="wsrv.nl"]');
+  await expect(preloads).not.toHaveCount(0);
+
   await page.keyboard.press("ArrowRight");
   await expect(dialog.getByText(/^2 \/ \d+$/)).toBeVisible();
 

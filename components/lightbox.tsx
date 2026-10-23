@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { preload } from "react-dom";
+import { getImageProps } from "next/image";
 import { WallpaperImage } from "./wallpaper-image";
 import {
   X,
@@ -8,9 +10,24 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl, getRawUrl, getGithubBlobUrl } from "@/lib/image-urls";
+
+// Shared by the visible image and neighbour preloads so both resolve to the same URL
+const VIEW_SIZE = { width: 1920, height: 1080, sizes: "100vw" } as const;
+
+// The resizer outputs static WebP, so GIFs are shown as originals to keep their animation
+function isAnimated(wallpaper: Wallpaper) {
+  return wallpaper.extension === "gif";
+}
+
+function preloadWallpaper(wallpaper: Wallpaper | undefined) {
+  if (!wallpaper || isAnimated(wallpaper)) return;
+  const { props } = getImageProps({ src: getImageUrl(wallpaper), alt: "", ...VIEW_SIZE });
+  preload(props.src, { as: "image", imageSrcSet: props.srcSet, imageSizes: props.sizes });
+}
 
 interface LightboxProps {
   wallpapers: Wallpaper[];
@@ -31,6 +48,15 @@ export function Lightbox({
 
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < wallpapers.length - 1;
+
+  const [loadedId, setLoadedId] = useState<string | null>(null);
+  const isLoading = loadedId !== wallpaper.id;
+
+  // Warm the cache for the neighbours so prev/next feel instant
+  useEffect(() => {
+    preloadWallpaper(wallpapers[currentIndex - 1]);
+    preloadWallpaper(wallpapers[currentIndex + 1]);
+  }, [wallpapers, currentIndex]);
 
   const goPrev = useCallback(() => {
     if (hasPrev) onNavigate(currentIndex - 1);
@@ -103,15 +129,24 @@ export function Lightbox({
         {/* Image */}
         <div className="relative max-w-full max-h-[75vh] overflow-hidden rounded-lg shadow-2xl">
           <WallpaperImage
+            key={wallpaper.id}
             src={imageUrl}
             alt={wallpaper.filename}
-            width={1920}
-            height={1080}
-            className="max-h-[75vh] w-auto h-auto object-contain"
-            sizes="100vw"
+            {...VIEW_SIZE}
+            className={`max-h-[75vh] w-auto h-auto object-contain transition-opacity duration-300 ${
+              isLoading ? "opacity-0" : "opacity-100"
+            }`}
             loading="eager"
             fetchPriority="high"
+            unoptimized={isAnimated(wallpaper)}
+            onLoad={() => setLoadedId(wallpaper.id)}
           />
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/5" role="status">
+              <Loader2 className="h-8 w-8 animate-spin text-white/70" aria-hidden />
+              <span className="sr-only">Loading wallpaper</span>
+            </div>
+          )}
         </div>
 
         {/* Info + actions */}

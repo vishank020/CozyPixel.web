@@ -7,7 +7,13 @@ import Image, { type ImageProps } from "next/image";
  * next/image for remote wallpapers. If the resizing proxy fails, it falls back to the
  * original file so the wallpaper still shows (PLAN A-01).
  */
-export function WallpaperImage({ src, alt, onError, ...props }: ImageProps & { src: string }) {
+export function WallpaperImage({
+  src,
+  alt,
+  onError,
+  unoptimized,
+  ...props
+}: ImageProps & { src: string }) {
   const [proxyFailed, setProxyFailed] = useState(false);
 
   return (
@@ -15,7 +21,7 @@ export function WallpaperImage({ src, alt, onError, ...props }: ImageProps & { s
       {...props}
       src={src}
       alt={alt}
-      unoptimized={proxyFailed}
+      unoptimized={unoptimized || proxyFailed}
       onError={(e) => {
         if (!proxyFailed) setProxyFailed(true);
         onError?.(e);
