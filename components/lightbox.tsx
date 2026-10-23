@@ -11,13 +11,14 @@ import {
   ChevronRight,
   ExternalLink,
   Link2,
-  Check,
+  FileImage,
   Loader2,
 } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { getImageUrl, getGithubBlobUrl } from "@/lib/image-urls";
+import { getImageUrl, getGithubBlobUrl, getRawUrl } from "@/lib/image-urls";
 import { displayName, formatBytes, formatLabel, wallpaperAlt } from "@/lib/format";
 import { DownloadButton } from "./download-button";
+import { CopyButton } from "./copy-button";
 import { themeIdForName } from "@/lib/themes";
 import { absoluteUrl } from "@/lib/site";
 
@@ -71,21 +72,6 @@ export function Lightbox({
 
   // Canonical link to this wallpaper on its theme page (works from the home page too)
   const shareUrl = absoluteUrl(`/${themeIdForName(wallpaper.theme)}?w=${encodeURIComponent(wallpaper.id)}`);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [copyFailed, setCopyFailed] = useState(false);
-
-  async function copyLink() {
-    const id = wallpaper.id;
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopyFailed(false);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId((current) => (current === id ? null : current)), 2000);
-    } catch {
-      setCopyFailed(true);
-    }
-  }
-  const copied = copiedId === wallpaper.id;
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -185,6 +171,8 @@ export function Lightbox({
 
   const navButton =
     "absolute top-1/2 -translate-y-1/2 z-10 hidden [@media(hover:hover)]:inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors";
+  const topButton =
+    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors";
   const actionButton =
     "inline-flex h-11 flex-1 sm:flex-none items-center justify-center gap-2 rounded-full bg-white/15 px-5 text-sm font-medium text-white hover:bg-white/25 transition-colors";
 
@@ -205,14 +193,29 @@ export function Lightbox({
         <p className="text-sm text-white/60 tabular-nums">
           {currentIndex + 1} / {wallpapers.length}
         </p>
-        <button
-          ref={closeRef}
-          onClick={onClose}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Secondary actions up here keep the thumb-reach bottom bar to Download + GitHub */}
+          <CopyButton
+            compact
+            text={shareUrl}
+            label="Copy link to this wallpaper"
+            shortLabel="Copy link"
+            icon={<Link2 className="h-5 w-5" aria-hidden />}
+            className={topButton}
+          />
+          {/* Direct file URL, handy for scripts and wallpaper tools */}
+          <CopyButton
+            compact
+            text={getRawUrl(wallpaper)}
+            label="Copy image URL"
+            shortLabel="Image URL"
+            icon={<FileImage className="h-5 w-5" aria-hidden />}
+            className={topButton}
+          />
+          <button ref={closeRef} onClick={onClose} className={topButton} aria-label="Close">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Image stage: tap outside the image to close, swipe the image to browse */}
@@ -317,19 +320,7 @@ export function Lightbox({
             GitHub
           </a>
 
-          <button
-            onClick={copyLink}
-            aria-label={copied ? "Link copied" : "Copy link to this wallpaper"}
-            title={copyFailed ? shareUrl : undefined}
-            className={`${actionButton} flex-none w-11 px-0 sm:w-auto sm:px-5`}
-          >
-            {copied ? <Check className="h-4 w-4" aria-hidden /> : <Link2 className="h-4 w-4" aria-hidden />}
-            <span className="hidden sm:inline">{copied ? "Copied" : "Copy link"}</span>
-          </button>
         </div>
-        <p className="sr-only" aria-live="polite">
-          {copied ? "Link copied" : copyFailed ? "Couldn't copy the link" : ""}
-        </p>
       </div>
     </div>
   );

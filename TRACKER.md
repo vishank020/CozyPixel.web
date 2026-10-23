@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 5** in progress: W5-01…W5-05 done; W5-06 next (branch `optimise`) |
+| Current phase | **Wave 5** in progress: all stories done; wave gate next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -89,7 +89,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W5-03 Deep links
 - [x] W5-04 Downloads with feedback
 - [x] W5-05 CI gate + scheduled refresh (live verification pending a push, see §6)
-- [ ] W5-06 Small delights
+- [x] W5-06 Small delights
 
 ### Hardening
 - [ ] H-01 Full perf + a11y run on both deploy targets
@@ -184,7 +184,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 23. ~~W5-03~~ done.
 24. ~~W5-04~~ done.
 25. ~~W5-05~~ done (verify on GitHub after the first push).
-26. W5-06 small delights.
+26. ~~W5-06~~ done. Next: Wave 5 gate, then Hardening (H-01…H-04).
 
 
 ---

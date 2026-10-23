@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { Search, X } from "lucide-react";
+import { Search, Shuffle, X } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
 import { displayName, slugify } from "@/lib/format";
-import { updateUrlParams, useUrlParams } from "@/lib/url-state";
+import { openWallpaper, updateUrlParams, useUrlParams } from "@/lib/url-state";
 import { WallpaperGrid } from "./wallpaper-grid";
 import { scrollToElement } from "./SmoothScroll";
 
@@ -123,9 +123,24 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
         </div>
       </div>
 
-      <p aria-live="polite" className="px-1 text-sm text-muted-foreground tabular-nums">
-        {filteredWallpapers.length} {filteredWallpapers.length === 1 ? "wallpaper" : "wallpapers"}
-      </p>
+      <div className="flex items-center justify-between gap-3 px-1">
+        <p aria-live="polite" className="text-sm text-muted-foreground tabular-nums">
+          {filteredWallpapers.length} {filteredWallpapers.length === 1 ? "wallpaper" : "wallpapers"}
+        </p>
+        {filteredWallpapers.length > 1 && (
+          // A random pick from what's currently shown (respects search and category)
+          <button
+            onClick={() => {
+              const pick = filteredWallpapers[Math.floor(Math.random() * filteredWallpapers.length)];
+              openWallpaper(pick.id);
+            }}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-medium text-primary transition-colors hover:bg-primary/10"
+          >
+            <Shuffle className="h-4 w-4" aria-hidden />
+            Surprise me
+          </button>
+        )}
+      </div>
 
       {/* Grid */}
       <WallpaperGrid

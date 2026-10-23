@@ -42,3 +42,23 @@ export function updateUrlParams(changes: Record<string, string | null>, mode: "p
   else window.history.replaceState(null, "", url);
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
+
+// Whether the open wallpaper's history entry was pushed by this page (then closing = Back).
+// A wallpaper opened from a shared link has no entry of ours to go back to.
+let pushedWallpaperEntry = false;
+
+/** Open a wallpaper in the lightbox (?w=id) with its own history entry, so Back closes it */
+export function openWallpaper(id: string) {
+  pushedWallpaperEntry = true;
+  updateUrlParams({ w: id }, "push");
+}
+
+/** Close the lightbox: go back if we pushed its entry, otherwise just drop ?w= */
+export function closeWallpaper() {
+  if (pushedWallpaperEntry) {
+    pushedWallpaperEntry = false;
+    window.history.back();
+  } else {
+    updateUrlParams({ w: null }, "replace");
+  }
+}

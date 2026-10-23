@@ -13,7 +13,7 @@ has no API, so the surface that stories change is routes and components. `A-xx` 
 | 404 | `app/not-found.tsx` → `out/404.html` | SCR-06 | Styled panel with links to each collection and home | **Done (W4-06)** |
 | `/about` | `app/about/page.tsx` | SCR-07 | Credits, verbatim disclaimer, takedown link, privacy, license | **Done (W5-02)** |
 | `/sitemap.xml` · `/robots.txt` | `app/sitemap.ts` · `app/robots.ts` (`force-static`) | — | Static SEO files | **Done (W5-01)** |
-| `/manifest.webmanifest` | `app/manifest.ts` (new, W5-06) | — | PWA install metadata | not built |
+| `/manifest.webmanifest` | `app/manifest.ts` (`force-static`, relative URLs) + `public/icons/` | — | Install metadata: 192/512 + maskable icons | **Done (W5-06)** |
 | OG images | `public/og/{home,catppuccin,nord,onedark}.png` from `scripts/make-og.ts` | — | 1200×630 social previews, referenced from metadata | **Done (W5-01)** |
 
 Query params on theme pages (W5-03, A-20): `sub` (subcategory slug), `q` (search), `w` (open wallpaper id).
@@ -30,12 +30,13 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | W2-01 | **Done (W2-01)** |
 | `SmoothScroll.tsx` | client | Lenis, lazy-loaded on fine pointers only; `setSmoothScrollPaused()`, `scrollToElement()` | W2-04, W3-02 | **Done (W2-04, W3-02)** |
 | `featured-strip.tsx` | client | Home featured grid + lightbox | W1-01, W1-02, W4-04 | baseline |
-| `theme-gallery.tsx` | client | Sticky glass filter bar: search (name + filename + category), chips with counts, live result count | W2-02, W3-02 | **Done (W3-02)** |
+| `theme-gallery.tsx` | client | Sticky glass filter bar: search (name + filename + category), chips with counts, live result count, "Surprise me"; state in the URL | W2-02, W3-02, W5-03, W5-06 | **Done (W3-02, W5-03, W5-06)** |
 | `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02, W3-01, W4-06)** |
 | `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | **Done (W1-01–03, W2-03, W3-01)** |
 | `lightbox.tsx` | client | Full-screen viewer: swipe, top bar (counter, close), bottom action bar, hover-only arrows, focus trap/restore, palette-tinted backdrop | W1-01, W1-04, W2-04, W3-03, W4-04 | **Done (W1-04, W2-04, W3-03)** |
-| `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
+| `footer.tsx` | server | Disclaimer, credits, "Collection updated" date (build time, UTC) | W5-06 | **Done (W5-06)** |
 | `theme-hero.tsx` | server | Per-theme page header: eyebrow, name, description, counts, palette swatches + glow in the page's own palette | W4-03 | **Done (W4-03)** |
+| `copy-button.tsx` | client | Clipboard copy with copied/failed states, live-announced; compact icon mode | W5-03, W5-06 | **Done (W5-06)** |
 | `toast.tsx` | client | App-wide `showToast()` + `<Toaster>` (`role="status"`); countdown only while the page is visible | W5-04 | **Done (W5-04)** |
 | `download-button.tsx` + `use-download.ts` | client | Original-file download with progress, busy/saved states, new-tab fallback + toast | W5-04 | **Done (W5-04)** |
 | `credit-note.tsx` | client | Slim dismissible credit + takedown pointer on theme pages; hidden pre-paint once dismissed (`lib/credit-note.ts`) | W5-02 | **Done (W5-02)** |

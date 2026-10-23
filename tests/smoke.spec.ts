@@ -499,18 +499,63 @@ test.describe("deep links", () => {
     await expect(page).toHaveURL(/\/nord$/);
   });
 
-  test("copy link puts the wallpaper's canonical URL on the clipboard", async ({ page, context }, testInfo) => {
+  test("copy link and copy image URL put the right URLs on the clipboard", async ({ page, context }, testInfo) => {
     test.skip(isMobile(testInfo.project.name), "clipboard permissions are a desktop Chromium feature here");
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await blockImages(page);
     await page.goto("/onedark");
     await page.getByRole("button", { name: /^View / }).first().click();
     const dialog = page.getByRole("dialog");
+    const clipboard = () => page.evaluate(() => navigator.clipboard.readText());
+
     await dialog.getByRole("button", { name: "Copy link to this wallpaper" }).click();
-    await expect(dialog.getByRole("button", { name: "Link copied" })).toBeVisible();
-    const copied = await page.evaluate(() => navigator.clipboard.readText());
-    expect(copied).toMatch(new RegExp(`^https://.+/onedark\\?w=${escapeRe(ONE_DARK[0].id)}$`));
+    await expect(dialog.getByRole("button", { name: "Copy link: copied" })).toBeVisible();
+    expect(await clipboard()).toMatch(new RegExp(`^https://.+/onedark\\?w=${escapeRe(ONE_DARK[0].id)}$`));
+
+    await dialog.getByRole("button", { name: "Copy image URL" }).click();
+    await expect(dialog.getByRole("button", { name: "Image URL: copied" })).toBeVisible();
+    expect(await clipboard()).toBe(
+      `https://raw.githubusercontent.com/SleepyCatHey/CozyPixels/main/${encodeURI(ONE_DARK[0].path)}`
+    );
   });
+
+  test("surprise me opens a random wallpaper from the current view; Back closes it", async ({ page }) => {
+    await blockImages(page);
+    await page.goto("/onedark");
+    await page.getByRole("button", { name: "Surprise me" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(page).toHaveURL(/\?w=.+/);
+    const id = new URL(page.url()).searchParams.get("w");
+    expect(ONE_DARK.some((w) => w.id === id)).toBe(true);
+
+    await page.goBack();
+    await expect(dialog).toBeHidden();
+  });
+});
+
+test("footer shows when the collection was last updated", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/");
+  await expect(page.locator("footer time")).toHaveAttribute("datetime", manifest.generatedAt);
+  await expect(page.locator("footer")).toContainText("Collection updated");
+});
+
+test("installable: web manifest with working icons", async ({ request, page }) => {
+  await page.goto("/");
+  const href = await page.locator('link[rel="manifest"]').getAttribute("href");
+  const manifestUrl = new URL(href!, page.url());
+  const webManifest = await (await request.get(manifestUrl.href)).json();
+  expect(webManifest).toMatchObject({ short_name: "CozyPixels", display: "standalone", start_url: "./" });
+
+  for (const icon of webManifest.icons as Array<{ src: string; sizes: string }>) {
+    const res = await request.get(new URL(icon.src, manifestUrl).href);
+    expect(res.status(), icon.src).toBe(200);
+    expect(res.headers()["content-type"]).toContain("image/png");
+  }
+  expect(webManifest.icons.map((i: { sizes: string }) => i.sizes)).toEqual(
+    expect.arrayContaining(["192x192", "512x512"])
+  );
 });
 
 test.describe("downloads", () => {

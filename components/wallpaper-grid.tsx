@@ -4,16 +4,12 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { Wallpaper } from "@/lib/types";
 import { WallpaperCard } from "./wallpaper-card";
 import { Lightbox } from "./lightbox";
-import { updateUrlParams, useUrlParams } from "@/lib/url-state";
+import { closeWallpaper, openWallpaper, updateUrlParams, useUrlParams } from "@/lib/url-state";
 
 // Cards rendered per batch (PLAN A-03): keeps the HTML and hydration small on long themes
 const PAGE_SIZE = 24;
 // Start rendering the next batch well before the user reaches the end
 const PRELOAD_MARGIN = "800px";
-
-// Whether the open wallpaper's history entry was pushed by this page (then Close = Back).
-// A wallpaper opened from a shared link has no entry of ours to go back to.
-let pushedLightboxEntry = false;
 
 interface WallpaperGridProps {
   wallpapers: Wallpaper[];
@@ -65,19 +61,8 @@ export function WallpaperGrid({
     return () => observer.disconnect();
   }, [hasMore, showMore, visibleCount]);
 
-  const openLightbox = useCallback((wallpaper: Wallpaper) => {
-    pushedLightboxEntry = true;
-    updateUrlParams({ w: wallpaper.id }, "push");
-  }, []);
-
-  const closeLightbox = useCallback(() => {
-    if (pushedLightboxEntry) {
-      pushedLightboxEntry = false;
-      window.history.back();
-    } else {
-      updateUrlParams({ w: null }, "replace");
-    }
-  }, []);
+  const openLightbox = useCallback((wallpaper: Wallpaper) => openWallpaper(wallpaper.id), []);
+  const closeLightbox = useCallback(() => closeWallpaper(), []);
 
   // Browsing inside the lightbox replaces the entry, so Back still closes it in one step
   const navigateLightbox = useCallback(

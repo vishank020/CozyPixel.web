@@ -1,4 +1,13 @@
 import { Heart } from "lucide-react";
+import { manifest } from "@/lib/manifest";
+
+// Formatted at build time (static export), in UTC so it never depends on the build machine
+const updated = new Date(manifest.generatedAt).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
 
 export function Footer() {
   return (
@@ -30,6 +39,9 @@ export function Footer() {
               Developed by <a href="https://github.com/vishank020" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">vishank020</a>
             </p>
           </div>
+          <p className="text-xs text-muted-foreground">
+            Collection updated <time dateTime={manifest.generatedAt}>{updated}</time>
+          </p>
         </div>
       </div>
     </footer>
