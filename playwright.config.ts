@@ -35,6 +35,14 @@ export default defineConfig({
       },
     },
     {
+      name: "mobile-390",
+      use: {
+        ...devices["Pixel 7"],
+        viewport: { width: 390, height: 844 },
+        ...(channel ? { channel } : {}),
+      },
+    },
+    {
       name: "desktop-1280",
       use: { viewport: { width: 1280, height: 800 } },
     },

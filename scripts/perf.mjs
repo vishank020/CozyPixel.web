@@ -26,6 +26,7 @@ const OUT_DIR = join(process.cwd(), ".perf");
 // alone, so real paint is checked with the observed LCP and the simulated one gets headroom.
 const BUDGETS = {
   performance: 90,
+  accessibility: 95,
   observedLcpMs: 1000,
   lcpMs: 3500,
   tbtMs: 200,
@@ -73,6 +74,7 @@ function summarise(lhr) {
 
   return {
     performance: Math.round(lhr.categories.performance.score * 100),
+    accessibility: Math.round(lhr.categories.accessibility.score * 100),
     observedLcpMs: Math.round(audits.metrics.details.items[0].observedLargestContentfulPaint),
     lcpMs: Math.round(audits["largest-contentful-paint"].numericValue),
     tbtMs: Math.round(audits["total-blocking-time"].numericValue),
@@ -91,6 +93,7 @@ function median(values) {
 function checkBudgets(result) {
   const failures = [];
   if (result.performance < BUDGETS.performance) failures.push("performance");
+  if (result.accessibility < BUDGETS.accessibility) failures.push("accessibility");
   if (result.observedLcpMs > BUDGETS.observedLcpMs) failures.push("observed LCP");
   if (result.lcpMs > BUDGETS.lcpMs) failures.push("simulated LCP");
   if (result.tbtMs > BUDGETS.tbtMs) failures.push("TBT");

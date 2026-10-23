@@ -99,7 +99,7 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
               aria-pressed={activeSubcategory === null}
               className={chipClass(activeSubcategory === null)}
             >
-              All <span className="opacity-70 tabular-nums">· {wallpapers.length}</span>
+              All <span className="opacity-80 tabular-nums">· {wallpapers.length}</span>
             </button>
             {subcategories.map(({ name, count }) => (
               <button
@@ -108,7 +108,7 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
                 aria-pressed={activeSubcategory === name}
                 className={chipClass(activeSubcategory === name)}
               >
-                {name} <span className="opacity-70 tabular-nums">· {count}</span>
+                {name} <span className="opacity-80 tabular-nums">· {count}</span>
               </button>
             ))}
           </div>

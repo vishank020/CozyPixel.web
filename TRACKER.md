@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 3** in progress: all stories done; wave gate next (branch `optimise`) |
+| Current phase | **Wave 4** next: W4-01 accessible palette tokens (Wave 3 complete, tag `wave-3-done`) (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -101,6 +101,9 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11 (v1.1 fro
 
 | Date | Point | Route | Perf | LCP | TBT | CLS | Img KB | JS KB (gz) |
 |---|---|---|---|---|---|---|---|---|
+| 2026-10-23 | Wave 3 gate | `/` | 95 (a11y 100) | 2.92 s (observed 0.14 s) | 58 ms | 0 | 100 | 149 |
+| 2026-10-23 | Wave 3 gate | `/catppuccin` | 94 (a11y 100) | 3.08 s (observed 0.11 s) | 49 ms | 0 | 219 | 155 |
+| 2026-10-23 | Wave 3 gate | `/onedark` | 96 (a11y 100) | 2.78 s (observed 0.10 s) | 47 ms | 0 | 103 | 155 |
 | 2026-10-23 | Baseline | `/` | 85 | 4.23 s | 194 ms | 0 | 19,124 | 257 |
 | 2026-10-23 | Baseline | `/catppuccin` | 42 | 7.35 s | 2,551 ms | 0 | 17,709 | 259 |
 | 2026-10-23 | Baseline | `/onedark` | 52 | 10.03 s | 958 ms | 0 | 5,505 | 259 |
@@ -139,6 +142,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-23 | W3 | typecheck · lint (clean) · build:local · build:preview · test:e2e at 360/390/1280 px (120 + 12 skipped) · perf ×3 incl. accessibility | Pass | Exit: smoke green at 360 and 390 px (new permanent `mobile-390` project); real touch swipe changes the counter; filter bar in viewport after scrolling 2,000 px; 44 px sweep passes on every route; Lighthouse accessibility 100/100/100 (`perf.mjs` now budgets a11y ≥ 95). Gate found and fixed: chip counts at `opacity-70` gave 4.47:1 on the active chip → `opacity-80`. Lighthouse checks one palette; per-palette contrast is W4-01. No regressions |
 | 2026-10-23 | W2 | typecheck · lint (clean) · build:local · build:preview · test:e2e (37 + 1 skipped) · perf ×3 + ×1 | Pass (A-11 v1.1) | Exit: every A-11 v1.1 budget met on all 3 routes (scores 94–96, TBT 45–57 ms, observed LCP 0.1–0.4 s); theme HTML 13–19 KB gzipped; gsap and framer-motion gone; hero reaches opacity 1 with all Next JS blocked (test). Against v1.0, simulated LCP (2.9–3.1 s) and theme-page JS (153 KB) failed; owner chose to revise the budgets (§4). Tried and reverted: lazy-loading the lightbox (saved ≈0 KB measured). No regressions |
 | 2026-10-23 | W1 | typecheck · lint · build:local · build:preview · test:e2e (23 + 1 skipped) · perf ×3 | Pass | Exit: (1) 0 client chunks contain manifest data (was one 336 KB chunk); total JS 1.1 MB → 877 KB uncompressed. (2) Image transfer `/` 100 KB, `/catppuccin` 302 KB (budget 1,536). (3) Smoke test proves the hidden collage is never downloaded at 360 px. No regressions. Still failing A-11 (LCP, TBT, JS) is W2's exit. Lint 1 known error (W2-01). Image KB dropped further vs. W1-02 as the wsrv cache warmed |
 | 2026-10-23 | Phase 0 | typecheck · lint · build:local · build:preview · test:e2e (14) · perf (baseline) | Pass | Exit met: every check runs with one command. Lint has 1 known error (theme-provider, fixed by W2-01; see §4). CSS 49.6 → 47.3 KB after dead-code removal |
@@ -162,7 +166,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 11. ~~W3-02~~ done.
 12. ~~W3-03~~ done.
 13. ~~W3-04~~ done.
-14. W3-05 theme switcher a11y + touch, then the Wave 3 gate.
+14. ~~W3-05, Wave 3 gate~~ done.
+15. W4-01 accessible palette tokens (Catppuccin Latte primary text is 1.80:1).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
