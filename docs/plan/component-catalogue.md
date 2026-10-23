@@ -28,9 +28,9 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `ThemeSwitcher.tsx` | client | Theme segmented control (desktop), palette menu (mobile), mode toggle | W3-05 | baseline |
 | `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | W2-01, W2-05 | **Done (W2-01, W2-05)** |
 | `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | W2-01 | **Done (W2-01)** |
-| `SmoothScroll.tsx` | client | Lenis, lazy-loaded on fine pointers only; `setSmoothScrollPaused()` | W2-04 | **Done (W2-04)** |
+| `SmoothScroll.tsx` | client | Lenis, lazy-loaded on fine pointers only; `setSmoothScrollPaused()`, `scrollToElement()` | W2-04, W3-02 | **Done (W2-04, W3-02)** |
 | `featured-strip.tsx` | client | Home featured grid + lightbox | W1-01, W1-02, W4-04 | baseline |
-| `theme-gallery.tsx` | client | Search, subcategory chips, filtered list | W2-02, W3-02 | baseline |
+| `theme-gallery.tsx` | client | Sticky glass filter bar: search (name + filename + category), chips with counts, live result count | W2-02, W3-02 | **Done (W3-02)** |
 | `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02)** |
 | `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | **Done (W1-01–03, W2-03, W3-01)** |
 | `lightbox.tsx` | client | Full-screen viewer, navigation, download | W1-01, W1-04, W2-04, W3-03, W4-04 | baseline |

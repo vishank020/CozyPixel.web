@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 3** in progress: W3-01 done, W3-02 next (branch `optimise`) |
+| Current phase | **Wave 3** in progress: W3-01, W3-02 done; W3-03 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -68,7 +68,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 
 ### Wave 3 — Mobile UX
 - [x] W3-01 Phone grid and cards
-- [ ] W3-02 Sticky compact filter bar
+- [x] W3-02 Sticky compact filter bar
 - [ ] W3-03 Lightbox for touch
 - [ ] W3-04 Viewport units and safe areas
 - [ ] W3-05 Theme switcher a11y + touch
@@ -159,7 +159,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 8. ~~W2-04~~ done (JS 196 → 148–152 KB).
 9. ~~W2-05, W2-06, Wave 2 gate~~ done.
 10. ~~W3-01~~ done.
-11. W3-02 sticky compact filter bar.
+11. ~~W3-02~~ done.
+12. W3-03 lightbox for touch (swipe, bottom bar, focus trap; fixes arrows hidden behind the image on phones).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -207,6 +208,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - **Fixed 2026-10-23 (pre-existing bug, outside the backlog):** two wallpapers shared an id because `slugify` drops `+` (`od_stamina.png` / `od_stamina+.png`), giving React duplicate keys and making the second card open the first wallpaper in the lightbox. The generator now suffixes collisions (`-2`) and the committed manifest got the same one-line fix; `tests/manifest.spec.ts` guards it.
 - `pnpm dev` serves under the Pages basePath: open **http://localhost:3000/CozyPixel.web** (or whichever port Next prints). The bare root 404s in dev. `build:preview`/`preview` serve at the root.
 - Dev-only hydration warnings listing `data-darkreader-*` attributes come from the Dark Reader browser extension rewriting the DOM before React loads. They're not app bugs; disable the extension for localhost when checking for real hydration errors (the smoke tests run without extensions).
+- With Lenis active (desktop), native `scrollIntoView`/`window.scrollTo` jumps are ignored. Use `scrollToElement()` from `components/SmoothScroll.tsx` for programmatic scrolling. Anchor links (`#themes`) work as-is.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

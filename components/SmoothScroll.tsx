@@ -14,6 +14,19 @@ export function setSmoothScrollPaused(paused: boolean) {
   else activeLenis?.start();
 }
 
+/**
+ * Scroll an element to the top of the viewport, honouring its scroll-margin-top.
+ * Native scrollIntoView is ignored while Lenis owns the scroll position.
+ */
+export function scrollToElement(el: HTMLElement) {
+  if (activeLenis) {
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+    activeLenis.scrollTo(el, { offset: -margin, duration: 0.6 });
+  } else {
+    el.scrollIntoView({ block: "start" });
+  }
+}
+
 export function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     const wantsSmooth =

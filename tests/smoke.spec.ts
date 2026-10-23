@@ -95,6 +95,41 @@ test("phone grid shows two columns with 44px download targets", async ({ page },
   expect(box.height).toBeGreaterThanOrEqual(44);
 });
 
+test("filter bar: category search, counts, sticky and 44px targets", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/catppuccin");
+  const count = page.getByText(/^\d+ wallpapers?$/);
+  await expect(count).toHaveText("383 wallpapers");
+
+  // Searching a category name finds that category (README promise)
+  const search = page.getByRole("searchbox", { name: "Search wallpapers" });
+  await search.fill("transportation");
+  const chip = page.getByRole("button", { name: /^Transportation · \d+$/ });
+  const expected = (await chip.textContent())!.match(/(\d+)$/)![1];
+  await expect(count).toHaveText(`${expected} wallpapers`);
+
+  const clear = page.getByRole("button", { name: "Clear search" });
+  const clearBox = await clear.evaluate(hitBox);
+  expect(Math.min(clearBox.width, clearBox.height)).toBeGreaterThanOrEqual(44);
+  await clear.click();
+  await expect(count).toHaveText("383 wallpapers");
+
+  const chipBox = await chip.evaluate(hitBox);
+  expect(chipBox.height).toBeGreaterThanOrEqual(44);
+
+  // Sticky: still pinned under the 64px header after scrolling into the grid
+  await page.mouse.wheel(0, 2000);
+  await page.evaluate(() => window.scrollTo(0, 2000));
+  await expect.poll(() => search.evaluate((el) => el.getBoundingClientRect().top)).toBeLessThan(140);
+  await expect(search).toBeInViewport();
+
+  // Picking a category while scrolled down shows its first results
+  await page.getByRole("button", { name: /^All · / }).click();
+  await chip.click();
+  await expect(chip).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".card-lift").first()).toBeInViewport();
+});
+
 test("theme grid renders in batches of 24 and loads more on scroll", async ({ page }) => {
   await blockImages(page);
   await page.goto("/catppuccin");

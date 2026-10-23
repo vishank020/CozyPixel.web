@@ -1,5 +1,5 @@
 import { manifest, getWallpapersByTheme } from "@/lib/manifest";
-import { ThemeGallery } from "@/components/theme-gallery";
+import { ThemeGallery, type SubcategoryCount } from "@/components/theme-gallery";
 
 export function generateStaticParams() {
   return [
@@ -27,7 +27,9 @@ export default async function ThemePage({
   const wallpapers = getWallpapersByTheme(themeName);
   
   const manifestTheme = manifest.themes[themeName];
-  const subcategories = manifestTheme ? Object.keys(manifestTheme.subcategories) : [];
+  const subcategories: SubcategoryCount[] = Object.entries(manifestTheme?.subcategories ?? {}).map(
+    ([name, count]) => ({ name, count })
+  );
 
   return (
     <main className="container mx-auto px-4 py-8">
