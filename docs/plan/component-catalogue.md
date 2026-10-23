@@ -33,7 +33,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `theme-gallery.tsx` | client | Sticky glass filter bar: search (name + filename + category), chips with counts, live result count | W2-02, W3-02 | **Done (W3-02)** |
 | `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02)** |
 | `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | **Done (W1-01–03, W2-03, W3-01)** |
-| `lightbox.tsx` | client | Full-screen viewer, navigation, download | W1-01, W1-04, W2-04, W3-03, W4-04 | baseline |
+| `lightbox.tsx` | client | Full-screen viewer: swipe, top bar (counter, close), bottom action bar, hover-only arrows, focus trap/restore, palette-tinted backdrop | W1-01, W1-04, W2-04, W3-03, W4-04 | **Done (W1-04, W2-04, W3-03)** |
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
 | `theme-hero.tsx` | server | Per-theme page header (new) | W4-03 | not built |
 | `toast.tsx` | client | Status toasts with `role="status"` (new) | W5-04 | not built |

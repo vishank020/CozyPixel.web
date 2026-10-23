@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 3** in progress: W3-01, W3-02 done; W3-03 next (branch `optimise`) |
+| Current phase | **Wave 3** in progress: W3-01…W3-03 done; W3-04 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -69,7 +69,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 ### Wave 3 — Mobile UX
 - [x] W3-01 Phone grid and cards
 - [x] W3-02 Sticky compact filter bar
-- [ ] W3-03 Lightbox for touch
+- [x] W3-03 Lightbox for touch
 - [ ] W3-04 Viewport units and safe areas
 - [ ] W3-05 Theme switcher a11y + touch
 
@@ -160,7 +160,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 9. ~~W2-05, W2-06, Wave 2 gate~~ done.
 10. ~~W3-01~~ done.
 11. ~~W3-02~~ done.
-12. W3-03 lightbox for touch (swipe, bottom bar, focus trap; fixes arrows hidden behind the image on phones).
+12. ~~W3-03~~ done.
+13. W3-04 viewport units and safe areas.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -202,13 +203,15 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - TBT varies a lot between runs on this machine (`/catppuccin` 2.5 s → 5.8 s → 6.9 s with no change to JS work). Compare TBT only within one session, and use `PERF_RUNS=3`. The real fix is W2-02 (paging).
 - wsrv.nl's first request for an uncached size can take ~6 s (measured on a 2.46 MB PNG); repeats are < 1 s. Visitors share that cache.
 - A hidden `<img>` can still show as loaded when its URL matches a visible image (Chrome's in-memory image cache), e.g. the hero Catppuccin card reuses a theme-card thumbnail at 640 w. That costs no extra request. The smoke test checks network requests, not `currentSrc`.
-- Lightbox at 360 px (checked 2026-10-23): image 46 KB at 1080 w instead of the multi-MB original; neighbours preloaded (7–20 KB). The prev/next arrows are fully covered by the image on phones (B §3.2); W3-03 replaces them with swipe + a bottom bar.
+- Lightbox at 360 px (checked 2026-10-23): image 46 KB at 1080 w instead of the multi-MB original; neighbours preloaded (7–20 KB). Arrows hidden behind the image on phones: fixed in W3-03 (swipe + bottom bar; arrows only on hover devices).
 - **Always `pnpm build:preview` before `test:e2e`/`perf`.** `build:local` writes a basePath build to the same `out/`; served at the root it loads no JS. Both tools now refuse to run against it. (A run against it showed the no-JS ceiling: `/` perf 100, LCP 1.1 s.)
 - **Simulated vs observed LCP (after W2-04).** Lighthouse's *observed* LCP equals FCP on every route (0.1–0.4 s locally); the *simulated* slow-4G LCP is 2.6–2.9 s. The LCP element is the header wordmark text; the simulation charges it for the 48 KB Inter font and the JS on the critical path (`font-display: swap` is already set, so real users see fallback text at first paint). A-11 still uses the simulated number.
 - **Fixed 2026-10-23 (pre-existing bug, outside the backlog):** two wallpapers shared an id because `slugify` drops `+` (`od_stamina.png` / `od_stamina+.png`), giving React duplicate keys and making the second card open the first wallpaper in the lightbox. The generator now suffixes collisions (`-2`) and the committed manifest got the same one-line fix; `tests/manifest.spec.ts` guards it.
 - `pnpm dev` serves under the Pages basePath: open **http://localhost:3000/CozyPixel.web** (or whichever port Next prints). The bare root 404s in dev. `build:preview`/`preview` serve at the root.
 - Dev-only hydration warnings listing `data-darkreader-*` attributes come from the Dark Reader browser extension rewriting the DOM before React loads. They're not app bugs; disable the extension for localhost when checking for real hydration errors (the smoke tests run without extensions).
 - With Lenis active (desktop), native `scrollIntoView`/`window.scrollTo` jumps are ignored. Use `scrollToElement()` from `components/SmoothScroll.tsx` for programmatic scrolling. Anchor links (`#themes`) work as-is.
+- **Headless screenshots of fades are unreliable.** In headless desktop Chrome a large lightbox image takes ~0.3–0.5 s before its fade-in visibly starts (software raster), so a screenshot right after load can show an empty stage. Wait ~2 s before screenshotting. Real browsers don't show this; the spinner now stays behind the image until its fade ends either way.
+- A failed `next build` leaves the previous `out/` in place, so tests then run against stale code. A TypeScript error in `tests/` fails the build (tsconfig includes them). Check for the `8/8` line before trusting a test run.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

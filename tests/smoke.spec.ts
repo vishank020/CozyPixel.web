@@ -151,6 +151,65 @@ test("theme grid renders in batches of 24 and loads more on scroll", async ({ pa
   await expect.poll(() => cards.count()).toBeGreaterThan(afterScroll);
 });
 
+/** A real one-finger horizontal swipe (touch events through Chrome DevTools Protocol) */
+async function swipe(page: Page, x: number, y: number, dx: number) {
+  const cdp = await page.context().newCDPSession(page);
+  const touch = (type: "touchStart" | "touchMove" | "touchEnd", px: number) =>
+    cdp.send("Input.dispatchTouchEvent", {
+      type,
+      touchPoints: type === "touchEnd" ? [] : [{ x: px, y }],
+    });
+  await touch("touchStart", x);
+  for (let i = 1; i <= 8; i++) await touch("touchMove", x + (dx * i) / 8);
+  await touch("touchEnd", x + dx);
+  await cdp.detach();
+}
+
+test("lightbox on phones: swipe, bottom bar, no hidden arrows, focus", async ({ page }, testInfo) => {
+  test.skip(!isMobile(testInfo.project.name), "touch layout");
+  await blockImages(page);
+  await page.goto("/onedark");
+  const card = page.getByRole("button", { name: /^View / }).first();
+  await card.click();
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("button", { name: "Close" })).toBeFocused();
+  // Arrows would sit under the image on a phone; swipe replaces them
+  await expect(dialog.getByRole("button", { name: "Next wallpaper" })).toBeHidden();
+  // Actions are reachable without scrolling
+  await expect(dialog.getByRole("button", { name: "Download" })).toBeInViewport();
+
+  const stage = await dialog.getByRole("img").boundingBox();
+  const midY = stage!.y + stage!.height / 2;
+  await swipe(page, 300, midY, -200);
+  await expect(dialog.getByText(/^2 \/ \d+$/)).toBeVisible();
+  await swipe(page, 60, midY, 200);
+  await expect(dialog.getByText(/^1 \/ \d+$/)).toBeVisible();
+  // A short drag is not a swipe
+  await swipe(page, 200, midY, -30);
+  await expect(dialog.getByText(/^1 \/ \d+$/)).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(card).toBeFocused();
+});
+
+test("lightbox on desktop: arrows and focus stays inside", async ({ page }, testInfo) => {
+  test.skip(isMobile(testInfo.project.name), "pointer layout");
+  await blockImages(page);
+  await page.goto("/onedark");
+  await page.getByRole("button", { name: /^View / }).nth(1).click();
+
+  const dialog = page.getByRole("dialog");
+  await dialog.getByRole("button", { name: "Next wallpaper" }).click();
+  await expect(dialog.getByText(/^3 \/ \d+$/)).toBeVisible();
+
+  for (let i = 0; i < 8; i++) {
+    await page.keyboard.press("Tab");
+    expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+  }
+});
+
 test("lightbox opens, navigates and closes", async ({ page }) => {
   await blockImages(page);
   await page.goto("/onedark");
