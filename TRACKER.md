@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 5** in progress: all stories done; wave gate next (branch `optimise`) |
+| Current phase | **Hardening** next: H-01…H-04 (Wave 5 complete, tag `wave-5-done`) (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -140,6 +140,9 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11 (v1.1 fro
 | 2026-10-23 | Wave 4 gate | `/` | 93 (a11y 100) | 3.18 s (observed 0.23 s) | 74 ms | 0 | 121 | 149 |
 | 2026-10-23 | Wave 4 gate | `/catppuccin` | 93 (a11y 100) | 3.16 s (observed 0.13 s) | 58 ms | 0 | 219 | 156 |
 | 2026-10-23 | Wave 4 gate | `/onedark` | 94 (a11y 100) | 3.02 s (observed 0.16 s) | 71 ms | 0 | 103 | 156 |
+| 2026-10-23 | Wave 5 gate | `/` | 93 (a11y 100, SEO 100, BP 100) | 3.25 s (observed 0.35 s) | 58 ms | 0 | 121 | 151 |
+| 2026-10-23 | Wave 5 gate | `/catppuccin` (5 runs) | 94 (a11y 100, SEO 100, BP 100) | 3.11 s (observed 0.15 s) | 54 ms | 0 | 219 | 160 |
+| 2026-10-23 | Wave 5 gate | `/onedark` | 95 (a11y 100, SEO 100, BP 100) | 2.99 s (observed 0.12 s) | 40 ms | 0 | 103 | 160 |
 
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
@@ -147,6 +150,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-23 | W5 | typecheck · lint · contrast · build:local · build:preview · test:e2e (179 + 19 skipped, ×2; also 170 as CI runs it) · perf ×3 (+ /catppuccin ×5) · GitHub Pages simulation (Pages build served under `/CozyPixel.web/`) | Pass, 1 item pending | Exit: shared `?sub=&w=` links open the wallpaper (tests); OG/Twitter tags + images for `/` and each theme (external OG debugger needs the live URL); `/about`, `/sitemap.xml`, `/robots.txt`, manifest, OG images, icons and every asset in the HTML return 200 under `/CozyPixel.web/`; Lighthouse SEO 100 and best-practices 100 on all routes; installability checked by the manifest/icons test (Lighthouse 13 has no PWA category). **Pending:** "a broken commit fails CI before deploy" needs a push. Gate found and fixed: every `<Link>` prefetch 404'd (Next 16.3 export path mismatch, pre-existing) → post-build fix + same-origin 404 check on every route. Perf: `/catppuccin` 3-run median looked like a regression (86, 4.15 s); 5 solo runs gave 94 / 3.11 s with a 2.7–3.7 s spread tracking machine load. Theme-page JS is exactly at the 160 KB budget: no headroom |
 | 2026-10-23 | W4 | typecheck · lint (clean) · contrast (all ≥ 4.5, 6 palettes) · build:local · build:preview · test:e2e (137 + 16 skipped) · perf ×3 · visual review: `/` and `/nord` at 360/768/1280/1920 px × 6 palettes (48 shots in `.perf/gate-w4/`, contact sheets `sheet-*.png`) | Pass | Exit: identity intact in every palette and size; contrast all pass; budgets met. Gate found and fixed: at 768 px the side-by-side hero squeezed the headline to 4 lines and wrapped the CTA (pre-existing); hero now stacks until `lg` and caps its size at 3.5 rem for 1024–1279 px, so the headline is 2 lines and the CTA one line at 360–1920 px (new permanent test). Caveat: the P0-03 "before" screenshots had been overwritten by later test runs, so the comparison used the baseline images reviewed earlier in the session; gate shots now live in a separate folder. Perf 93–94 vs 94–97 at W3 (TBT 58–74 ms): within noise but watch in H-01 |
 | 2026-10-23 | W3 | typecheck · lint (clean) · build:local · build:preview · test:e2e at 360/390/1280 px (120 + 12 skipped) · perf ×3 incl. accessibility | Pass | Exit: smoke green at 360 and 390 px (new permanent `mobile-390` project); real touch swipe changes the counter; filter bar in viewport after scrolling 2,000 px; 44 px sweep passes on every route; Lighthouse accessibility 100/100/100 (`perf.mjs` now budgets a11y ≥ 95). Gate found and fixed: chip counts at `opacity-70` gave 4.47:1 on the active chip → `opacity-80`. Lighthouse checks one palette; per-palette contrast is W4-01. No regressions |
 | 2026-10-23 | W2 | typecheck · lint (clean) · build:local · build:preview · test:e2e (37 + 1 skipped) · perf ×3 + ×1 | Pass (A-11 v1.1) | Exit: every A-11 v1.1 budget met on all 3 routes (scores 94–96, TBT 45–57 ms, observed LCP 0.1–0.4 s); theme HTML 13–19 KB gzipped; gsap and framer-motion gone; hero reaches opacity 1 with all Next JS blocked (test). Against v1.0, simulated LCP (2.9–3.1 s) and theme-page JS (153 KB) failed; owner chose to revise the budgets (§4). Tried and reverted: lazy-loading the lightbox (saved ≈0 KB measured). No regressions |
@@ -184,7 +188,9 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 23. ~~W5-03~~ done.
 24. ~~W5-04~~ done.
 25. ~~W5-05~~ done (verify on GitHub after the first push).
-26. ~~W5-06~~ done. Next: Wave 5 gate, then Hardening (H-01…H-04).
+26. ~~W5-06, Wave 5 gate~~ done.
+27. Push `optimise` and open a PR into `main`: verifies the CI gate on GitHub (W5-05) and is needed for H-01 (live URLs).
+28. H-01…H-04.
 
 
 ---
@@ -250,6 +256,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 - **Source data:** some wallpapers appear in two categories (e.g. `ign_LakesideDeer-03.png` in Nord Animals & Creatures and Characters & People): two cards, same image. That's upstream data, left as is.
 - **CI (W5-05):** `.github/workflows/nextjs.yml` runs lint → typecheck → contrast → build:preview → Playwright → build:local → deploy, on push to `main`, daily at 03:00 UTC and on manual dispatch; pull requests run the checks without deploying. A failed manifest refresh logs a warning and builds from the committed manifest (verified: a failing refresh leaves the file byte-identical). **Not yet verified on GitHub** (needs a push): that a failing check blocks the deploy, and that scheduled runs fire (GitHub only runs schedules from the default branch, so this starts after `optimise` is merged into `main`).
 - Tests derive collection facts (counts, first wallpaper, names, sizes) from `data/manifest.json`, so a refreshed collection can't break the daily run.
+- **Prefetch fix:** `scripts/fix-export-prefetch.mjs` runs after every build to work around Next 16.3 writing route prefetch files under a different path than the client requests. Remove it once Next fixes that (the same-origin 404 test will tell you if prefetch paths break again).
+- Simulated-LCP noise on this machine is large (±0.5 s between runs); use `PERF_RUNS=5` on a single route before concluding there's a regression.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).
