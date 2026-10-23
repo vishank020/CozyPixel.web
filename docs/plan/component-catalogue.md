@@ -26,7 +26,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 |---|---|---|---|---|
 | `header.tsx` | server | Logo, glass sticky bar, About link | W1-05, W3-04, W5-02 | baseline |
 | `ThemeSwitcher.tsx` | client | Theme segmented control (desktop), palette menu (mobile), mode toggle | W3-05 | baseline |
-| `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | W2-01, W2-05 | **Done (W2-01)** |
+| `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | W2-01, W2-05 | **Done (W2-01, W2-05)** |
 | `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | W2-01 | **Done (W2-01)** |
 | `SmoothScroll.tsx` | client | Lenis, lazy-loaded on fine pointers only; `setSmoothScrollPaused()` | W2-04 | **Done (W2-04)** |
 | `featured-strip.tsx` | client | Home featured grid + lightbox | W1-01, W1-02, W4-04 | baseline |

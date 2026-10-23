@@ -54,3 +54,15 @@ export const themeScript = `(${applyStoredTheme.toString()}).apply(null, ${JSON.
 export function applyThemeFromStorage() {
   applyStoredTheme(...ARGS);
 }
+
+const SWITCH_TRANSITION_MS = 300;
+let switchTimer: ReturnType<typeof setTimeout> | undefined;
+
+/** Applies a theme change with a short color cross-fade (see .theme-switching in globals.css) */
+export function applyThemeWithTransition() {
+  const root = document.documentElement;
+  root.classList.add("theme-switching");
+  applyThemeFromStorage();
+  clearTimeout(switchTimer);
+  switchTimer = setTimeout(() => root.classList.remove("theme-switching"), SWITCH_TRANSITION_MS);
+}

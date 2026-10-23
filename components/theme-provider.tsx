@@ -9,7 +9,12 @@ import {
   useSyncExternalStore,
 } from "react";
 import { ThemeId, Mode, THEME_STORAGE_KEY, MODE_STORAGE_KEY } from "@/lib/themes";
-import { applyThemeFromStorage, DEFAULT_MODE, DEFAULT_THEME } from "@/lib/theme-dom";
+import {
+  applyThemeFromStorage,
+  applyThemeWithTransition,
+  DEFAULT_MODE,
+  DEFAULT_THEME,
+} from "@/lib/theme-dom";
 
 interface ThemeContextValue {
   theme: ThemeId;
@@ -77,7 +82,7 @@ function subscribe(listener: () => void) {
   const mq = window.matchMedia("(prefers-color-scheme: dark)");
   const onSystemChange = () => {
     if (readStoredMode() === "system") {
-      applyThemeFromStorage();
+      applyThemeWithTransition();
       notify();
     }
   };
@@ -109,13 +114,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = useCallback((next: ThemeId) => {
     persist(THEME_STORAGE_KEY, next);
-    applyThemeFromStorage();
+    applyThemeWithTransition();
     notify();
   }, []);
 
   const setMode = useCallback((next: Mode) => {
     persist(MODE_STORAGE_KEY, next);
-    applyThemeFromStorage();
+    applyThemeWithTransition();
     notify();
   }, []);
 

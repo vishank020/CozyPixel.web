@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 2** in progress: W2-01…W2-04 done; W2-05 next (branch `optimise`) |
+| Current phase | **Wave 2** in progress: W2-01…W2-05 done; W2-06 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -63,7 +63,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W2-02 Paged grid
 - [x] W2-03 CSS motion replaces framer-motion
 - [x] W2-04 Lenis desktop-only, no GSAP
-- [ ] W2-05 Scoped theme transition
+- [x] W2-05 Scoped theme transition
 - [ ] W2-06 Cheaper effects below md
 
 ### Wave 3 — Mobile UX
@@ -166,6 +166,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 | 2026-10-23 | P0-02: no-basePath build via `VERCEL=1 pnpm build:local` | Added `LOCAL_PREVIEW` to `next.config.ts` and a `build:preview` script (`scripts/build-preview.mjs`) | `VAR=1 cmd` doesn't work in Windows shells, and setting `VERCEL` locally could trigger Vercel-specific Next behaviour |
 | 2026-10-23 | A-09: client receives slim wallpaper objects (no `extension`) | Pass full `Wallpaper` objects as props; only the import split was done | Dropping one short field saves ~4 KB of RSC payload per theme page, not worth the extra type and mapper. The real cost (336 KB manifest chunk) is gone |
 | 2026-10-23 | A-06: `ThemeProvider` initialises state from `<html>` attributes on mount | `<html>` attributes + localStorage are an external store read with `useSyncExternalStore`; one function (`lib/theme-dom.ts`) is both serialised into the head script and called at runtime; `useLayoutEffect` re-applies for dev Strict Mode | Follows `node_modules/next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`. Mount-time state init would need setState in an effect (the lint error) and could drift from the script |
+| 2026-10-23 | W2-05 scope: remove the `*` transition | Also restores components' own hover transitions: the unlayered `*` rule beat Tailwind v4's layered `transition-*` utilities, so e.g. the card image zoom (`transition-transform duration-500`) snapped instead of easing | Visible but intended: the original classes now behave as written |
 | 2026-10-23 | W2 Exit: "`/catppuccin.html` ≤ 150 KB" | Measured 243 KB raw / **19 KB gzipped** (was 1,094 KB raw). Criterion changed to "≤ 30 KB gzipped" | Raw size is a poor proxy for what users download. The rest is srcset markup and the RSC list of 383 wallpapers for the lightbox; slimming that (A-09) saves ~67 KB raw but ~5 KB gzipped, which isn't worth deriving fields on the client |
 | 2026-10-23 | DoD: `pnpm lint` green (resolved by W2-01: lint fully clean) | Lint was already red at baseline (3 errors, 2 warnings); not fixed in P0-02 | Out of P0-02 scope. P0-04 fixes `tailwind.config.ts`, the apostrophe and unused imports; W2-01 fixes the `theme-provider` setState-in-effect error. Until then, "lint green" means "no new problems" |
 

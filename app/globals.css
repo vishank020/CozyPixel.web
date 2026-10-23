@@ -229,12 +229,19 @@
   opacity: 0.4;
 }
 
-* {
-  transition:
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    color 0.2s ease,
-    box-shadow 0.25s ease;
+/* Smooth palette swap, only for the ~300ms after a theme/mode change (PLAN A-07).
+   A permanent rule on * would override every component's own transitions. */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition:
+      background-color 0.25s ease,
+      border-color 0.25s ease,
+      color 0.2s ease,
+      fill 0.2s ease,
+      box-shadow 0.25s ease !important;
+  }
 }
 
 /* Custom horizontal scrollbar for filter chips */

@@ -137,6 +137,25 @@ test("saved theme and content paint before any app JS runs", async ({ page }) =>
   await expect(page.getByRole("button", { name: /^View / }).first()).toBeVisible();
 });
 
+test("theme cross-fade is scoped to the moment of switching", async ({ page }, testInfo) => {
+  await blockImages(page);
+  await page.goto("/onedark");
+
+  // At rest, components keep their own transitions (the card image eases its zoom)
+  const cardImage = page.locator(".card-lift img").first();
+  await expect
+    .poll(() => cardImage.evaluate((el) => getComputedStyle(el).transitionProperty))
+    .toContain("transform");
+
+  if (isMobile(testInfo.project.name)) {
+    await page.getByRole("button", { name: "Theme menu" }).click();
+  }
+  const html = page.locator("html");
+  await page.getByRole("button", { name: "Nord", exact: true }).click();
+  await expect(html).toHaveClass(/\btheme-switching\b/);
+  await expect(html).not.toHaveClass(/\btheme-switching\b/, { timeout: 2_000 });
+});
+
 test("smooth scrolling runs on desktop only and pauses under the lightbox", async ({ page }, testInfo) => {
   await blockImages(page);
   await page.goto("/onedark");
