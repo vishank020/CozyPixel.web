@@ -57,5 +57,10 @@ export const themes: Record<ThemeId, ThemeMeta> = {
   },
 };
 
+/** Theme id for a manifest theme name: "One Dark" → "onedark" */
+export function themeIdForName(name: string): ThemeId | undefined {
+  return (Object.keys(themes) as ThemeId[]).find((id) => themes[id].name === name);
+}
+
 export const THEME_STORAGE_KEY = "cozypixels-theme";
 export const MODE_STORAGE_KEY = "cozypixels-mode";

@@ -4,11 +4,16 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { Wallpaper } from "@/lib/types";
 import { WallpaperCard } from "./wallpaper-card";
 import { Lightbox } from "./lightbox";
+import { updateUrlParams, useUrlParams } from "@/lib/url-state";
 
 // Cards rendered per batch (PLAN A-03): keeps the HTML and hydration small on long themes
 const PAGE_SIZE = 24;
 // Start rendering the next batch well before the user reaches the end
 const PRELOAD_MARGIN = "800px";
+
+// Whether the open wallpaper's history entry was pushed by this page (then Close = Back).
+// A wallpaper opened from a shared link has no entry of ours to go back to.
+let pushedLightboxEntry = false;
 
 interface WallpaperGridProps {
   wallpapers: Wallpaper[];
@@ -20,8 +25,12 @@ export function WallpaperGrid({
   wallpapers,
   onClearFilters,
 }: WallpaperGridProps) {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // The open wallpaper lives in the URL (?w=<id>) so it can be shared and Back closes it
+  const openId = useUrlParams().get("w");
+  const foundIndex = openId ? wallpapers.findIndex((w) => w.id === openId) : -1;
+  const lightboxIndex = foundIndex === -1 ? null : foundIndex;
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // A new filter result starts again from the first batch
@@ -29,6 +38,11 @@ export function WallpaperGrid({
   if (shownList !== wallpapers) {
     setShownList(wallpapers);
     setVisibleCount(PAGE_SIZE);
+  }
+
+  // A linked wallpaper deep in the list: render up to its batch so its card exists
+  if (lightboxIndex !== null && lightboxIndex >= visibleCount) {
+    setVisibleCount(Math.ceil((lightboxIndex + 1) / PAGE_SIZE) * PAGE_SIZE);
   }
 
   const hasMore = visibleCount < wallpapers.length;
@@ -52,17 +66,24 @@ export function WallpaperGrid({
   }, [hasMore, showMore, visibleCount]);
 
   const openLightbox = useCallback((wallpaper: Wallpaper) => {
-    const index = wallpapers.findIndex((w) => w.id === wallpaper.id);
-    if (index !== -1) setLightboxIndex(index);
-  }, [wallpapers]);
+    pushedLightboxEntry = true;
+    updateUrlParams({ w: wallpaper.id }, "push");
+  }, []);
 
   const closeLightbox = useCallback(() => {
-    setLightboxIndex(null);
+    if (pushedLightboxEntry) {
+      pushedLightboxEntry = false;
+      window.history.back();
+    } else {
+      updateUrlParams({ w: null }, "replace");
+    }
   }, []);
 
-  const navigateLightbox = useCallback((index: number) => {
-    setLightboxIndex(index);
-  }, []);
+  // Browsing inside the lightbox replaces the entry, so Back still closes it in one step
+  const navigateLightbox = useCallback(
+    (index: number) => updateUrlParams({ w: wallpapers[index].id }, "replace"),
+    [wallpapers]
+  );
 
   // Empty state
   if (wallpapers.length === 0) {

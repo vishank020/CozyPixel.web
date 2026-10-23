@@ -1,5 +1,14 @@
 import type { Wallpaper } from "./types";
 
+/** URL-safe slug: "Anime & Gaming" → "anime-and-gaming". Shared by the manifest ids and URLs. */
+export function slugify(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 // Source-collection tags, not part of the name ("ign_FluidifiedST-2.png", "od_gnome.png")
 const SOURCE_PREFIX = /^(ign|od)_/i;
 

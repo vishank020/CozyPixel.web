@@ -11,11 +11,15 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Link2,
+  Check,
   Loader2,
 } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
 import { getImageUrl, getRawUrl, getGithubBlobUrl } from "@/lib/image-urls";
 import { displayName, wallpaperAlt } from "@/lib/format";
+import { themeIdForName } from "@/lib/themes";
+import { absoluteUrl } from "@/lib/site";
 
 // Shared by the visible image and neighbour preloads so both resolve to the same URL
 const VIEW_SIZE = { width: 1920, height: 1080, sizes: "100vw" } as const;
@@ -65,6 +69,24 @@ export function Lightbox({
   const [revealedId, setRevealedId] = useState<string | null>(null);
   const isLoading = loadedId !== wallpaper.id;
   const isRevealed = revealedId === wallpaper.id;
+
+  // Canonical link to this wallpaper on its theme page (works from the home page too)
+  const shareUrl = absoluteUrl(`/${themeIdForName(wallpaper.theme)}?w=${encodeURIComponent(wallpaper.id)}`);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copyFailed, setCopyFailed] = useState(false);
+
+  async function copyLink() {
+    const id = wallpaper.id;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopyFailed(false);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((current) => (current === id ? null : current)), 2000);
+    } catch {
+      setCopyFailed(true);
+    }
+  }
+  const copied = copiedId === wallpaper.id;
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -295,7 +317,20 @@ export function Lightbox({
             <ExternalLink className="h-4 w-4" />
             GitHub
           </a>
+
+          <button
+            onClick={copyLink}
+            aria-label={copied ? "Link copied" : "Copy link to this wallpaper"}
+            title={copyFailed ? shareUrl : undefined}
+            className={`${actionButton} flex-none w-11 px-0 sm:w-auto sm:px-5`}
+          >
+            {copied ? <Check className="h-4 w-4" aria-hidden /> : <Link2 className="h-4 w-4" aria-hidden />}
+            <span className="hidden sm:inline">{copied ? "Copied" : "Copy link"}</span>
+          </button>
         </div>
+        <p className="sr-only" aria-live="polite">
+          {copied ? "Link copied" : copyFailed ? "Couldn't copy the link" : ""}
+        </p>
       </div>
     </div>
   );

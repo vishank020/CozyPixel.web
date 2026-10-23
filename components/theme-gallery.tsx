@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Search, X } from "lucide-react";
 import type { Wallpaper } from "@/lib/types";
-import { displayName } from "@/lib/format";
+import { displayName, slugify } from "@/lib/format";
+import { updateUrlParams, useUrlParams } from "@/lib/url-state";
 import { WallpaperGrid } from "./wallpaper-grid";
 import { scrollToElement } from "./SmoothScroll";
 
@@ -23,8 +24,15 @@ function searchText(w: Wallpaper) {
 }
 
 export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
+  // Filters live in the URL (?sub=<category slug>&q=<text>) so a view can be shared
+  const params = useUrlParams();
+  const searchQuery = params.get("q") ?? "";
+  const subSlug = params.get("sub");
+  const activeSubcategory = subcategories.find((s) => slugify(s.name) === subSlug)?.name ?? null;
+
+  const setSearchQuery = (q: string) => updateUrlParams({ q }, "replace");
+  const setActiveSubcategory = (name: string | null) =>
+    updateUrlParams({ sub: name && slugify(name) }, "replace");
   const resultsTopRef = useRef<HTMLDivElement>(null);
 
   const searchIndex = useMemo(() => wallpapers.map(searchText), [wallpapers]);
@@ -122,10 +130,7 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
       {/* Grid */}
       <WallpaperGrid
         wallpapers={filteredWallpapers}
-        onClearFilters={() => {
-          setSearchQuery("");
-          setActiveSubcategory(null);
-        }}
+        onClearFilters={() => updateUrlParams({ q: null, sub: null }, "replace")}
       />
     </div>
   );

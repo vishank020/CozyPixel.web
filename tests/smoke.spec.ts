@@ -430,6 +430,65 @@ test("credit note: dismissible, and stays hidden before any JS on return visits"
   await expect(page.locator(".credit-note")).toBeHidden();
 });
 
+test.describe("deep links", () => {
+  test("filters come from and go to the URL", async ({ page }) => {
+    await blockImages(page);
+    await page.goto("/catppuccin?sub=transportation&q=van");
+    await expect(page.getByRole("button", { name: /^Transportation · / })).toHaveAttribute("aria-pressed", "true");
+    const search = page.getByRole("searchbox", { name: "Search wallpapers" });
+    await expect(search).toHaveValue("van");
+    await expect(page.locator('[aria-live="polite"]')).toHaveText("1 wallpaper");
+
+    // Editing filters replaces the history entry instead of adding to it
+    const historyLength = await page.evaluate(() => history.length);
+    await search.fill("");
+    await page.getByRole("button", { name: /^All · / }).click();
+    await expect(page).toHaveURL(/\/catppuccin$/);
+    expect(await page.evaluate(() => history.length)).toBe(historyLength);
+  });
+
+  test("opening a wallpaper adds ?w= and Back closes it", async ({ page }) => {
+    await blockImages(page);
+    await page.goto("/onedark");
+    await page.getByRole("button", { name: /^View / }).first().click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await expect(page).toHaveURL(/\?w=one-dark-/);
+
+    await page.goBack();
+    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(page).toHaveURL(/\/onedark$/);
+  });
+
+  test("a shared link opens that wallpaper, even deep in the list", async ({ page }) => {
+    await blockImages(page);
+    await page.goto("/nord?w=nord-characters-and-people-ign-lakesidedeer-03-png");
+    const dialog = page.getByRole("dialog");
+    await expect(dialog.getByText(/^101 \/ 413$/)).toBeVisible();
+    await expect(dialog.getByText("Lakeside Deer 03")).toBeVisible();
+
+    // Its card exists behind the lightbox: the grid rendered up to its batch (card #101)
+    expect(await page.locator(".card-lift").count()).toBeGreaterThanOrEqual(101);
+
+    // Close stays on the page (no history entry of ours to go back to)
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await expect(dialog).toBeHidden();
+    await expect(page).toHaveURL(/\/nord$/);
+  });
+
+  test("copy link puts the wallpaper's canonical URL on the clipboard", async ({ page, context }, testInfo) => {
+    test.skip(isMobile(testInfo.project.name), "clipboard permissions are a desktop Chromium feature here");
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await blockImages(page);
+    await page.goto("/onedark");
+    await page.getByRole("button", { name: /^View / }).first().click();
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("button", { name: "Copy link to this wallpaper" }).click();
+    await expect(dialog.getByRole("button", { name: "Link copied" })).toBeVisible();
+    const copied = await page.evaluate(() => navigator.clipboard.readText());
+    expect(copied).toMatch(/^https:\/\/.+\/onedark\?w=one-dark-gaming-botw-od-botw-saddled-jpg$/);
+  });
+});
+
 test("unknown URLs get the styled 404 with ways back", async ({ page }) => {
   await blockImages(page);
   const response = await page.goto("/no-such-page");

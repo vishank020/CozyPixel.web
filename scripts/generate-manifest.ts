@@ -13,6 +13,7 @@
 
 import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
+import { slugify } from "../lib/format";
 
 const SOURCE_REPO = process.env.SOURCE_REPO || "SleepyCatHey/CozyPixels";
 const BRANCH = process.env.BRANCH || "main";
@@ -66,13 +67,6 @@ async function githubFetch(url: string) {
   return res.json();
 }
 
-function slugify(str: string): string {
-  return str
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 function detectTheme(path: string): "Catppuccin" | "Nord" | "One Dark" | null {
   if (path.startsWith("Catppuccin/")) return "Catppuccin";
