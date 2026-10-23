@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Phase 0**: P0-01, P0-02 done; P0-03 next (branch `optimise`) |
+| Current phase | **Phase 0**: P0-01…P0-03 done; P0-04 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -47,7 +47,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 ### Phase 0 — Foundations
 - [x] P0-01 Commit the documentation set
 - [x] P0-02 Scripts + baseline
-- [ ] P0-03 Playwright smoke suite
+- [x] P0-03 Playwright smoke suite
 - [ ] P0-04 Remove dead code
 
 ### Wave 1 — Images and bundle
@@ -120,7 +120,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
-3. P0-03: Playwright smoke suite + "before" screenshots.
+3. ~~P0-03~~ done. Next: P0-04 remove dead code (also clears 4 of the 5 baseline lint problems), then Wave 1.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -151,6 +151,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
 ## 6. Known issues / notes
 
+- Playwright uses the installed Chrome locally (`channel: "chrome"`). In CI set `PW_CHANNEL=""` and run `pnpm exec playwright install --with-deps chromium` (W5-05). The suite blocks image requests for functional checks; only the screenshot test loads images. "Before" screenshots from 2026-10-23 are in `.perf/shots/` (git-ignored, local only). In them the featured strip is still empty boxes after 8 s on mobile.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).
