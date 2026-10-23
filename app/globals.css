@@ -375,3 +375,8 @@
     transition: opacity 0.2s ease;
   }
 }
+
+/* Dismissed credit note: hidden before first paint via the head script (lib/credit-note.ts) */
+html[data-credit-dismissed] .credit-note {
+  display: none;
+}

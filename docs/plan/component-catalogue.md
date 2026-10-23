@@ -11,7 +11,7 @@ has no API, so the surface that stories change is routes and components. `A-xx` 
 | `/` | `app/page.tsx` | SCR-01 | Hero + collage, theme cards, featured strip, "Free forever" panel | baseline |
 | `/catppuccin` · `/nord` · `/onedark` | `app/[theme]/page.tsx` (`generateStaticParams`, `generateMetadata`) | SCR-02 | `ThemeHero` + `ThemeGallery` | **Done (W4-03)** |
 | 404 | `app/not-found.tsx` → `out/404.html` | SCR-06 | Styled panel with links to each collection and home | **Done (W4-06)** |
-| `/about` | `app/about/page.tsx` (new, W5-02) | SCR-07 | Credits, disclaimer, takedown, no-tracking | not built |
+| `/about` | `app/about/page.tsx` | SCR-07 | Credits, verbatim disclaimer, takedown link, privacy, license | **Done (W5-02)** |
 | `/sitemap.xml` · `/robots.txt` | `app/sitemap.ts` · `app/robots.ts` (`force-static`) | — | Static SEO files | **Done (W5-01)** |
 | `/manifest.webmanifest` | `app/manifest.ts` (new, W5-06) | — | PWA install metadata | not built |
 | OG images | `public/og/{home,catppuccin,nord,onedark}.png` from `scripts/make-og.ts` | — | 1200×630 social previews, referenced from metadata | **Done (W5-01)** |
@@ -24,7 +24,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 
 | Component | Client? | Owns | Changed by | Status |
 |---|---|---|---|---|
-| `header.tsx` | server | Logo, glass sticky bar, About link | W1-05, W3-04, W5-02 | **Done (W1-05, W3-04)** |
+| `header.tsx` | server | Logo, glass sticky bar, About link (icon on phones) | W1-05, W3-04, W5-02 | **Done (W1-05, W3-04, W5-02)** |
 | `ThemeSwitcher.tsx` | client | Theme segmented control (desktop), palette menu (mobile), mode toggle; aria-pressed/expanded, Escape + outside tap, 44px targets | W3-05 | **Done (W3-05)** |
 | `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | W2-01, W2-05 | **Done (W2-01, W2-05)** |
 | `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | W2-01 | **Done (W2-01)** |
@@ -37,6 +37,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |
 | `theme-hero.tsx` | server | Per-theme page header: eyebrow, name, description, counts, palette swatches + glow in the page's own palette | W4-03 | **Done (W4-03)** |
 | `toast.tsx` | client | Status toasts with `role="status"` (new) | W5-04 | not built |
+| `credit-note.tsx` | client | Slim dismissible credit + takedown pointer on theme pages; hidden pre-paint once dismissed (`lib/credit-note.ts`) | W5-02 | **Done (W5-02)** |
 | `animations.tsx` | client | framer-motion wrappers | **deleted** in W2-03 | **Done (W2-03)** |
 | `Features.tsx`, `Hero.tsx` | client | Unused template leftovers | **deleted** in P0-04 | **Done (P0-04)** |
 

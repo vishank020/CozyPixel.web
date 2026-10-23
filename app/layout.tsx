@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { themeScript } from "@/lib/theme-dom";
+import { creditNoteScript } from "@/lib/credit-note";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -54,6 +55,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#1e1e2e" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: creditNoteScript }} />
         {/* Every wallpaper thumbnail comes from the resizing proxy (lib/image-loader.ts) */}
         <link rel="preconnect" href="https://wsrv.nl" />
       </head>

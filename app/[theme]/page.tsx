@@ -3,6 +3,7 @@ import { manifest, getWallpapersByTheme } from "@/lib/manifest";
 import { themes, type ThemeId } from "@/lib/themes";
 import { ThemeGallery, type SubcategoryCount } from "@/components/theme-gallery";
 import { ThemeHero } from "@/components/theme-hero";
+import { CreditNote } from "@/components/credit-note";
 import { SITE_NAME } from "@/lib/site";
 
 type Params = Promise<{ theme: string }>;
@@ -43,6 +44,7 @@ export default async function ThemePage({ params }: { params: Params }) {
   return (
     <main className="container mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
       <ThemeHero theme={theme} wallpaperCount={wallpapers.length} categoryCount={subcategories.length} />
+      <CreditNote />
       <ThemeGallery wallpapers={wallpapers} subcategories={subcategories} />
     </main>
   );

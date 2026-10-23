@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 5** in progress: W5-01 done, W5-02 next (branch `optimise`) |
+| Current phase | **Wave 5** in progress: W5-01, W5-02 done; W5-03 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -85,7 +85,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 
 ### Wave 5 — Completeness
 - [x] W5-01 Metadata, OG, sitemap, robots
-- [ ] W5-02 License, About, visible takedown
+- [x] W5-02 License, About, visible takedown
 - [ ] W5-03 Deep links
 - [ ] W5-04 Downloads with feedback
 - [ ] W5-05 CI gate + scheduled refresh
@@ -180,9 +180,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 19. ~~W4-05~~ done.
 20. ~~W4-06, Wave 4 gate~~ done.
 21. ~~W5-01~~ done.
-22. W5-02 license, About page, visible takedown.
-
-Quick win any time: the `LICENSE` file from W5-02.
+22. ~~W5-02~~ done.
+23. W5-03 deep links (`?sub=&q=&w=`).
 
 
 ---
@@ -242,6 +241,7 @@ Quick win any time: the `LICENSE` file from W5-02.
 - Image fade-in is gated on `html.hydrated` (set by `ThemeProvider`), so without JS, or before hydration, images are never hidden; the first grid card (likely LCP) never fades.
 - **Proxy source (fixed 2026-10-23):** jsDelivr refuses wsrv.nl for some files (reproducible 403 → wsrv 404 for e.g. `od_botw.jpg`, `ign_colorful.png`), so the loader now gives wsrv the raw GitHub URL; jsDelivr is only the browser fallback. If raw GitHub ever rate-limits wsrv, ADR-01's build-time thumbnails are the plan B.
 - **Sharing (W5-01):** site URL = `SITE_ORIGIN` env (default `https://vishank020.github.io`, or Vercel's production URL) + basePath, exposed as `NEXT_PUBLIC_SITE_URL` by `next.config.ts` and read via `lib/site.ts`. OG images live in `public/og/` and are referenced explicitly (file-convention images would bake in the basePath twice). `sitemap.xml`/`robots.txt` need `dynamic = "force-static"` under static export. On GitHub Pages (project site) `robots.txt` sits at `/CozyPixel.web/robots.txt`, which crawlers don't read; submit the sitemap URL to search consoles directly. On Vercel (root) it works as is.
+- Flaky once (W5-02): the hidden-collage test failed in one full run (phone hero URLs not counted as shown) and passed in the next 2 full runs and 3 solo runs. Its assertion message now records viewport width and shown-image counts for next time.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).

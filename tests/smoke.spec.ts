@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-const ROUTES = ["/", "/catppuccin", "/nord", "/onedark"];
+const ROUTES = ["/", "/catppuccin", "/nord", "/onedark", "/about"];
 
 // Wallpapers come from third-party CDNs; functional checks don't need the pixels
 async function blockImages(page: Page) {
@@ -77,7 +77,11 @@ test("hidden hero collage never downloads on phones", async ({ page }, testInfo)
       .flatMap((img) => (img.getAttribute("srcset") ?? "").split(", ").map((entry) => entry.split(" ")[0]))
   );
   const wasted = candidates.filter((url) => requested.has(url) && !shownUrls.includes(url));
-  expect(wasted, "hidden collage images were downloaded").toEqual([]);
+  const context = await page.evaluate(() => ({
+    width: window.innerWidth,
+    shownImgs: [...document.querySelectorAll("img")].filter((i) => i.checkVisibility()).length,
+  }));
+  expect(wasted, `hidden collage images were downloaded (${JSON.stringify(context)}, ${shownUrls.length} shown URLs)`).toEqual([]);
 });
 
 test("phone grid shows two columns with 44px download targets", async ({ page }, testInfo) => {
@@ -391,6 +395,39 @@ test("sharing metadata, sitemap and robots", async ({ page, request }) => {
   }
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toMatch(/Sitemap: https:\/\/.+\/sitemap\.xml/);
+});
+
+test("about page: credits, takedown route, license; linked from the header", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/nord");
+  await page.getByRole("link", { name: /About/ }).first().click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page).toHaveTitle("About & credits · CozyPixels");
+
+  // Scoped to the page body: the footer has the same link
+  await expect(page.getByRole("main").getByRole("link", { name: "open an issue on the original repository" })).toHaveAttribute(
+    "href",
+    "https://github.com/SleepyCatHey/CozyPixels/issues"
+  );
+  await expect(page.getByRole("main").getByText(/saved from various social media platforms without tracking sources/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "MIT license" })).toHaveAttribute("href", /\/LICENSE$/);
+});
+
+test("credit note: dismissible, and stays hidden before any JS on return visits", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/onedark");
+  const note = page.getByRole("complementary", { name: "Credits" });
+  await expect(note).toBeVisible();
+  await expect(note.getByRole("link", { name: "request credit or removal" })).toHaveAttribute("href", /\/about$/);
+
+  await note.getByRole("button", { name: "Dismiss credit note" }).click();
+  await expect(note).toBeHidden();
+
+  // Return visit with every Next.js chunk blocked: only the head script can hide it
+  await page.route(/\/_next\/static\/chunks\/.*\.js$/, (route) => route.abort());
+  await page.reload();
+  await expect(page.locator("h1").first()).toBeVisible();
+  await expect(page.locator(".credit-note")).toBeHidden();
 });
 
 test("unknown URLs get the styled 404 with ways back", async ({ page }) => {

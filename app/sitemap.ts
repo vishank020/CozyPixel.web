@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date(manifest.generatedAt);
   return [
     { url: absoluteUrl("/"), lastModified, changeFrequency: "weekly", priority: 1 },
+    { url: absoluteUrl("/about"), lastModified, changeFrequency: "yearly", priority: 0.3 },
     ...(Object.keys(themes) as ThemeId[]).map((id) => ({
       url: absoluteUrl(`/${id}`),
       lastModified,
