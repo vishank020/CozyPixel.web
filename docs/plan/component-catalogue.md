@@ -10,7 +10,7 @@ has no API, so the surface that stories change is routes and components. `A-xx` 
 |---|---|---|---|---|
 | `/` | `app/page.tsx` | SCR-01 | Hero + collage, theme cards, featured strip, "Free forever" panel | baseline |
 | `/catppuccin` · `/nord` · `/onedark` | `app/[theme]/page.tsx` (`generateStaticParams`, `generateMetadata`) | SCR-02 | `ThemeHero` + `ThemeGallery` | **Done (W4-03)** |
-| 404 | `app/not-found.tsx` (new, W4-06) | SCR-06 | Styled not-found panel | not built |
+| 404 | `app/not-found.tsx` → `out/404.html` | SCR-06 | Styled panel with links to each collection and home | **Done (W4-06)** |
 | `/about` | `app/about/page.tsx` (new, W5-02) | SCR-07 | Credits, disclaimer, takedown, no-tracking | not built |
 | `/sitemap.xml` · `/robots.txt` | `app/sitemap.ts` · `app/robots.ts` (new, W5-01) | — | Static SEO files | not built |
 | `/manifest.webmanifest` | `app/manifest.ts` (new, W5-06) | — | PWA install metadata | not built |
@@ -31,7 +31,7 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 | `SmoothScroll.tsx` | client | Lenis, lazy-loaded on fine pointers only; `setSmoothScrollPaused()`, `scrollToElement()` | W2-04, W3-02 | **Done (W2-04, W3-02)** |
 | `featured-strip.tsx` | client | Home featured grid + lightbox | W1-01, W1-02, W4-04 | baseline |
 | `theme-gallery.tsx` | client | Sticky glass filter bar: search (name + filename + category), chips with counts, live result count | W2-02, W3-02 | **Done (W3-02)** |
-| `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02)** |
+| `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02, W3-01, W4-06)** |
 | `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | **Done (W1-01–03, W2-03, W3-01)** |
 | `lightbox.tsx` | client | Full-screen viewer: swipe, top bar (counter, close), bottom action bar, hover-only arrows, focus trap/restore, palette-tinted backdrop | W1-01, W1-04, W2-04, W3-03, W4-04 | **Done (W1-04, W2-04, W3-03)** |
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |

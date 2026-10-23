@@ -12,10 +12,13 @@ const PRELOAD_MARGIN = "800px";
 
 interface WallpaperGridProps {
   wallpapers: Wallpaper[];
+  /** Shown as an action in the empty state when filters hide everything */
+  onClearFilters?: () => void;
 }
 
 export function WallpaperGrid({
   wallpapers,
+  onClearFilters,
 }: WallpaperGridProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -64,11 +67,20 @@ export function WallpaperGrid({
   // Empty state
   if (wallpapers.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <p className="text-lg font-medium text-foreground">No wallpapers found</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Try a different theme or subcategory
+      <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-3 overflow-hidden rounded-3xl border border-border/60 bg-card px-6 py-14 text-center shadow-sm">
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+        <p className="relative text-lg font-semibold text-foreground">No wallpapers match</p>
+        <p className="relative text-sm text-muted-foreground">
+          Try another word or category.
         </p>
+        {onClearFilters && (
+          <button
+            onClick={onClearFilters}
+            className="relative mt-2 inline-flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
     );
   }

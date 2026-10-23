@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 4** in progress: W4-01…W4-05 done; W4-06 next (branch `optimise`) |
+| Current phase | **Wave 4** in progress: all stories done; wave gate next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -80,7 +80,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W4-03 Theme page hero
 - [x] W4-04 Loading shimmer + fade-in
 - [x] W4-05 Mobile hero visual
-- [ ] W4-06 Styled 404 and empty state
+- [x] W4-06 Styled 404 and empty state
 
 ### Wave 5 — Completeness
 - [ ] W5-01 Metadata, OG, sitemap, robots

@@ -120,7 +120,13 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
       </p>
 
       {/* Grid */}
-      <WallpaperGrid wallpapers={filteredWallpapers} />
+      <WallpaperGrid
+        wallpapers={filteredWallpapers}
+        onClearFilters={() => {
+          setSearchQuery("");
+          setActiveSubcategory(null);
+        }}
+      />
     </div>
   );
 }

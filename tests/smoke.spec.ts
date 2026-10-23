@@ -352,6 +352,29 @@ test("without app JS, thumbnails are never hidden by the fade", async ({ page })
   await expect(fading).toHaveCSS("opacity", "1");
 });
 
+test("unknown URLs get the styled 404 with ways back", async ({ page }) => {
+  await blockImages(page);
+  const response = await page.goto("/no-such-page");
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveTitle("Page not found · CozyPixels");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("drifted off");
+
+  await page.getByRole("link", { name: "Nord" }).click();
+  await expect(page).toHaveURL(/\/nord$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Nord");
+});
+
+test("empty search shows a friendly state that clears the filters", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/catppuccin");
+  await page.getByRole("searchbox", { name: "Search wallpapers" }).fill("zzqqxx");
+  await expect(page.getByText("No wallpapers match")).toBeVisible();
+
+  await page.getByRole("button", { name: "Clear filters" }).click();
+  await expect(page.locator('[aria-live="polite"]')).toHaveText("383 wallpapers");
+  await expect(page.getByRole("searchbox", { name: "Search wallpapers" })).toHaveValue("");
+});
+
 test.describe("touch targets", () => {
   for (const route of ROUTES) {
     test(`${route}: every control is at least 44px on phones`, async ({ page }, testInfo) => {
