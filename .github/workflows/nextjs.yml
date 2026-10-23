@@ -1,31 +1,36 @@
-name: Deploy Next.js site to Pages
+name: Check and deploy to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Deploy whenever main changes
   push:
     branches: ["main"]
+  # Run the same checks on pull requests (no deploy)
+  pull_request:
+  # Daily refresh, so wallpapers added or removed upstream show up within a day (PLAN A-21)
+  schedule:
+    - cron: "0 3 * * *"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# One deploy at a time (never cancel one midway); pull request runs are cancelled by newer pushes
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('checks-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Build job
+  # Quality gate + Pages build: nothing deploys unless every check passes
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      CI: true
+      # Use Playwright's bundled Chromium instead of an installed Chrome
+      PW_CHANNEL: ""
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
@@ -36,31 +41,69 @@ jobs:
         with:
           node-version: "24"
           cache: "pnpm"
-          
-      - name: Install dependencies
-        run: pnpm install
 
-      - name: Generate Manifest
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # A GitHub API hiccup shouldn't block a deploy: fall back to the committed manifest
+      - name: Refresh wallpaper manifest
+        id: manifest
+        continue-on-error: true
         run: pnpm run generate-manifest
         env:
-          # This allows the script to fetch more from GitHub without rate limiting
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Build with Next.js
-        run: pnpm run build
-        
-      - name: Upload artifact
+
+      - name: Warn if the manifest could not be refreshed
+        if: steps.manifest.outcome == 'failure'
+        run: echo "::warning::Manifest refresh failed; building from the committed data/manifest.json"
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Palette contrast
+        run: pnpm contrast
+
+      - name: Build for tests (no basePath)
+        run: pnpm build:preview
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: pnpm test:e2e
+
+      - name: Keep test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: .perf/test-results
+          retention-days: 7
+
+      # Uses the manifest from the refresh step (build:local skips prebuild's regeneration)
+      - name: Build for GitHub Pages
+        if: github.event_name != 'pull_request'
+        run: pnpm build:local
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
 
-  # Deployment job
   deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

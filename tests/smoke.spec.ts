@@ -1,6 +1,21 @@
 import { test, expect, type Page } from "@playwright/test";
+import manifestData from "../data/manifest.json";
+import { displayName, formatBytes, formatLabel, slugify } from "../lib/format";
+import type { Manifest, Wallpaper } from "../lib/types";
 
 const ROUTES = ["/", "/catppuccin", "/nord", "/onedark", "/about"];
+
+// Collection facts come from the manifest, so the daily data refresh can't break the tests
+const manifest = manifestData as Manifest;
+const byTheme = (name: string) => manifest.wallpapers.filter((w) => w.theme === name);
+const CATPPUCCIN = byTheme("Catppuccin");
+const NORD = byTheme("Nord");
+const ONE_DARK = byTheme("One Dark");
+const countText = (n: number) => `${n} ${n === 1 ? "wallpaper" : "wallpapers"}`;
+const escapeRe = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// Same matching as the gallery search (components/theme-gallery.tsx)
+const matchesSearch = (w: Wallpaper, query: string) =>
+  `${displayName(w.filename)} ${w.filename} ${w.subcategory}`.toLowerCase().includes(query.toLowerCase());
 
 // Wallpapers come from third-party CDNs; functional checks don't need the pixels
 async function blockImages(page: Page) {
@@ -105,22 +120,22 @@ test("phone grid shows two columns with 44px download targets", async ({ page },
 test("filter bar: category search, counts, sticky and 44px targets", async ({ page }) => {
   await blockImages(page);
   await page.goto("/catppuccin");
-  // The live result count, not the hero's "413 wallpapers" stat
+  // The live result count, not the hero's wallpaper-count stat
   const count = page.locator('p[aria-live="polite"]');
-  await expect(count).toHaveText("383 wallpapers");
+  await expect(count).toHaveText(countText(CATPPUCCIN.length));
 
   // Searching a category name finds that category (README promise)
+  const category = CATPPUCCIN[CATPPUCCIN.length - 1].subcategory;
   const search = page.getByRole("searchbox", { name: "Search wallpapers" });
-  await search.fill("transportation");
-  const chip = page.getByRole("button", { name: /^Transportation · \d+$/ });
-  const expected = (await chip.textContent())!.match(/(\d+)$/)![1];
-  await expect(count).toHaveText(`${expected} wallpapers`);
+  await search.fill(category.toLowerCase());
+  const chip = page.getByRole("button", { name: new RegExp(`^${escapeRe(category)} · \\d+$`) });
+  await expect(count).toHaveText(countText(CATPPUCCIN.filter((w) => matchesSearch(w, category)).length));
 
   const clear = page.getByRole("button", { name: "Clear search" });
   const clearBox = await clear.evaluate(hitBox);
   expect(Math.min(clearBox.width, clearBox.height)).toBeGreaterThanOrEqual(44);
   await clear.click();
-  await expect(count).toHaveText("383 wallpapers");
+  await expect(count).toHaveText(countText(CATPPUCCIN.length));
 
   const chipBox = await chip.evaluate(hitBox);
   expect(chipBox.height).toBeGreaterThanOrEqual(44);
@@ -147,7 +162,7 @@ test("theme grid renders in batches of 24 and loads more on scroll", async ({ pa
 
   // The lightbox still browses the whole theme, not just the rendered batch
   await cards.first().click();
-  await expect(page.getByRole("dialog").getByText(/^1 \/ 383$/)).toBeVisible();
+  await expect(page.getByRole("dialog").getByText(`1 / ${CATPPUCCIN.length}`, { exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
 
   // Batches keep chaining while the sentinel is near the viewport, so only assert growth
@@ -298,7 +313,7 @@ test("theme page hero: own title, counts and palette whatever the site theme", a
 
   await expect(page).toHaveTitle("Nord wallpapers · CozyPixels");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Nord");
-  await expect(page.getByText(/^413$/).first()).toBeVisible();
+  await expect(page.getByText(String(NORD.length), { exact: true }).first()).toBeVisible();
 
   const palette = page.getByRole("list", { name: "Nord palette" }).getByRole("listitem");
   await expect(palette).toHaveCount(5);
@@ -325,7 +340,7 @@ test("thumbnails: shimmer while loading, fade in after, first card never hidden"
   const held = new Promise<void>((r) => (release = r));
   let heldOnce = false;
   await page.route(/wsrv\.nl/, async (route) => {
-    if (!heldOnce && route.request().url().includes("od_botw_z")) {
+    if (!heldOnce && decodeURIComponent(route.request().url()).includes(encodeURI(ONE_DARK[1].filename))) {
       heldOnce = true;
       await held;
     }
@@ -433,11 +448,18 @@ test("credit note: dismissible, and stays hidden before any JS on return visits"
 test.describe("deep links", () => {
   test("filters come from and go to the URL", async ({ page }) => {
     await blockImages(page);
-    await page.goto("/catppuccin?sub=transportation&q=van");
-    await expect(page.getByRole("button", { name: /^Transportation · / })).toHaveAttribute("aria-pressed", "true");
+    const target = CATPPUCCIN[Math.min(5, CATPPUCCIN.length - 1)];
+    const query = displayName(target.filename).split(" ")[0].toLowerCase();
+    const expected = CATPPUCCIN.filter((w) => w.subcategory === target.subcategory && matchesSearch(w, query)).length;
+
+    await page.goto(`/catppuccin?sub=${slugify(target.subcategory)}&q=${encodeURIComponent(query)}`);
+    await expect(page.getByRole("button", { name: new RegExp(`^${escapeRe(target.subcategory)} · `) })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
     const search = page.getByRole("searchbox", { name: "Search wallpapers" });
-    await expect(search).toHaveValue("van");
-    await expect(page.locator('p[aria-live="polite"]')).toHaveText("1 wallpaper");
+    await expect(search).toHaveValue(query);
+    await expect(page.locator('p[aria-live="polite"]')).toHaveText(countText(expected));
 
     // Editing filters replaces the history entry instead of adding to it
     const historyLength = await page.evaluate(() => history.length);
@@ -452,7 +474,7 @@ test.describe("deep links", () => {
     await page.goto("/onedark");
     await page.getByRole("button", { name: /^View / }).first().click();
     await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page).toHaveURL(/\?w=one-dark-/);
+    await expect(page).toHaveURL(new RegExp(`\\?w=${escapeRe(ONE_DARK[0].id)}$`));
 
     await page.goBack();
     await expect(page.getByRole("dialog")).toBeHidden();
@@ -461,13 +483,15 @@ test.describe("deep links", () => {
 
   test("a shared link opens that wallpaper, even deep in the list", async ({ page }) => {
     await blockImages(page);
-    await page.goto("/nord?w=nord-characters-and-people-ign-lakesidedeer-03-png");
+    const index = Math.min(100, NORD.length - 1);
+    const target = NORD[index];
+    await page.goto(`/nord?w=${target.id}`);
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByText(/^101 \/ 413$/)).toBeVisible();
-    await expect(dialog.getByText("Lakeside Deer 03")).toBeVisible();
+    await expect(dialog.getByText(`${index + 1} / ${NORD.length}`, { exact: true })).toBeVisible();
+    await expect(dialog.getByText(displayName(target.filename), { exact: true })).toBeVisible();
 
-    // Its card exists behind the lightbox: the grid rendered up to its batch (card #101)
-    expect(await page.locator(".card-lift").count()).toBeGreaterThanOrEqual(101);
+    // Its card exists behind the lightbox: the grid rendered up to its batch
+    expect(await page.locator(".card-lift").count()).toBeGreaterThanOrEqual(index + 1);
 
     // Close stays on the page (no history entry of ours to go back to)
     await dialog.getByRole("button", { name: "Close" }).click();
@@ -485,12 +509,14 @@ test.describe("deep links", () => {
     await dialog.getByRole("button", { name: "Copy link to this wallpaper" }).click();
     await expect(dialog.getByRole("button", { name: "Link copied" })).toBeVisible();
     const copied = await page.evaluate(() => navigator.clipboard.readText());
-    expect(copied).toMatch(/^https:\/\/.+\/onedark\?w=one-dark-gaming-botw-od-botw-saddled-jpg$/);
+    expect(copied).toMatch(new RegExp(`^https://.+/onedark\\?w=${escapeRe(ONE_DARK[0].id)}$`));
   });
 });
 
 test.describe("downloads", () => {
-  const ORIGINAL = /raw\.githubusercontent\.com\/.*od_botw_saddled\.jpg$/;
+  const FIRST = ONE_DARK[0];
+  const NAME = displayName(FIRST.filename);
+  const ORIGINAL = new RegExp(`raw\\.githubusercontent\\.com/.*${escapeRe(encodeURI(FIRST.path))}$`);
 
   test("card download saves the original file under its own name, with a busy state", async ({ page }) => {
     await blockImages(page);
@@ -502,16 +528,16 @@ test.describe("downloads", () => {
     });
     await page.goto("/onedark");
 
-    const button = page.getByRole("button", { name: "Download Botw Saddled" });
+    const button = page.getByRole("button", { name: `Download ${NAME}` });
     const downloadEvent = page.waitForEvent("download");
     await button.click();
-    const busy = page.getByRole("button", { name: /^Downloading Botw Saddled/ });
+    const busy = page.getByRole("button", { name: new RegExp(`^Downloading ${escapeRe(NAME)}`) });
     await expect(busy).toBeDisabled();
 
     release();
     const download = await downloadEvent;
-    expect(download.suggestedFilename()).toBe("od_botw_saddled.jpg");
-    await expect(page.getByRole("button", { name: "Saved Botw Saddled" })).toBeVisible();
+    expect(download.suggestedFilename()).toBe(FIRST.filename);
+    await expect(page.getByRole("button", { name: `Saved ${NAME}` })).toBeVisible();
   });
 
   test("a failed download opens the file in a new tab and says so", async ({ page, context }) => {
@@ -520,7 +546,7 @@ test.describe("downloads", () => {
     await page.goto("/onedark");
 
     const popup = context.waitForEvent("page");
-    await page.getByRole("button", { name: "Download Botw Saddled" }).click();
+    await page.getByRole("button", { name: `Download ${NAME}` }).click();
     expect((await popup).url()).toMatch(ORIGINAL);
 
     // Coming back from the new tab, the explanation is still waiting
@@ -532,7 +558,10 @@ test.describe("downloads", () => {
     await blockImages(page);
     await page.goto("/onedark");
     await page.getByRole("button", { name: /^View / }).first().click();
-    await expect(page.getByRole("dialog").getByText(/One Dark · Gaming \(BOTW\)\s*· JPEG · 707 KB/)).toBeVisible();
+    const info = new RegExp(
+      `${escapeRe(`${FIRST.theme} · ${FIRST.subcategory}`)}\\s*${escapeRe(`· ${formatLabel(FIRST.extension)} · ${formatBytes(FIRST.size ?? 0)}`)}`
+    );
+    await expect(page.getByRole("dialog").getByText(info)).toBeVisible();
   });
 });
 
@@ -555,7 +584,7 @@ test("empty search shows a friendly state that clears the filters", async ({ pag
   await expect(page.getByText("No wallpapers match")).toBeVisible();
 
   await page.getByRole("button", { name: "Clear filters" }).click();
-  await expect(page.locator('p[aria-live="polite"]')).toHaveText("383 wallpapers");
+  await expect(page.locator('p[aria-live="polite"]')).toHaveText(countText(CATPPUCCIN.length));
   await expect(page.getByRole("searchbox", { name: "Search wallpapers" })).toHaveValue("");
 });
 

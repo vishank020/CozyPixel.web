@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 5** in progress: W5-01…W5-04 done; W5-05 next (branch `optimise`) |
+| Current phase | **Wave 5** in progress: W5-01…W5-05 done; W5-06 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -88,7 +88,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W5-02 License, About, visible takedown
 - [x] W5-03 Deep links
 - [x] W5-04 Downloads with feedback
-- [ ] W5-05 CI gate + scheduled refresh
+- [x] W5-05 CI gate + scheduled refresh (live verification pending a push, see §6)
 - [ ] W5-06 Small delights
 
 ### Hardening
@@ -183,7 +183,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 22. ~~W5-02~~ done.
 23. ~~W5-03~~ done.
 24. ~~W5-04~~ done.
-25. W5-05 CI gate + scheduled refresh.
+25. ~~W5-05~~ done (verify on GitHub after the first push).
+26. W5-06 small delights.
 
 
 ---
@@ -224,7 +225,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 
 ## 6. Known issues / notes
 
-- Playwright uses the installed Chrome locally (`channel: "chrome"`). In CI set `PW_CHANNEL=""` and run `pnpm exec playwright install --with-deps chromium` (W5-05). The suite blocks image requests for functional checks; only the screenshot test loads images. "Before" screenshots from 2026-10-23 are in `.perf/shots/` (git-ignored, local only). In them the featured strip is still empty boxes after 8 s on mobile.
+- Playwright uses the installed Chrome locally (`channel: "chrome"`); CI sets `PW_CHANNEL=""` and installs Playwright's Chromium (verified locally: `CI=true PW_CHANNEL="" pnpm test:e2e` → 170 passed). The suite blocks image requests for functional checks; only the screenshot test loads images. "Before" screenshots from 2026-10-23 are in `.perf/shots/` (git-ignored, local only). In them the featured strip is still empty boxes after 8 s on mobile.
 - **LCP after W1-02 is render-bound, not image-bound.** On `/` the LCP element is the hero paragraph and 100 % of its LCP is "element render delay" (page hidden until hydration + framer-motion `initial` opacity 0). On `/catppuccin` the LCP image downloads in 271 ms and then waits 1.8 s to render. Images stopped dominating the simulated load, so the hydration gate is now what Lighthouse sees. W2-01/W2-03 target exactly this; a `preconnect` to wsrv.nl made no difference to it.
 - TBT varies a lot between runs on this machine (`/catppuccin` 2.5 s → 5.8 s → 6.9 s with no change to JS work). Compare TBT only within one session, and use `PERF_RUNS=3`. The real fix is W2-02 (paging).
 - wsrv.nl's first request for an uncached size can take ~6 s (measured on a 2.46 MB PNG); repeats are < 1 s. Visitors share that cache.
@@ -247,6 +248,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 - Flaky once (W5-02): the hidden-collage test failed in one full run (phone hero URLs not counted as shown) and passed in the next 2 full runs and 3 solo runs. Its assertion message now records viewport width and shown-image counts for next time.
 - **Deep links (W5-03):** gallery state is `?sub=<category slug>&q=<text>&w=<wallpaper id>`, read with `useSyncExternalStore` in `lib/url-state.ts`, not `useSearchParams` (which under static export would client-render the whole gallery and drop it from the static HTML). Filters use `replaceState`; opening a wallpaper uses `pushState` so Back closes it. "Copy link" shares the canonical `/{theme}?w={id}` (no filters).
 - **Source data:** some wallpapers appear in two categories (e.g. `ign_LakesideDeer-03.png` in Nord Animals & Creatures and Characters & People): two cards, same image. That's upstream data, left as is.
+- **CI (W5-05):** `.github/workflows/nextjs.yml` runs lint → typecheck → contrast → build:preview → Playwright → build:local → deploy, on push to `main`, daily at 03:00 UTC and on manual dispatch; pull requests run the checks without deploying. A failed manifest refresh logs a warning and builds from the committed manifest (verified: a failing refresh leaves the file byte-identical). **Not yet verified on GitHub** (needs a push): that a failing check blocks the deploy, and that scheduled runs fire (GitHub only runs schedules from the default branch, so this starts after `optimise` is merged into `main`).
+- Tests derive collection facts (counts, first wallpaper, names, sizes) from `data/manifest.json`, so a refreshed collection can't break the daily run.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).
