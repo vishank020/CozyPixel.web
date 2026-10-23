@@ -74,7 +74,7 @@ export function ThemeGallery({ wallpapers, subcategories }: ThemeGalleryProps) {
             aria-label="Search wallpapers"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-11 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow [&::-webkit-search-cancel-button]:hidden"
+            className="w-full min-h-11 pl-9 pr-11 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow [&::-webkit-search-cancel-button]:hidden"
           />
           {searchQuery && (
             <button

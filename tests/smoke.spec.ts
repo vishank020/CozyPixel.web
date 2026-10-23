@@ -222,6 +222,72 @@ test("viewport fits notched screens and the hero uses stable viewport units", as
   expect(minHeight).toBeCloseTo(innerHeight * 0.85, 0);
 });
 
+test("theme menu on phones: expanded state, Escape, outside tap, pressed theme", async ({ page }, testInfo) => {
+  test.skip(!isMobile(testInfo.project.name), "the menu replaces the segmented control on phones");
+  await blockImages(page);
+  await page.goto("/");
+  const toggle = page.getByRole("button", { name: "Theme menu" });
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  const items = page.getByRole("group", { name: "Theme" }).getByRole("button");
+  await expect(items).toHaveCount(3);
+  for (const box of await items.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))) {
+    expect(box).toBeGreaterThanOrEqual(44);
+  }
+
+  await page.keyboard.press("Escape");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(toggle).toBeFocused();
+
+  await toggle.click();
+  await page.touchscreen.tap(180, 500);
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+  await toggle.click();
+  await page.getByRole("button", { name: "One Dark", exact: true }).click();
+  await toggle.click();
+  await expect(page.getByRole("button", { name: "One Dark", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Nord", exact: true })).toHaveAttribute("aria-pressed", "false");
+});
+
+test("theme buttons on desktop expose the active theme", async ({ page }, testInfo) => {
+  test.skip(isMobile(testInfo.project.name), "segmented control is md+");
+  await blockImages(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Nord", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Nord", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Catppuccin", exact: true })).toHaveAttribute("aria-pressed", "false");
+});
+
+test.describe("touch targets", () => {
+  for (const route of ROUTES) {
+    test(`${route}: every control is at least 44px on phones`, async ({ page }, testInfo) => {
+      test.skip(!isMobile(testInfo.project.name), "touch layout");
+      await blockImages(page);
+      await page.goto(route);
+      await expect(page.locator("h1").first()).toBeVisible();
+
+      const small = await page
+        .locator("a[href], button, input, [role='button']")
+        .evaluateAll((els, hitBoxSrc) => {
+          const hitBox = new Function(`return (${hitBoxSrc})`)() as (el: Element) => { width: number; height: number };
+          return els
+            .filter((el) => (el as HTMLElement).checkVisibility())
+            // Links inside running text are exempt (WCAG 2.5.8)
+            .filter((el) => !(el.tagName === "A" && el.closest("p")))
+            .map((el) => ({ el, box: hitBox(el) }))
+            .filter(({ box }) => box.width < 44 || box.height < 44)
+            .map(({ el, box }) =>
+              `${el.tagName} "${(el.getAttribute("aria-label") ?? el.textContent ?? "").trim().slice(0, 30)}" ${Math.round(box.width)}x${Math.round(box.height)}`
+            );
+        }, hitBox.toString());
+      expect(small).toEqual([]);
+    });
+  }
+});
+
 test("lightbox opens, navigates and closes", async ({ page }) => {
   await blockImages(page);
   await page.goto("/onedark");

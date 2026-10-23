@@ -230,7 +230,7 @@ export default function Home() {
               href="https://github.com/SleepyCatHey/CozyPixels"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-primary font-medium hover:underline relative z-10 mt-2"
+              className="inline-flex min-h-11 items-center gap-2 text-primary font-medium hover:underline relative z-10 mt-2"
             >
               Support the project on GitHub <ArrowRight className="h-4 w-4" />
             </a>

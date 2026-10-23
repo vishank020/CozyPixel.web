@@ -24,8 +24,8 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 
 | Component | Client? | Owns | Changed by | Status |
 |---|---|---|---|---|
-| `header.tsx` | server | Logo, glass sticky bar, About link | W1-05, W3-04, W5-02 | baseline |
-| `ThemeSwitcher.tsx` | client | Theme segmented control (desktop), palette menu (mobile), mode toggle | W3-05 | baseline |
+| `header.tsx` | server | Logo, glass sticky bar, About link | W1-05, W3-04, W5-02 | **Done (W1-05, W3-04)** |
+| `ThemeSwitcher.tsx` | client | Theme segmented control (desktop), palette menu (mobile), mode toggle; aria-pressed/expanded, Escape + outside tap, 44px targets | W3-05 | **Done (W3-05)** |
 | `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | W2-01, W2-05 | **Done (W2-01, W2-05)** |
 | `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | W2-01 | **Done (W2-01)** |
 | `SmoothScroll.tsx` | client | Lenis, lazy-loaded on fine pointers only; `setSmoothScrollPaused()`, `scrollToElement()` | W2-04, W3-02 | **Done (W2-04, W3-02)** |

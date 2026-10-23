@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 3** in progress: W3-01…W3-04 done; W3-05 next (branch `optimise`) |
+| Current phase | **Wave 3** in progress: all stories done; wave gate next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -71,7 +71,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W3-02 Sticky compact filter bar
 - [x] W3-03 Lightbox for touch
 - [x] W3-04 Viewport units and safe areas
-- [ ] W3-05 Theme switcher a11y + touch
+- [x] W3-05 Theme switcher a11y + touch
 
 ### Wave 4 — Style polish
 - [ ] W4-01 Accessible palette tokens
