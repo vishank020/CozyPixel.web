@@ -14,7 +14,8 @@
     "perf": "node scripts/perf.mjs",
     "generate-manifest": "tsx scripts/generate-manifest.ts",
     "prebuild": "pnpm run generate-manifest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "contrast": "node scripts/contrast.mjs"
   },
   "dependencies": {
     "lenis": "^1.3.26",

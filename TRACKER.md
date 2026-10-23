@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 4** next: W4-01 accessible palette tokens (Wave 3 complete, tag `wave-3-done`) (branch `optimise`) |
+| Current phase | **Wave 4** in progress: W4-01 done, W4-02 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -29,7 +29,8 @@ pnpm build:local                   # static export from committed manifest (Page
 pnpm build:preview                 # same, no basePath (Vercel-like; what preview/perf serve)
 pnpm preview                       # serve out/ at http://localhost:4173
 pnpm perf                          # Lighthouse mobile on /, /catppuccin, /onedark against preview
-pnpm test:e2e                      # Playwright smoke at 360 px + 1280 px against preview
+pnpm test:e2e                      # Playwright at 360 / 390 / 1280 px against preview
+pnpm contrast                      # WCAG check of every text pairing in all 6 palettes
 ```
 
 | What | Where |
@@ -74,7 +75,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W3-05 Theme switcher a11y + touch
 
 ### Wave 4 — Style polish
-- [ ] W4-01 Accessible palette tokens
+- [x] W4-01 Accessible palette tokens
 - [ ] W4-02 Design-token pass
 - [ ] W4-03 Theme page hero
 - [ ] W4-04 Loading shimmer + fade-in
@@ -101,9 +102,6 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11 (v1.1 fro
 
 | Date | Point | Route | Perf | LCP | TBT | CLS | Img KB | JS KB (gz) |
 |---|---|---|---|---|---|---|---|---|
-| 2026-10-23 | Wave 3 gate | `/` | 95 (a11y 100) | 2.92 s (observed 0.14 s) | 58 ms | 0 | 100 | 149 |
-| 2026-10-23 | Wave 3 gate | `/catppuccin` | 94 (a11y 100) | 3.08 s (observed 0.11 s) | 49 ms | 0 | 219 | 155 |
-| 2026-10-23 | Wave 3 gate | `/onedark` | 96 (a11y 100) | 2.78 s (observed 0.10 s) | 47 ms | 0 | 103 | 155 |
 | 2026-10-23 | Baseline | `/` | 85 | 4.23 s | 194 ms | 0 | 19,124 | 257 |
 | 2026-10-23 | Baseline | `/catppuccin` | 42 | 7.35 s | 2,551 ms | 0 | 17,709 | 259 |
 | 2026-10-23 | Baseline | `/onedark` | 52 | 10.03 s | 958 ms | 0 | 5,505 | 259 |
@@ -135,6 +133,9 @@ Filled by P0-02 (baseline) and every wave gate. Budgets: PLAN §3 A-11 (v1.1 fro
 | 2026-10-23 | Wave 2 gate | `/` | 95 | 2.94 s (observed 0.41 s) | 52 ms | 0 | 100 | 148 |
 | 2026-10-23 | Wave 2 gate | `/catppuccin` | 95 | 2.93 s (observed 0.11 s) | 49 ms | 0 | 302 | 153 |
 | 2026-10-23 | Wave 2 gate | `/onedark` | 95 | 2.95 s (observed 0.15 s) | 57 ms | 0 | 201 | 153 |
+| 2026-10-23 | Wave 3 gate | `/` | 95 (a11y 100) | 2.92 s (observed 0.14 s) | 58 ms | 0 | 100 | 149 |
+| 2026-10-23 | Wave 3 gate | `/catppuccin` | 94 (a11y 100) | 3.08 s (observed 0.11 s) | 49 ms | 0 | 219 | 155 |
+| 2026-10-23 | Wave 3 gate | `/onedark` | 96 (a11y 100) | 2.78 s (observed 0.10 s) | 47 ms | 0 | 103 | 155 |
 
 Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm perf`, local Chrome, Lighthouse 13.5 mobile preset. "JS KB" is transfer size (gzip from `serve`).
 
@@ -167,7 +168,8 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 12. ~~W3-03~~ done.
 13. ~~W3-04~~ done.
 14. ~~W3-05, Wave 3 gate~~ done.
-15. W4-01 accessible palette tokens (Catppuccin Latte primary text is 1.80:1).
+15. ~~W4-01~~ done.
+16. W4-02 design-token pass (radius scale, focus ring, fluid headings).
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 
@@ -181,6 +183,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 | 2026-10-23 | P0-02: no-basePath build via `VERCEL=1 pnpm build:local` | Added `LOCAL_PREVIEW` to `next.config.ts` and a `build:preview` script (`scripts/build-preview.mjs`) | `VAR=1 cmd` doesn't work in Windows shells, and setting `VERCEL` locally could trigger Vercel-specific Next behaviour |
 | 2026-10-23 | A-09: client receives slim wallpaper objects (no `extension`) | Pass full `Wallpaper` objects as props; only the import split was done | Dropping one short field saves ~4 KB of RSC payload per theme page, not worth the extra type and mapper. The real cost (336 KB manifest chunk) is gone |
 | 2026-10-23 | A-06: `ThemeProvider` initialises state from `<html>` attributes on mount | `<html>` attributes + localStorage are an external store read with `useSyncExternalStore`; one function (`lib/theme-dom.ts`) is both serialised into the head script and called at runtime; `useLayoutEffect` re-applies for dev Strict Mode | Follows `node_modules/next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`. Mount-time state init would need setState in an effect (the lint error) and could drift from the script |
+| 2026-10-23 | A-14: Latte muted-foreground → Subtext0; fix only the pairings named in C §2 | Subtext1 (`233 13% 41%`), and also fixed the pairings `pnpm contrast` found beyond C §2: button text in both Nord modes, hover accents in Nord/One Dark dark, One Dark light muted (4.45) | Subtext0 measures 4.40:1 on Latte Base. The script checks every text pairing the components use, which the analysis's 4-pairing table didn't |
 | 2026-10-23 | W2-05 scope: remove the `*` transition | Also restores components' own hover transitions: the unlayered `*` rule beat Tailwind v4's layered `transition-*` utilities, so e.g. the card image zoom (`transition-transform duration-500`) snapped instead of easing | Visible but intended: the original classes now behave as written |
 | 2026-10-23 | A-11 v1.0: simulated LCP ≤ 2.5 s, client JS ≤ 150 KB | A-11 v1.1: score ≥ 90, **observed LCP ≤ 1.0 s**, simulated LCP ≤ 3.5 s, JS ≤ 160 KB. Owner decision at the Wave 2 gate | Both v1.0 numbers were set before measuring and sit below the framework floor. Simulated LCP stays ≈2.56 s even with the web font removed (React/Next runtime on the simulated critical path); observed LCP is 0.1–0.4 s. JS is 112 KB React/Next runtime + ≈15 KB site code; lazy-loading the lightbox saved ≈0 KB. `perf.mjs` now reports observed LCP too |
 | 2026-10-23 | W2-06: lighter glows/noise below `md` if paint cost > 5 ms/frame | No change. Measured home scroll at 360 px, 4× CPU throttle, 3 runs each: effects on avg 8.8–9.0 ms/frame vs off 8.7–8.8 ms (≈0.2 ms difference), no difference in frames > 33 ms | A-08's condition not met; keeping the effects intact also serves "keep the current style". Headless compositing differs from real phone GPUs, so H-02 re-checks on devices |
@@ -219,6 +222,7 @@ Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 - **Headless screenshots of fades are unreliable.** In headless desktop Chrome a large lightbox image takes ~0.3–0.5 s before its fade-in visibly starts (software raster), so a screenshot right after load can show an empty stage. Wait ~2 s before screenshotting. Real browsers don't show this; the spinner now stays behind the image until its fade ends either way.
 - A failed `next build` leaves the previous `out/` in place, so tests then run against stale code. A TypeScript error in `tests/` fails the build (tsconfig includes them). Check for the `8/8` line before trusting a test run.
 - **Flaky once (2026-10-23, after W3-04):** one `locator.click` timed out at 30 s in a run started straight after two production builds; the next 8 full runs passed (72/72). Unidentified test (output lost). If it recurs, capture the failing test name before re-running.
+- **Contrast (W4-01, `pnpm contrast`).** Before: 14 text pairings under 4.5:1 (worst: Catppuccin light primary 1.80, Nord dark primary 3.03). After: all ≥ 4.5 in all 6 palettes. Token changes: Catppuccin light primary → Latte Mauve `#8839ef` with Latte Base text, muted → Latte Subtext1; Nord light primary L 52→45 %; Nord dark primary → `nord8` `#88c0d0`, accent-fg L 70→75 %; One Dark light primary L 55→51 %, muted L 45→44 %; One Dark dark accent-fg L 70→72 %. Visual check at 390 px in Catppuccin light and Nord dark.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
 - `CLAUDE.md`, `AGENTS.md`, `context.md` and `css_context.md` are listed in `.gitignore`, but `CLAUDE.md`/`AGENTS.md` are already tracked, so edits still show up. `context.md`/`css_context.md` are local only (revisit in H-04).
