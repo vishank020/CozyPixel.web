@@ -10,7 +10,7 @@
     "start": "next start",
     "preview": "serve out -l 4173",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "perf": "node scripts/perf.mjs",
     "generate-manifest": "tsx scripts/generate-manifest.ts",
     "prebuild": "pnpm run generate-manifest",
