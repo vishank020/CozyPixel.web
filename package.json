@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "build:local": "next build",
+    "build": "next build && node scripts/fix-export-prefetch.mjs",
+    "build:local": "next build && node scripts/fix-export-prefetch.mjs",
     "build:preview": "node scripts/build-preview.mjs",
     "start": "next start",
     "preview": "serve out -l 4173",

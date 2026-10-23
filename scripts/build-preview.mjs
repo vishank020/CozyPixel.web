@@ -12,4 +12,8 @@ const result = spawnSync("pnpm exec next build", {
   env: { ...process.env, LOCAL_PREVIEW: "1" },
 });
 
-process.exit(result.status ?? 1);
+if (result.status !== 0) process.exit(result.status ?? 1);
+
+// Same post-build fix as build/build:local (see scripts/fix-export-prefetch.mjs)
+const fix = spawnSync("node scripts/fix-export-prefetch.mjs", { stdio: "inherit", shell: true });
+process.exit(fix.status ?? 1);

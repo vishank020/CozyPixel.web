@@ -54,11 +54,20 @@ test.describe("every route", () => {
         if (msg.type() === "error" && /react|hydrat/i.test(msg.text())) reactErrors.push(msg.text());
       });
 
+      // Any same-origin 404 (missing chunk, prefetch file, icon…) is a broken build
+      const notFound: string[] = [];
+      page.on("response", (res) => {
+        if (res.status() === 404 && res.url().startsWith("http://localhost:4173")) notFound.push(res.url());
+      });
+
       await blockImages(page);
       await page.goto(route);
       await expect(page.locator("h1").first()).toBeVisible();
       await page.waitForLoadState("load");
+      // Let viewport prefetches settle
+      await page.waitForTimeout(1500);
       expect(reactErrors).toEqual([]);
+      expect(notFound).toEqual([]);
 
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - window.innerWidth
