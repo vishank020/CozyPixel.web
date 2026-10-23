@@ -60,6 +60,27 @@ test("hidden hero collage never downloads on phones", async ({ page }, testInfo)
   expect(wasted, "hidden collage images were downloaded").toEqual([]);
 });
 
+test("theme grid renders in batches of 24 and loads more on scroll", async ({ page }) => {
+  await blockImages(page);
+  await page.goto("/catppuccin");
+  const cards = page.getByRole("button", { name: /^View / });
+  await expect(cards).toHaveCount(24);
+  await expect(page.getByText(/^Showing 24 of \d+$/)).toBeVisible();
+
+  // The lightbox still browses the whole theme, not just the rendered batch
+  await cards.first().click();
+  await expect(page.getByRole("dialog").getByText(/^1 \/ 383$/)).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  // Batches keep chaining while the sentinel is near the viewport, so only assert growth
+  await page.getByText(/^Showing 24 of/).scrollIntoViewIfNeeded();
+  await expect(cards).not.toHaveCount(24);
+  const afterScroll = await cards.count();
+
+  await page.getByRole("button", { name: "Load more" }).click();
+  await expect.poll(() => cards.count()).toBeGreaterThan(afterScroll);
+});
+
 test("lightbox opens, navigates and closes", async ({ page }) => {
   await blockImages(page);
   await page.goto("/onedark");

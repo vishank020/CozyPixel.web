@@ -26,12 +26,12 @@ Root layout `app/layout.tsx`: `<html>` (head theme script, W2-01) → `ThemeProv
 |---|---|---|---|---|
 | `header.tsx` | server | Logo, glass sticky bar, About link | W1-05, W3-04, W5-02 | baseline |
 | `ThemeSwitcher.tsx` | client | Theme segmented control (desktop), palette menu (mobile), mode toggle | W3-05 | baseline |
-| `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | **Done (W2-01)**, W2-05 |
-| `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | **Done (W2-01)** |
+| `theme-provider.tsx` | client | Theme/mode store over `<html>` attributes + localStorage | W2-01, W2-05 | **Done (W2-01)** |
+| `lib/theme-dom.ts` | — | Applies the saved theme; serialised as the `<head>` script | W2-01 | **Done (W2-01)** |
 | `SmoothScroll.tsx` | client | Lenis (desktop only after W2-04) | W2-04 | baseline |
 | `featured-strip.tsx` | client | Home featured grid + lightbox | W1-01, W1-02, W4-04 | baseline |
 | `theme-gallery.tsx` | client | Search, subcategory chips, filtered list | W2-02, W3-02 | baseline |
-| `wallpaper-grid.tsx` | client | Grid layout, paging, empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | baseline |
+| `wallpaper-grid.tsx` | client | Grid layout, paging (24 per batch), empty state, lightbox host | W1-03, W2-02, W3-01, W4-06 | **Done (W1-03, W2-02)** |
 | `wallpaper-card.tsx` | client | Thumbnail, hover lift, name, download button | W1-01–03, W2-03, W3-01, W4-04 | baseline |
 | `lightbox.tsx` | client | Full-screen viewer, navigation, download | W1-01, W1-04, W2-04, W3-03, W4-04 | baseline |
 | `footer.tsx` | server | Disclaimer, credits, "updated" date | W5-06 | baseline |

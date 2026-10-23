@@ -63,7 +63,7 @@ Measure first, add the tooling every later story uses, and delete dead code so d
 | W2-05 | CSS | **Scoped theme transition.** Delete the `*` transition. `setTheme`/`setMode` add `html.theme-switching` for 300 ms, and the CSS transitions colors only under that class. | `globals.css`, `theme-provider.tsx` | A §3.4, A-07 | S |
 | W2-06 | CSS | **Cheaper effects below `md`.** Apply A-08 only if the W2 perf/paint trace shows the orbs or noise costing > 5 ms per frame on the throttled profile; otherwise log "not needed" in TRACKER §4. | `app/page.tsx`, `globals.css` | A §3.5, A-08 | S |
 
-**Exit**: `pnpm perf` meets every A-11 budget on `/` and `/catppuccin`; `/catppuccin.html` ≤ 150 KB; `gsap` and `framer-motion` absent from `package.json`; hero headline visible with JS disabled.
+**Exit**: `pnpm perf` meets every A-11 budget on `/` and `/catppuccin`; `/catppuccin.html` ≤ 30 KB gzipped (was ≤ 150 KB raw; see TRACKER §4); `gsap` and `framer-motion` absent from `package.json`; hero headline visible with JS disabled.
 
 ---
 
