@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | Last updated | 2026-10-23 |
-| Current phase | **Wave 1** in progress: W1-01…W1-04 done; W1-05 next (branch `optimise`) |
+| Current phase | **Wave 1** in progress: W1-01…W1-05 done; W1-06 next (branch `optimise`) |
 | Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
@@ -55,7 +55,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 - [x] W1-02 Custom image loader
 - [x] W1-03 Priority hygiene
 - [x] W1-04 Lightbox image sizing
-- [ ] W1-05 Logo and favicon
+- [x] W1-05 Logo and favicon
 - [ ] W1-06 Oversized originals
 
 ### Wave 2 — Rendering, hydration and motion
@@ -126,7 +126,7 @@ Baseline: 3 runs per route (median), `pnpm build:preview` + `PERF_RUNS=3 pnpm pe
 1. ~~P0-01~~ done.
 2. ~~P0-02~~ done.
 3. ~~P0-03, P0-04~~ done.
-4. ~~Phase 0 gate, W1-01, W1-02~~ done. Next: W1-05 logo and favicon.
+4. ~~Phase 0 gate, W1-01, W1-02~~ done. Next: W1-06 oversized originals, then the Wave 1 gate.
 
 Quick win any time: the `LICENSE` file from W5-02 (no dependencies).
 

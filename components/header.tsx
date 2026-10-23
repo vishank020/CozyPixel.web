@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import logoPic from "@/lib/assets/logo.png";
+import logoPic from "@/lib/assets/logo.webp";
 
 export function Header() {
   return (
