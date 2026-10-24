@@ -6,8 +6,8 @@
 | | |
 |---|---|
 | Last updated | 2026-10-24 |
-| Current phase | **Hardening** — H-01 done (A-11 v1.2); next H-02…H-04 (Waves 1–5 merged to `main` via PR #1, tag `wave-5-done`) |
-| Next milestone | Phase 0 exit: baseline Lighthouse numbers recorded, smoke suite green |
+| Current phase | **Hardening** — H-01 + H-03 done; H-02 (real devices, owner) and H-04 (docs) left (Waves 1–5 merged to `main` via PR #1, tag `wave-5-done`) |
+| Next milestone | Hardening done: both live targets pass A-11 v1.2, proxy drill passed, real-device sign-off, docs match code |
 | Plan | [`docs/PLAN.md`](docs/PLAN.md) · **Backlog: [`docs/plan/waves.md`](docs/plan/waves.md)** · Components: [`docs/plan/component-catalogue.md`](docs/plan/component-catalogue.md) · Data: [`docs/plan/data-usage.md`](docs/plan/data-usage.md) |
 | Repo | https://github.com/vishank020/CozyPixel.web · live: https://vishank020.github.io/CozyPixel.web/ |
 
@@ -94,7 +94,7 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` not started
 ### Hardening
 - [x] H-01 Full perf + a11y run on both deploy targets — measured 2026-10-24; both pass under A-11 v1.2 (JS 160 Pages / 162 Vercel vs 165 budget, see §6)
 - [ ] H-02 Real-device pass
-- [ ] H-03 Proxy failure drill
+- [x] H-03 Proxy failure drill — wsrv blocked at 390 px on `/onedark`: 18/18 visible images fell back to jsDelivr, filters + lightbox work (see §6)
 - [ ] H-04 Refresh docs
 
 ### Performance log
@@ -158,6 +158,7 @@ H-01 live runs: `PERF_URL=<target> PERF_RUNS=3 pnpm perf` against `https://visha
 
 | Date | Wave | Suites run | Result | Notes (regressions found, fixes, deferred items) |
 |---|---|---|---|---|
+| 2026-10-24 | H-03 | Playwright with every `wsrv.nl` request aborted (390×844, `/onedark`) | Pass | 38 proxy requests blocked; the 18 images that loaded all came from `cdn.jsdelivr.net` at original size (no `?w=`), filtering still worked (13 chips, 24 → 12 cards), and the lightbox opened the original (1808 px, also jsDelivr). No page errors. First scripted attempt clicked a card instead of a chip and opened the dialog early; selector fixed. Fallback is usable but heavy: originals are much larger than the proxy's WebP |
 | 2026-10-24 | H-01 | live perf + a11y on both targets (`PERF_URL=… PERF_RUNS=3 pnpm perf`, 3 routes each) | Pass (A-11 v1.2) | Pages: 93/95/94, a11y 100, all budgets met. Vercel: 94/92/94, a11y 100; theme-page JS 162 KB — 2 KB over the then-current 160 KB. The code is identical; Vercel's Brotli is 3.2 KB larger than Pages' gzip on the same chunks, and 160 KB had zero headroom. Re-baselined to 165 KB (A-11 v1.2, §4) rather than cut a feature; the next real lever is replacing `next/image` (≈6–8 KB). Vercel also deploys only on push (no daily manifest refresh), so it was a day behind |
 | 2026-10-23 | W5 | typecheck · lint · contrast · build:local · build:preview · test:e2e (179 + 19 skipped, ×2; also 170 as CI runs it) · perf ×3 (+ /catppuccin ×5) · GitHub Pages simulation (Pages build served under `/CozyPixel.web/`) | Pass, 1 item pending | Exit: shared `?sub=&w=` links open the wallpaper (tests); OG/Twitter tags + images for `/` and each theme (external OG debugger needs the live URL); `/about`, `/sitemap.xml`, `/robots.txt`, manifest, OG images, icons and every asset in the HTML return 200 under `/CozyPixel.web/`; Lighthouse SEO 100 and best-practices 100 on all routes; installability checked by the manifest/icons test (Lighthouse 13 has no PWA category). **Pending:** "a broken commit fails CI before deploy" needs a push. Gate found and fixed: every `<Link>` prefetch 404'd (Next 16.3 export path mismatch, pre-existing) → post-build fix + same-origin 404 check on every route. Perf: `/catppuccin` 3-run median looked like a regression (86, 4.15 s); 5 solo runs gave 94 / 3.11 s with a 2.7–3.7 s spread tracking machine load. Theme-page JS was exactly at the then-current 160 KB budget, no headroom (re-baselined to 165 KB in A-11 v1.2, §4) |
 | 2026-10-23 | W4 | typecheck · lint (clean) · contrast (all ≥ 4.5, 6 palettes) · build:local · build:preview · test:e2e (137 + 16 skipped) · perf ×3 · visual review: `/` and `/nord` at 360/768/1280/1920 px × 6 palettes (48 shots in `.perf/gate-w4/`, contact sheets `sheet-*.png`) | Pass | Exit: identity intact in every palette and size; contrast all pass; budgets met. Gate found and fixed: at 768 px the side-by-side hero squeezed the headline to 4 lines and wrapped the CTA (pre-existing); hero now stacks until `lg` and caps its size at 3.5 rem for 1024–1279 px, so the headline is 2 lines and the CTA one line at 360–1920 px (new permanent test). Caveat: the P0-03 "before" screenshots had been overwritten by later test runs, so the comparison used the baseline images reviewed earlier in the session; gate shots now live in a separate folder. Perf 93–94 vs 94–97 at W3 (TBT 58–74 ms): within noise but watch in H-01 |
@@ -199,7 +200,9 @@ H-01 live runs: `PERF_URL=<target> PERF_RUNS=3 pnpm perf` against `https://visha
 25. ~~W5-05~~ done (verify on GitHub after the first push).
 26. ~~W5-06, Wave 5 gate~~ done.
 27. ~~Push `optimise` and open a PR into `main`~~ done 2026-10-23: PR #1 merged, merge run green, Pages deployed. First scheduled run green on 2026-10-24 07:47 UTC and redeployed. Live URLs are ready for H-01.
-28. ~~H-01~~ done 2026-10-24: Pages 93/95/94, Vercel 94/92/94, a11y 100 everywhere. Vercel's 2 KB JS overage was CDN compression on identical code, so A-11 moved to 165 KB (v1.2, §4). Next: H-02…H-04.
+28. ~~H-01~~ done 2026-10-24: Pages 93/95/94, Vercel 94/92/94, a11y 100 everywhere. Vercel's 2 KB JS overage was CDN compression on identical code, so A-11 moved to 165 KB (v1.2, §4).
+29. ~~H-03~~ done 2026-10-24: proxy blocked, 18/18 images fell back to jsDelivr, filters + lightbox usable (see §6).
+30. H-02 (real devices, owner) and H-04 (docs) remain.
 
 
 ---
@@ -268,6 +271,7 @@ H-01 live runs: `PERF_URL=<target> PERF_RUNS=3 pnpm perf` against `https://visha
 - Tests derive collection facts (counts, first wallpaper, names, sizes) from `data/manifest.json`, so a refreshed collection can't break the daily run.
 - **Prefetch fix:** `scripts/fix-export-prefetch.mjs` runs after every build to work around Next 16.3 writing route prefetch files under a different path than the client requests. Remove it once Next fixes that (the same-origin 404 test will tell you if prefetch paths break again).
 - Simulated-LCP noise on this machine is large (±0.5 s between runs); use `PERF_RUNS=5` on a single route before concluding there's a regression.
+- **H-03 proxy failure drill (2026-10-24):** with every `wsrv.nl` request aborted (Playwright, 390×844, `/onedark`), `WallpaperImage`'s `onError` flips to `unoptimized` and all 18 loaded images came from `cdn.jsdelivr.net` at full size. The 13 filter chips still worked (24 → 12 cards) and the lightbox opened the 1808 px original, also from jsDelivr; no page errors. A proxy outage is therefore usable but heavy — originals replace the proxy's WebP. The drill script is `.perf/h03-proxy-drill.mjs` (git-ignored, local only); re-run it after changing `WallpaperImage` or the loader.
 - **H-01 finding (2026-10-24): Vercel theme-page JS was 2 KB over the old 160 KB budget.** Same code as Pages (decoded chunks match except the basePath strings), but Vercel's Brotli is 3.2 KB larger than Pages' gzip for the same 529 KB: e.g. 70.52 vs 71.44 KB and 44.09 vs 44.22 KB per chunk (Resource Timing `encodedBodySize`). Lighthouse says 160 (Pages) vs 162 (Vercel) KB for `/catppuccin` and `/onedark`; `/` is 151 vs 153. A-11 v1.2 (165 KB) absorbs it — see §4. All six live runs scored a11y 100. A desktop Resource Timing check adds the desktop-only Lenis chunk (≈5.5 KB encoded), so desktop totals are 163/166 KB; the mobile preset correctly leaves it out. Vercel also redeploys only on push — no daily manifest refresh — so its collection was a day behind Pages when measured. If JS headroom is needed later, the biggest lever is replacing `next/image` with native `<img>` (≈6–8 KB), not trimming icons or components.
 - These docs were generated from the project-docs-template kit (removed from the repo on 2026-10-23 after use). The workflow it defines is fully captured in `CLAUDE.md` § Workflow and `docs/plan/waves.md`.
 - `data/manifest.json` shows as modified: only `generatedAt` changed (any `pnpm build` regenerates it through `prebuild`). Revert with `git checkout data/manifest.json` unless the content changed.
