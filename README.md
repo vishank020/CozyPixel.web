@@ -5,7 +5,7 @@
 
   **A beautiful, lightning-fast frontend gallery built for the ultimate aesthetic wallpaper collection.**
 
-  [View Live Demo](https://vishank020.github.io/CozyPixel.web/)
+  [View Live Demo](https://vishank020.github.io/CozyPixel.web/) · [Vercel mirror](https://cozypixels.vercel.app/)
 </div>
 
 ---
@@ -20,9 +20,10 @@ Designed with a heavy focus on modern UI/UX, the site features a stunning froste
 
 - **🖼️ Massive Collection**: Browse hundreds of curated, high-quality wallpapers.
 - **🌗 Native Theming**: Fully integrated custom theming engine supporting **Catppuccin (Latte/Mocha)**, **Nord (Light/Dark)**, and **One Dark (Light/Dark)**. The entire UI shifts seamlessly to match the wallpapers you are viewing!
-- **⚡ Blazing Fast (SSG)**: Built with Next.js 15, the gallery is statically generated at build time using the GitHub API. No database required.
-- **🔍 Instant Search**: Client-side filtering by subcategories and filenames for instant discovery.
-- **📱 Fully Responsive**: Carefully optimized for mobile, tablet, and desktop viewing.
+- **⚡ Blazing Fast (SSG)**: Built with Next.js 16 and exported as a fully static site (`out/`) — no server, database or API at runtime. The manifest is generated at build time from the GitHub API.
+- **🔍 Instant Search**: Client-side filtering by subcategories and filenames, with shareable `?sub=` / `?q=` deep links.
+- **📱 Fully Responsive**: Carefully optimized for mobile, tablet, and desktop viewing, with a swipeable lightbox and one-tap downloads.
+- **🔒 No Tracking**: No analytics, ads or accounts. Wallpapers stay in the [original repository](https://github.com/SleepyCatHey/CozyPixels); only the code and a JSON manifest are deployed.
 
 ---
 
@@ -56,4 +57,6 @@ Please consider dropping a ⭐ on the [original wallpaper repository](https://gi
 
 ## 📄 License
 
-This frontend web project is open-source. For licensing regarding the wallpapers themselves, please refer to the [original CozyPixels repository](https://github.com/SleepyCatHey/CozyPixels).
+The **code** in this repository is released under the [MIT License](LICENSE) © 2026 Vishank Singh.
+
+The **wallpapers are not covered by that licence.** They remain the property of their original authors and are hosted in the [CozyPixels collection](https://github.com/SleepyCatHey/CozyPixels); this site only displays and links to them. For licensing of the artwork, or to request a takedown, refer to the original repository.
